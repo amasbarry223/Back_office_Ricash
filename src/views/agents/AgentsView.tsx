@@ -17,7 +17,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { AGENT_STATUS_LABELS, type AgentStatus } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
@@ -54,7 +54,6 @@ function formatDate(dateStr: string): string {
 export default function AgentsView() {
   const { agents, updateAgentStatus } = useAgentsStore();
   const navigate = useRouterStore((s) => s.navigate);
-  const { toast } = useToast();
 
   const [query, setQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
@@ -107,12 +106,11 @@ export default function AgentsView() {
         return; // PENDING — use Approve instead
       }
       updateAgentStatus(agentId, newStatus);
-      toast({
-        title: newStatus === 'SUSPENDED' ? 'Agent suspendu' : 'Agent réactivé',
-        description: `Le statut a été mis à jour avec succès.`,
+      toast.success(newStatus === 'SUSPENDED' ? 'Agent suspendu' : 'Agent réactivé', {
+        description: 'Le statut a été mis à jour avec succès.',
       });
     },
-    [updateAgentStatus, toast]
+    [updateAgentStatus]
   );
 
   const handleExportCSV = useCallback(() => {

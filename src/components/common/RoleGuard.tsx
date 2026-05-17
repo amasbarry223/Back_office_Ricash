@@ -11,7 +11,8 @@ interface RoleGuardProps {
 }
 
 export default function RoleGuard({ roles, fallback = null, children }: RoleGuardProps) {
-  const canAccess = useAuthStore((s) => s.canAccess(roles));
+  const userRole = useAuthStore((s) => s.user?.role);
+  const canAccess = userRole ? roles.includes(userRole) : false;
 
   if (!canAccess) {
     return <>{fallback}</>;

@@ -24,7 +24,7 @@ import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { useTransactionsStore } from '@/stores/transactions-store';
 import { useKycStore } from '@/stores/kyc-store';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   COUNTRY_LABELS,
   TRANSACTION_TYPE_LABELS,
@@ -84,7 +84,6 @@ export default function UserDetailView() {
   const updateClientKyc = useUsersStore((s) => s.updateClientKyc);
   const transactions = useTransactionsStore((s) => s.transactions);
   const kycRecords = useKycStore((s) => s.records);
-  const { toast } = useToast();
 
   const clientId = params.id ?? '';
   const client = getClientById(clientId);
@@ -132,16 +131,14 @@ export default function UserDetailView() {
   const handleToggleStatus = () => {
     const newStatus: UserStatus = client.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
     updateClientStatus(client.id, newStatus);
-    toast({
-      title: newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé',
-      description: `Le statut a été mis à jour avec succès.`,
+    toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
+      description: 'Le statut a été mis à jour avec succès.',
     });
   };
 
   const handleForceKyc = () => {
     updateClientKyc(client.id, 2 as KycLevel);
-    toast({
-      title: 'KYC forcé',
+    toast.success('KYC forcé', {
       description: 'Le niveau KYC du client a été forcé à Niveau 2.',
     });
   };

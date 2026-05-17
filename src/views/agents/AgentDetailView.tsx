@@ -25,7 +25,7 @@ import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useTransactionsStore } from '@/stores/transactions-store';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import {
   COUNTRY_LABELS,
   TRANSACTION_TYPE_LABELS,
@@ -72,7 +72,6 @@ export default function AgentDetailView() {
   const approveAgent = useAgentsStore((s) => s.approveAgent);
   const floatMovementsList = useAgentsStore((s) => s.floatMovements);
   const transactions = useTransactionsStore((s) => s.transactions);
-  const { toast } = useToast();
 
   const [commissionRate, setCommissionRate] = useState('');
 
@@ -110,16 +109,14 @@ export default function AgentDetailView() {
 
   const handleSuspend = () => {
     updateAgentStatus(agent.id, 'SUSPENDED');
-    toast({
-      title: 'Agent suspendu',
+    toast.success('Agent suspendu', {
       description: `L'agent ${agent.firstName} ${agent.lastName} a été suspendu.`,
     });
   };
 
   const handleReactivate = () => {
     updateAgentStatus(agent.id, 'APPROVED');
-    toast({
-      title: 'Agent réactivé',
+    toast.success('Agent réactivé', {
       description: `L'agent ${agent.firstName} ${agent.lastName} a été réactivé.`,
     });
   };
@@ -127,16 +124,13 @@ export default function AgentDetailView() {
   const handleApprove = () => {
     const rate = parseFloat(commissionRate);
     if (isNaN(rate) || rate <= 0 || rate > 100) {
-      toast({
-        title: 'Erreur',
+      toast.error('Erreur', {
         description: 'Veuillez entrer un taux de commission valide (entre 0.1 et 100).',
-        variant: 'destructive',
       });
       return;
     }
     approveAgent(agent.id, rate);
-    toast({
-      title: 'Agent approuvé',
+    toast.success('Agent approuvé', {
       description: `L'agent ${agent.firstName} ${agent.lastName} a été approuvé avec un taux de ${rate}%.`,
     });
     setCommissionRate('');

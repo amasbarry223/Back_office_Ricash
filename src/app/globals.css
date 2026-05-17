@@ -137,24 +137,22 @@
   }
 }
 
-/* Ricash Custom Utilities */
-@layer utilities {
-  .ricash-bg {
-    background-color: var(--ricash-bg);
-  }
-  .ricash-sidebar {
-    background-color: var(--ricash-sidebar-bg);
-  }
-  .ricash-header {
-    background-color: var(--ricash-header-bg);
-    backdrop-filter: blur(8px);
-  }
-  .ricash-card-shadow {
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
-  }
-  .ricash-sidebar-shadow {
-    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
-  }
+/* Ricash Custom Utility Classes (global scope for Tailwind v4 compat) */
+.ricash-bg {
+  background-color: var(--ricash-bg);
+}
+.ricash-sidebar {
+  background-color: var(--ricash-sidebar-bg);
+}
+.ricash-header {
+  background-color: var(--ricash-header-bg);
+  backdrop-filter: blur(8px);
+}
+.ricash-card-shadow {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+}
+.ricash-sidebar-shadow {
+  box-shadow: 4px 0 24px rgba(0,0,0,0.15);
 }
 
 /* Custom Scrollbar */

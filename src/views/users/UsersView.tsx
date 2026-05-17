@@ -9,7 +9,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { COUNTRY_LABELS, USER_STATUS_LABELS, type UserStatus } from '@/types';
 import { Button } from '@/components/ui/button';
 import {
@@ -60,7 +60,7 @@ function formatDate(dateStr: string): string {
 export default function UsersView() {
   const { clients, updateClientStatus, updateClientKyc } = useUsersStore();
   const navigate = useRouterStore((s) => s.navigate);
-  const { toast } = useToast();
+
 
   const [query, setQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
@@ -118,23 +118,21 @@ export default function UsersView() {
     (clientId: string, currentStatus: UserStatus) => {
       const newStatus: UserStatus = currentStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
       updateClientStatus(clientId, newStatus);
-      toast({
-        title: newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé',
-        description: `Le statut a été mis à jour avec succès.`,
+      toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
+        description: 'Le statut a été mis à jour avec succès.',
       });
     },
-    [updateClientStatus, toast]
+    [updateClientStatus]
   );
 
   const handleForceKyc = useCallback(
     (clientId: string) => {
       updateClientKyc(clientId, 2);
-      toast({
-        title: 'KYC forcé',
+      toast.success('KYC forcé', {
         description: 'Le niveau KYC du client a été forcé à Niveau 2.',
       });
     },
-    [updateClientKyc, toast]
+    [updateClientKyc]
   );
 
   const handleExportCSV = useCallback(() => {

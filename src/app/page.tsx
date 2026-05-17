@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
 import DashboardLayout from '@/components/layout/DashboardLayout';
@@ -118,16 +118,37 @@ function RouteRenderer() {
 export default function Home() {
   const { isAuthenticated } = useAuthStore();
   const { navigate, currentRoute } = useRouterStore();
+  // Wait for Zustand persist hydration to avoid SSR mismatch
+  const [hydrated, setHydrated] = useState(false);
 
-  // Auto-navigate to dashboard if authenticated and on login route
   useEffect(() => {
+    // Use requestAnimationFrame to avoid synchronous setState in effect
+    requestAnimationFrame(() => {
+      setHydrated(true);
+    });
+  }, []);
+
+  // Auto-navigate based on auth state
+  useEffect(() => {
+    if (!hydrated) return;
     if (isAuthenticated && currentRoute === 'login') {
       navigate('dashboard');
     }
     if (!isAuthenticated && currentRoute !== 'login') {
       navigate('login');
     }
-  }, [isAuthenticated, currentRoute, navigate]);
+  }, [isAuthenticated, currentRoute, navigate, hydrated]);
+
+  // Show nothing during hydration to prevent SSR mismatch
+  if (!hydrated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
+        <div className="flex flex-col items-center gap-3">
+          <div className="shimmer size-12 rounded-xl" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>

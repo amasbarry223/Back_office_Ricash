@@ -16,7 +16,7 @@ import DataTable from '@/components/common/DataTable';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useAuthStore } from '@/stores/auth-store';
-import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,7 +50,6 @@ export default function AgentFloatView() {
   const floatMovementsList = useAgentsStore((s) => s.floatMovements);
   const createFloatRequest = useAgentsStore((s) => s.createFloatRequest);
   const user = useAuthStore((s) => s.user);
-  const { toast } = useToast();
 
   const [amount, setAmount] = useState('');
   const [justification, setJustification] = useState('');
@@ -104,18 +103,14 @@ export default function AgentFloatView() {
   const handleSubmitRequest = () => {
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      toast({
-        title: 'Erreur',
+      toast.error('Erreur', {
         description: 'Veuillez entrer un montant valide supérieur à 0.',
-        variant: 'destructive',
       });
       return;
     }
     if (!justification.trim()) {
-      toast({
-        title: 'Erreur',
+      toast.error('Erreur', {
         description: 'Veuillez fournir une justification.',
-        variant: 'destructive',
       });
       return;
     }
@@ -135,8 +130,7 @@ export default function AgentFloatView() {
       setIsSubmitting(false);
       setAmount('');
       setJustification('');
-      toast({
-        title: 'Demande soumise',
+      toast.success('Demande soumise', {
         description: `Votre demande de rechargement de ${formatXOF(numAmount)} a été soumise avec succès.`,
       });
     }, 500);

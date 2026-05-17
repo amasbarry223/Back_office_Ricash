@@ -1,0 +1,339 @@
+'use client';
+
+import React, { useState, useMemo } from 'react';
+import { CheckCircle, XCircle, MessageSquare } from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import DataTable from '@/components/common/DataTable';
+import StatusBadge from '@/components/common/StatusBadge';
+import PageHeader from '@/components/common/PageHeader';
+import RoleGuard from '@/components/common/RoleGuard';
+import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
+import { useAuthStore } from '@/stores/auth-store';
+import { useAgentsStore } from '@/stores/agents-store';
+import type { FloatRequest } from '@/types';
+
+export default function FloatRequestsView() {
+  const { navigate } = useRouterStore();
+  const user = useAuthStore((s) => s.user);
+  const { floatRequests, approveFloatRequest, rejectFloatRequest, getPendingRequestsCount } =
+    useAgentsStore();
+
+  const [rejectingId, setRejectingId] = useState<string | null>(null);
+  const [rejectComment, setRejectComment] = useState('');
+  const [activeTab, setActiveTab] = useState('pending');
+
+  const pendingCount = getPendingRequestsCount();
+
+  const pendingRequests = useMemo(
+    () => floatRequests.filter((r) => r.status === 'PENDING'),
+    [floatRequests]
+  );
+
+  const allRequests = useMemo(
+    () => [...floatRequests].sort(
+      (a, b) => new Date(b.requestedAt).getTime() - new Date(a.requestedAt).getTime()
+    ),
+    [floatRequests]
+  );
+
+  const formatAmount = (amount: number) =>
+    amount.toLocaleString('fr-FR', { style: 'decimal', minimumFractionDigits: 0 }) + ' XOF';
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const d = new Date(dateStr);
+      return d.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return dateStr;
+    }
+  };
+
+  const handleApprove = (id: string) => {
+    if (!user?.email) return;
+    approveFloatRequest(id, user.email);
+    toast.success('Demande de float approuvée');
+  };
+
+  const handleReject = (id: string) => {
+    if (!user?.email) return;
+    if (!rejectComment.trim()) {
+      toast.error('Veuillez saisir un commentaire de refus');
+      return;
+    }
+    rejectFloatRequest(id, user.email, rejectComment.trim());
+    setRejectingId(null);
+    setRejectComment('');
+    toast.success('Demande de float rejetée');
+  };
+
+  const pendingColumns = [
+    {
+      key: 'id',
+      label: 'N°',
+      sortable: true,
+      width: '100px',
+    },
+    {
+      key: 'agentCode',
+      label: 'Agent',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return (
+          <div>
+            <p className="font-medium text-sm">{req.agentCode}</p>
+            <p className="text-xs text-muted-foreground">{req.agentName}</p>
+          </div>
+        );
+      },
+    },
+    {
+      key: 'amount',
+      label: 'Montant demandé (XOF)',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return <span className="font-medium text-sm">{formatAmount(req.amount)}</span>;
+      },
+    },
+    {
+      key: 'justification',
+      label: 'Justification',
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return (
+          <p className="text-sm text-muted-foreground max-w-xs truncate" title={req.justification}>
+            {req.justification}
+          </p>
+        );
+      },
+    },
+    {
+      key: 'requestedAt',
+      label: 'Date',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return <span className="text-sm">{formatDate(req.requestedAt)}</span>;
+      },
+    },
+    {
+      key: 'actions',
+      label: 'Actions',
+      width: '260px',
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+
+        if (rejectingId === req.id) {
+          return (
+            <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+              <Textarea
+                placeholder="Commentaire de refus…"
+                value={rejectComment}
+                onChange={(e) => setRejectComment(e.target.value)}
+                className="min-h-[60px] text-sm"
+                autoFocus
+              />
+              <div className="flex items-center gap-1.5">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="h-7 text-xs"
+                  onClick={() => handleReject(req.id)}
+                >
+                  <XCircle className="size-3.5 mr-1" />
+                  Confirmer
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-7 text-xs"
+                  onClick={() => {
+                    setRejectingId(null);
+                    setRejectComment('');
+                  }}
+                >
+                  Annuler
+                </Button>
+              </div>
+            </div>
+          );
+        }
+
+        return (
+          <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+            <RoleGuard roles={['super_admin']}>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
+                onClick={() => handleApprove(req.id)}
+              >
+                <CheckCircle className="size-3.5 mr-1" />
+                Approuver
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="h-7 text-xs text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => setRejectingId(req.id)}
+              >
+                <XCircle className="size-3.5 mr-1" />
+                Rejeter
+              </Button>
+            </RoleGuard>
+          </div>
+        );
+      },
+    },
+  ];
+
+  const historyColumns = [
+    {
+      key: 'id',
+      label: 'N°',
+      sortable: true,
+      width: '100px',
+    },
+    {
+      key: 'agentCode',
+      label: 'Agent',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return (
+          <div>
+            <p className="font-medium text-sm">{req.agentCode}</p>
+            <p className="text-xs text-muted-foreground">{req.agentName}</p>
+          </div>
+        );
+      },
+    },
+    {
+      key: 'amount',
+      label: 'Montant demandé (XOF)',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return <span className="font-medium text-sm">{formatAmount(req.amount)}</span>;
+      },
+    },
+    {
+      key: 'justification',
+      label: 'Justification',
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return (
+          <p className="text-sm text-muted-foreground max-w-xs truncate" title={req.justification}>
+            {req.justification}
+          </p>
+        );
+      },
+    },
+    {
+      key: 'requestedAt',
+      label: 'Date',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return <span className="text-sm">{formatDate(req.requestedAt)}</span>;
+      },
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        if (req.status === 'PENDING') {
+          return <StatusBadge status="PENDING" type="agent" />;
+        }
+        if (req.status === 'APPROVED') {
+          return <StatusBadge status="APPROVED" type="agent" />;
+        }
+        // REJECTED — use transaction 'FAILED' to get red styling
+        return <StatusBadge status="FAILED" type="transaction" />;
+      },
+    },
+    {
+      key: 'comment',
+      label: 'Commentaire',
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const req = row as unknown as FloatRequest;
+        return req.comment ? (
+          <div className="flex items-start gap-1.5 max-w-xs">
+            <MessageSquare className="size-3.5 text-muted-foreground shrink-0 mt-0.5" />
+            <p className="text-sm text-muted-foreground truncate" title={req.comment}>
+              {req.comment}
+            </p>
+          </div>
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        );
+      },
+    },
+  ];
+
+  return (
+    <div className="space-y-4">
+      <PageHeader
+        title="Demandes de Float"
+        subtitle="Gestion des demandes de recharge float des agents"
+        breadcrumb={[
+          { label: 'Tableau de bord', onClick: () => navigate('dashboard') },
+          { label: 'Demandes de Float' },
+        ]}
+      />
+
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="pending" className="gap-1.5">
+            En attente
+            {pendingCount > 0 && (
+              <Badge className="bg-orange-500 text-white text-[10px] px-1.5 py-0 h-5 min-w-[20px] flex items-center justify-center">
+                {pendingCount}
+              </Badge>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="history">Historique</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="pending" className="mt-4">
+          <DataTable
+            columns={pendingColumns}
+            data={pendingRequests as unknown as Record<string, unknown>[]}
+            emptyMessage="Aucune demande en attente"
+            pagination={{
+              page: 1,
+              perPage: 10,
+              total: pendingRequests.length,
+            }}
+          />
+        </TabsContent>
+
+        <TabsContent value="history" className="mt-4">
+          <DataTable
+            columns={historyColumns}
+            data={allRequests as unknown as Record<string, unknown>[]}
+            emptyMessage="Aucune demande de float"
+            pagination={{
+              page: 1,
+              perPage: 10,
+              total: allRequests.length,
+            }}
+          />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

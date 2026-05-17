@@ -1,0 +1,165 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
+import { Loader2, Lock, Mail } from 'lucide-react';
+import { useAuthStore } from '@/stores/auth-store';
+import { useRouterStore } from '@/stores/router-store';
+
+export default function LoginView() {
+  const { login, isLoading, error, isAuthenticated, clearError } = useAuthStore();
+  const navigate = useRouterStore((s) => s.navigate);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Redirect to dashboard if already authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('dashboard');
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Clear error when user types
+  useEffect(() => {
+    if (error) {
+      clearError();
+    }
+  }, [email, password, error, clearError]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await login(email, password);
+  };
+
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: 'linear-gradient(135deg, #F4F7FB 0%, #E2EAF4 50%, #F4F7FB 100%)',
+      }}
+    >
+      <Card className="w-full max-w-md shadow-lg ricash-card-shadow">
+        <CardHeader className="text-center pb-2">
+          {/* Ricash Logo */}
+          <div className="flex flex-col items-center gap-1">
+            <h1
+              className="text-4xl font-bold tracking-wider"
+              style={{ color: 'var(--ricash-primary)' }}
+            >
+              RICASH
+            </h1>
+            <p className="text-sm text-muted-foreground font-medium">
+              Back-Office v4.0
+            </p>
+          </div>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Error message */}
+            {error && (
+              <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                {error}
+              </div>
+            )}
+
+            {/* Email field */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="email">Adresse email</Label>
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="exemple@ricash.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="pl-9"
+                  required
+                  autoComplete="email"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            {/* Password field */}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="password">Mot de passe</Label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-9"
+                  required
+                  autoComplete="current-password"
+                  disabled={isLoading}
+                />
+              </div>
+            </div>
+
+            {/* Forgot password link */}
+            <div className="flex justify-end">
+              <span className="text-xs text-muted-foreground cursor-not-allowed select-none">
+                Mot de passe oublié ?
+              </span>
+            </div>
+
+            {/* Login button */}
+            <Button
+              type="submit"
+              className="w-full h-10 text-white font-semibold"
+              style={{
+                backgroundColor: 'var(--ricash-primary)',
+              }}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="size-4 animate-spin" />
+                  Connexion en cours...
+                </>
+              ) : (
+                'Se connecter'
+              )}
+            </Button>
+          </form>
+
+          {/* Test accounts */}
+          <div className="mt-6 pt-5 border-t">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+              Comptes de test
+            </p>
+            <div className="flex flex-col gap-2">
+              <div className="rounded-md bg-muted/60 px-3 py-2">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                    Compte Super Admin
+                  </span>
+                  <br />
+                  superadmin@ricash.com / ricash2025
+                </p>
+              </div>
+              <div className="rounded-md bg-muted/60 px-3 py-2">
+                <p className="text-xs text-muted-foreground">
+                  <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                    Compte Admin
+                  </span>
+                  <br />
+                  admin@ricash.com / ricash2025
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}

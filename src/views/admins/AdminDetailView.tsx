@@ -12,6 +12,7 @@ import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
+import { formatDateTimeLong } from '@/lib/format';
 
 export default function AdminDetailView() {
   const params = useRouterStore((s) => s.params);
@@ -34,20 +35,9 @@ export default function AdminDetailView() {
     );
   }
 
-  const formatDate = (dateStr?: string) => {
+  const formatDateSafe = (dateStr?: string) => {
     if (!dateStr) return 'Jamais';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return 'Jamais';
-    }
+    return formatDateTimeLong(dateStr);
   };
 
   const handleSuspend = () => {
@@ -100,12 +90,12 @@ export default function AdminDetailView() {
     {
       icon: Calendar,
       label: 'Date de création',
-      value: formatDate(admin.createdAt),
+      value: formatDateSafe(admin.createdAt),
     },
     {
       icon: Calendar,
       label: 'Dernière connexion',
-      value: formatDate(admin.lastLogin),
+      value: formatDateSafe(admin.lastLogin),
     },
   ];
 

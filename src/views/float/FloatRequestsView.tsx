@@ -15,6 +15,7 @@ import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import type { FloatRequest } from '@/types';
+import { formatXOF, formatDateTime } from '@/lib/format';
 
 export default function FloatRequestsView() {
   const navigate = useRouterStore((s) => s.navigate);
@@ -42,24 +43,6 @@ export default function FloatRequestsView() {
     ),
     [floatRequests]
   );
-
-  const formatAmount = (amount: number) =>
-    amount.toLocaleString('fr-FR', { style: 'decimal', minimumFractionDigits: 0 }) + ' XOF';
-
-  const formatDate = (dateStr: string) => {
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return dateStr;
-    }
-  };
 
   const handleApprove = (id: string) => {
     if (!user?.email) return;
@@ -106,7 +89,7 @@ export default function FloatRequestsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const req = row as unknown as FloatRequest;
-        return <span className="font-medium text-sm">{formatAmount(req.amount)}</span>;
+        return <span className="font-medium text-sm">{formatXOF(req.amount)}</span>;
       },
     },
     {
@@ -127,7 +110,7 @@ export default function FloatRequestsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const req = row as unknown as FloatRequest;
-        return <span className="text-sm">{formatDate(req.requestedAt)}</span>;
+        return <span className="text-sm">{formatDateTime(req.requestedAt)}</span>;
       },
     },
     {
@@ -228,7 +211,7 @@ export default function FloatRequestsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const req = row as unknown as FloatRequest;
-        return <span className="font-medium text-sm">{formatAmount(req.amount)}</span>;
+        return <span className="font-medium text-sm">{formatXOF(req.amount)}</span>;
       },
     },
     {
@@ -249,7 +232,7 @@ export default function FloatRequestsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const req = row as unknown as FloatRequest;
-        return <span className="text-sm">{formatDate(req.requestedAt)}</span>;
+        return <span className="text-sm">{formatDateTime(req.requestedAt)}</span>;
       },
     },
     {

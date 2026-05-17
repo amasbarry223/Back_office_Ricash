@@ -20,17 +20,8 @@ import {
   type KycLevel,
   type KycRecord,
 } from '@/types';
+import { formatDate } from '@/lib/format';
 import { toast } from 'sonner';
-
-// Format date
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
 
 // KYC Level badge colors
 const KYC_LEVEL_COLORS: Record<number, string> = {

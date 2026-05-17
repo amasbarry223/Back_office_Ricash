@@ -30,6 +30,7 @@ import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { USER_STATUS_LABELS, type Role, type Admin } from '@/types';
+import { formatDateTime } from '@/lib/format';
 
 export default function AdminsView() {
   const navigate = useRouterStore((s) => s.navigate);
@@ -105,20 +106,9 @@ export default function AdminsView() {
     setNewRole('admin');
   };
 
-  const formatDate = (dateStr?: string) => {
+  const formatDateSafe = (dateStr?: string) => {
     if (!dateStr) return 'Jamais';
-    try {
-      const d = new Date(dateStr);
-      return d.toLocaleDateString('fr-FR', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    } catch {
-      return 'Jamais';
-    }
+    return formatDateTime(dateStr);
   };
 
   const columns = [
@@ -173,7 +163,7 @@ export default function AdminsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const admin = row as unknown as Admin;
-        return <span className="text-sm text-muted-foreground">{formatDate(admin.lastLogin)}</span>;
+        return <span className="text-sm text-muted-foreground">{formatDateSafe(admin.lastLogin)}</span>;
       },
     },
     {

@@ -33,35 +33,7 @@ import { useAgentsStore } from '@/stores/agents-store';
 import { useUsersStore } from '@/stores/users-store';
 import { useNotificationsStore } from '@/stores/notifications-store';
 import { TRANSACTION_TYPE_LABELS, type NotificationType } from '@/types';
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-function formatXOF(amount: number): string {
-  return new Intl.NumberFormat('fr-FR').format(amount) + ' XOF';
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-}
-
-function formatTimeAgo(iso: string): string {
-  const now = Date.now();
-  const then = new Date(iso).getTime();
-  const diffMs = now - then;
-  const diffMin = Math.floor(diffMs / 60000);
-  if (diffMin < 1) return "À l'instant";
-  if (diffMin < 60) return `Il y a ${diffMin} min`;
-  const diffH = Math.floor(diffMin / 60);
-  if (diffH < 24) return `Il y a ${diffH}h`;
-  const diffD = Math.floor(diffH / 24);
-  return `Il y a ${diffD}j`;
-}
+import { formatXOF, formatDate, formatTimeAgo } from '@/lib/format';
 
 // ---------------------------------------------------------------------------
 // 30-day mock chart data generator
@@ -243,51 +215,65 @@ export default function DashboardView() {
 
       {/* ---- Stat Cards Grid ---- */}
       <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <StatCard
-          title="Volume transactions"
-          value={txStats.total}
-          icon={<ArrowLeftRight className="size-5" />}
-          color="blue"
-          trend={{ value: 12, direction: 'up' }}
-        />
-        <StatCard
-          title="Montant traité"
-          value={formatXOF(txStats.totalAmount)}
-          icon={<Banknote className="size-5" />}
-          color="green"
-          trend={{ value: 8, direction: 'up' }}
-        />
-        <StatCard
-          title="Transactions en attente"
-          value={txStats.pending}
-          icon={<Clock className="size-5" />}
-          color="orange"
-        />
-        <StatCard
-          title="Alertes fraude"
-          value={Math.max(fraudAlerts, 2)}
-          icon={<AlertTriangle className="size-5" />}
-          color="red"
-        />
-        <StatCard
-          title="Agents actifs"
-          value={activeAgents}
-          icon={<UserCheck className="size-5" />}
-          color="blue"
-        />
-        <StatCard
-          title="Clients enregistrés"
-          value={clients.length}
-          icon={<Users className="size-5" />}
-          color="green"
-          trend={{ value: 15, direction: 'up' }}
-        />
-        <StatCard
-          title="Float global"
-          value={formatXOF(globalFloat)}
-          icon={<Wallet className="size-5" />}
-          color="green"
-        />
+        <div onClick={() => navigate('transactions')} className="cursor-pointer">
+          <StatCard
+            title="Volume transactions"
+            value={txStats.total}
+            icon={<ArrowLeftRight className="size-5" />}
+            color="blue"
+            trend={{ value: 12, direction: 'up' }}
+          />
+        </div>
+        <div onClick={() => navigate('transactions')} className="cursor-pointer">
+          <StatCard
+            title="Montant traité"
+            value={formatXOF(txStats.totalAmount)}
+            icon={<Banknote className="size-5" />}
+            color="green"
+            trend={{ value: 8, direction: 'up' }}
+          />
+        </div>
+        <div onClick={() => navigate('transactions')} className="cursor-pointer">
+          <StatCard
+            title="Transactions en attente"
+            value={txStats.pending}
+            icon={<Clock className="size-5" />}
+            color="orange"
+          />
+        </div>
+        <div onClick={() => navigate('notifications')} className="cursor-pointer">
+          <StatCard
+            title="Alertes fraude"
+            value={Math.max(fraudAlerts, 2)}
+            icon={<AlertTriangle className="size-5" />}
+            color="red"
+          />
+        </div>
+        <div onClick={() => navigate('agents')} className="cursor-pointer">
+          <StatCard
+            title="Agents actifs"
+            value={activeAgents}
+            icon={<UserCheck className="size-5" />}
+            color="blue"
+          />
+        </div>
+        <div onClick={() => navigate('clients')} className="cursor-pointer">
+          <StatCard
+            title="Clients enregistrés"
+            value={clients.length}
+            icon={<Users className="size-5" />}
+            color="green"
+            trend={{ value: 15, direction: 'up' }}
+          />
+        </div>
+        <div onClick={() => navigate('float')} className="cursor-pointer">
+          <StatCard
+            title="Float global"
+            value={formatXOF(globalFloat)}
+            icon={<Wallet className="size-5" />}
+            color="green"
+          />
+        </div>
       </section>
 
       {/* ---- Chart + Alerts Row ---- */}

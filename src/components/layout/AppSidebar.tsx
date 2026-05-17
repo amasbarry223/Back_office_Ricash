@@ -4,7 +4,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard,
   Shield,
-  UserCog,
   UserCheck,
   Users,
   ArrowLeftRight,
@@ -56,13 +55,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       {
         icon: Shield,
-        label: 'Super Admins',
-        route: 'admins',
-        roles: ['super_admin'],
-      },
-      {
-        icon: UserCog,
-        label: 'Admins',
+        label: 'Administration',
         route: 'admins',
         roles: ['super_admin'],
       },

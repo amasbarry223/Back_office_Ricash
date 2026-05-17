@@ -11,4 +11,9 @@ export const mockNotifications: Notification[] = [
   { id: 'NOT-008', type: 'KYC_EXPIRED', title: 'KYC Expiré', message: '3 documents KYC arrivent à expiration dans les 30 prochains jours', read: true, createdAt: '2025-07-05T08:00:00Z' },
   { id: 'NOT-009', type: 'SYSTEM', title: 'Nouvelle Version', message: 'La version 4.0 du back-office est disponible', read: true, createdAt: '2025-07-04T10:00:00Z' },
   { id: 'NOT-010', type: 'TRANSACTION_ALERT', title: 'Échec Transaction', message: '5 transactions ont échoué au cours des dernières 24h', read: true, createdAt: '2025-07-03T18:00:00Z' },
+  { id: 'NOT-011', type: 'FRAUD_ALERT', title: 'Alerte Fraude', message: 'Tentative de transfert inhabituel de 850 000 XOF depuis le compte CLI-027 (Essoyaba Kpémissi)', read: false, createdAt: '2025-07-11T17:30:00Z' },
+  { id: 'NOT-012', type: 'LOW_FLOAT', title: 'Float Bas', message: 'Agent AG-SLP-007 (Fatou Sall) - Float restant: 50 000 XOF', read: false, createdAt: '2025-07-11T16:45:00Z' },
+  { id: 'NOT-013', type: 'SYSTEM', title: 'Mise à jour Sécurité', message: 'Un correctif de sécurité a été appliqué avec succès à la plateforme', read: true, createdAt: '2025-07-10T20:00:00Z' },
+  { id: 'NOT-014', type: 'KYC_EXPIRED', title: 'KYC Expiré', message: 'Le document KYC du client Issa Kaboré (CLI-024) a expiré et nécessite une mise à jour', read: false, createdAt: '2025-07-11T12:15:00Z' },
+  { id: 'NOT-015', type: 'TRANSACTION_ALERT', title: 'Volume Élevé', message: 'Le volume de transactions dépasse la moyenne quotidienne de 35% aujourd\'hui', read: true, createdAt: '2025-07-11T14:00:00Z' },
 ];

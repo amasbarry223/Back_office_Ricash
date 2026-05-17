@@ -21,6 +21,16 @@ export const mockClients: Client[] = [
   { id: 'CLI-018', phone: '+22178567890', firstName: 'Thierno', lastName: 'Ba', country: 'SN', status: 'ACTIVE', kycLevel: 2, balance: 520000, createdAt: '2024-11-20', lastLogin: '2025-07-11T13:50:00Z' },
   { id: 'CLI-019', phone: '+22507456789', firstName: 'Affoué', lastName: 'Koné', country: 'CI', status: 'ACTIVE', kycLevel: 1, balance: 76000, createdAt: '2025-06-15', lastLogin: '2025-07-10T07:30:00Z' },
   { id: 'CLI-020', phone: '+22672567890', firstName: 'Aboubacar', lastName: 'Sawadogo', country: 'BF', status: 'ACTIVE', kycLevel: 2, balance: 410000, createdAt: '2025-02-28', lastLogin: '2025-07-11T09:05:00Z' },
+  { id: 'CLI-021', phone: '+22374567890', firstName: 'Boubacar', lastName: 'Dembélé', country: 'ML', status: 'SUSPENDED', kycLevel: 0, balance: 0, createdAt: '2025-05-03', lastLogin: '2025-06-12T11:30:00Z' },
+  { id: 'CLI-022', phone: '+22179678901', firstName: 'Adama', lastName: 'Diop', country: 'SN', status: 'ACTIVE', kycLevel: 1, balance: 185000, createdAt: '2025-03-22', lastLogin: '2025-07-10T16:20:00Z' },
+  { id: 'CLI-023', phone: '+22508789012', firstName: 'Aminata', lastName: 'Bamba', country: 'CI', status: 'ACTIVE', kycLevel: 2, balance: 720000, createdAt: '2024-12-15', lastLogin: '2025-07-11T08:45:00Z' },
+  { id: 'CLI-024', phone: '+22673890123', firstName: 'Issa', lastName: 'Kaboré', country: 'BF', status: 'INACTIVE', kycLevel: 0, balance: 0, createdAt: '2025-06-08', lastLogin: '2025-06-20T14:10:00Z' },
+  { id: 'CLI-025', phone: '+22464901234', firstName: 'Mamadouba', lastName: 'Bangoura', country: 'GN', status: 'ACTIVE', kycLevel: 1, balance: 92000, createdAt: '2025-04-12', lastLogin: '2025-07-09T10:55:00Z' },
+  { id: 'CLI-026', phone: '+22782012345', firstName: 'Hawa', lastName: 'Issaka', country: 'NE', status: 'SUSPENDED', kycLevel: 1, balance: 5000, createdAt: '2025-01-28', lastLogin: '2025-05-14T09:30:00Z' },
+  { id: 'CLI-027', phone: '+22893123456', firstName: 'Essoyaba', lastName: 'Kpémissi', country: 'TG', status: 'ACTIVE', kycLevel: 2, balance: 1000000, createdAt: '2024-10-18', lastLogin: '2025-07-11T12:00:00Z' },
+  { id: 'CLI-028', phone: '+22994234567', firstName: 'Ganiou', lastName: 'Agossa', country: 'BJ', status: 'INACTIVE', kycLevel: 0, balance: 0, createdAt: '2025-06-25', lastLogin: '2025-06-30T07:15:00Z' },
+  { id: 'CLI-029', phone: '+22375645678', firstName: 'Fatoumata', lastName: 'Coulibaly', country: 'ML', status: 'ACTIVE', kycLevel: 1, balance: 265000, createdAt: '2025-02-05', lastLogin: '2025-07-11T06:30:00Z' },
+  { id: 'CLI-030', phone: '+22176756789', firstName: 'Moussa', lastName: 'Diatta', country: 'SN', status: 'ACTIVE', kycLevel: 2, balance: 580000, createdAt: '2024-11-10', lastLogin: '2025-07-10T19:40:00Z' },
 ];
 
 export const mockAdmins: Admin[] = [

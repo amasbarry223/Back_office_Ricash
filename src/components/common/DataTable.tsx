@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { ArrowUpDown, ArrowUp, ArrowDown, Download, Inbox } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown, Inbox } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -83,29 +83,6 @@ export default function DataTable({
     return pages;
   };
 
-  const exportCSV = () => {
-    if (data.length === 0) return;
-
-    const headers = columns.map((col) => col.label).join(',');
-    const rows = data.map((row) =>
-      columns
-        .map((col) => {
-          const val = row[col.key];
-          const strVal = val !== null && val !== undefined ? String(val) : '';
-          return `"${strVal.replace(/"/g, '""')}"`;
-        })
-        .join(',')
-    );
-    const csv = [headers, ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `export-${new Date().toISOString().slice(0, 10)}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
   const renderSortIcon = (col: Column) => {
     if (!col.sortable) return null;
     if (sortKey !== col.key) {
@@ -166,19 +143,6 @@ export default function DataTable({
 
   return (
     <div className="bg-white rounded-xl ricash-card-shadow overflow-hidden">
-      {/* Optional export button */}
-      <div className="flex justify-end px-4 pt-3">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={exportCSV}
-          className="text-muted-foreground hover:text-foreground text-xs"
-        >
-          <Download className="size-3.5 mr-1" />
-          Exporter CSV
-        </Button>
-      </div>
-
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>

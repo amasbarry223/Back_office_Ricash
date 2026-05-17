@@ -11,6 +11,7 @@ import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { toast } from 'sonner';
 import { COUNTRY_LABELS, USER_STATUS_LABELS, type UserStatus } from '@/types';
+import { formatXOF, formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -44,18 +45,6 @@ const FILTER_CONFIGS = [
   { key: 'country', label: 'Pays', type: 'select' as const, options: COUNTRY_OPTIONS },
   { key: 'kycLevel', label: 'Niveau KYC', type: 'select' as const, options: KYC_LEVEL_OPTIONS },
 ];
-
-function formatXOF(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount) + ' XOF';
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
-}
 
 export default function UsersView() {
   const clients = useUsersStore((s) => s.clients);

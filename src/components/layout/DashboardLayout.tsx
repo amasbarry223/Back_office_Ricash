@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import AppSidebar from './AppSidebar';
 import AppHeader from './AppHeader';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useRouterStore } from '@/stores/router-store';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -13,6 +14,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const currentRoute = useRouterStore((s) => s.currentRoute);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -24,6 +26,13 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      requestAnimationFrame(() => setMobileMenuOpen(false));
+    }
+  }, [currentRoute, mobileMenuOpen]);
 
   const desktopCollapsed = collapsed && !isMobile;
   const sidebarWidth = desktopCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';

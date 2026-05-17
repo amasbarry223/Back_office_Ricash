@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo, useCallback } from 'react';
-import { Download, ArrowUpDown, Eye } from 'lucide-react';
+import { Download, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -22,23 +22,7 @@ import {
   type Operator,
   type Transaction,
 } from '@/types';
-
-// Format XOF amount
-function formatXOF(amount: number): string {
-  return amount.toLocaleString('fr-FR') + ' XOF';
-}
-
-// Format date
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
+import { formatXOF, formatDateTime as formatDate } from '@/lib/format';
 
 // Transaction type badge color mapping
 const TYPE_COLORS: Record<TransactionType, string> = {

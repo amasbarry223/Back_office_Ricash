@@ -37,7 +37,7 @@ export default function LoginView() {
     <div
       className="min-h-screen flex items-center justify-center p-4"
       style={{
-        background: 'linear-gradient(135deg, #F4F7FB 0%, #E2EAF4 50%, #F4F7FB 100%)',
+        background: 'linear-gradient(135deg, #F4F7FB 0%, #D6E4F0 40%, #1A3C6E 100%)',
       }}
     >
       <Card className="w-full max-w-md shadow-lg ricash-card-shadow">
@@ -53,6 +53,7 @@ export default function LoginView() {
             <p className="text-sm text-muted-foreground font-medium">
               Back-Office v4.0
             </p>
+            <div className="w-12 h-1 rounded-full mx-auto mt-2" style={{ backgroundColor: 'var(--ricash-accent)' }} />
           </div>
         </CardHeader>
 

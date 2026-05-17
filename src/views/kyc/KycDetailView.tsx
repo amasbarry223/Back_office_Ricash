@@ -33,28 +33,8 @@ import {
   type KycLevel,
   type DocumentType,
 } from '@/types';
+import { formatDateLong, formatDateTimeLong } from '@/lib/format';
 import { toast } from 'sonner';
-
-// Format date
-function formatDate(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  });
-}
-
-function formatDateTime(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 // KYC Level badge colors
 const KYC_LEVEL_COLORS: Record<number, string> = {
@@ -209,7 +189,7 @@ export default function KycDetailView() {
               </div>
               <div>
                 <p className="text-xs text-muted-foreground">Date de soumission</p>
-                <p className="text-sm font-medium">{formatDate(record.submittedAt)}</p>
+                <p className="text-sm font-medium">{formatDateLong(record.submittedAt)}</p>
               </div>
 
               {record.smileIdentityResult && (
@@ -238,7 +218,7 @@ export default function KycDetailView() {
               {record.verifiedAt && (
                 <div>
                   <p className="text-xs text-muted-foreground">Date de vérification</p>
-                  <p className="text-sm font-medium">{formatDateTime(record.verifiedAt)}</p>
+                  <p className="text-sm font-medium">{formatDateTimeLong(record.verifiedAt)}</p>
                 </div>
               )}
 
@@ -422,7 +402,7 @@ export default function KycDetailView() {
                   <Clock className="size-3.5 text-muted-foreground" />
                   <div>
                     <p className="text-xs text-muted-foreground">Date de soumission</p>
-                    <p className="text-sm font-medium">{formatDate(record.submittedAt)}</p>
+                    <p className="text-sm font-medium">{formatDateLong(record.submittedAt)}</p>
                   </div>
                 </div>
               </div>

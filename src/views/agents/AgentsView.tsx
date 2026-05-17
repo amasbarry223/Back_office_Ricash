@@ -19,6 +19,7 @@ import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { toast } from 'sonner';
 import { AGENT_STATUS_LABELS, type AgentStatus } from '@/types';
+import { formatXOF, formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -38,18 +39,6 @@ const STATUS_OPTIONS = Object.entries(AGENT_STATUS_LABELS).map(([value, label]) 
 const FILTER_CONFIGS = [
   { key: 'status', label: 'Statut', type: 'select' as const, options: STATUS_OPTIONS },
 ];
-
-function formatXOF(amount: number): string {
-  return new Intl.NumberFormat('fr-FR', { style: 'decimal', minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount) + ' XOF';
-}
-
-function formatDate(dateStr: string): string {
-  try {
-    return new Date(dateStr).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  } catch {
-    return dateStr;
-  }
-}
 
 export default function AgentsView() {
   const agents = useAgentsStore((s) => s.agents);

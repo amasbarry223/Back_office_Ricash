@@ -39,24 +39,8 @@ import {
   type Channel,
   type Operator,
 } from '@/types';
+import { formatXOF, formatDateTimeLong } from '@/lib/format';
 import { toast } from 'sonner';
-
-// Format XOF amount
-function formatXOF(amount: number): string {
-  return amount.toLocaleString('fr-FR') + ' XOF';
-}
-
-// Format date
-function formatDateTime(dateStr: string): string {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-}
 
 // Transaction type icon mapping
 const TYPE_ICONS: Record<TransactionType, React.ReactNode> = {
@@ -265,7 +249,7 @@ export default function TransactionDetailView() {
                 <Calendar className="size-4 text-muted-foreground" />
                 <div>
                   <p className="text-xs text-muted-foreground">Date/Heure de création</p>
-                  <p className="text-sm font-medium">{formatDateTime(transaction.createdAt)}</p>
+                  <p className="text-sm font-medium">{formatDateTimeLong(transaction.createdAt)}</p>
                 </div>
               </div>
             </CardContent>

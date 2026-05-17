@@ -18,6 +18,7 @@ import EmptyState from '@/components/common/EmptyState';
 import { useRouterStore } from '@/stores/router-store';
 import { useNotificationsStore } from '@/stores/notifications-store';
 import type { NotificationType, Notification } from '@/types';
+import { formatTimeAgo } from '@/lib/format';
 
 const NOTIFICATION_ICONS: Record<NotificationType, { icon: React.ElementType; colorClass: string; bgClass: string }> = {
   FRAUD_ALERT: {
@@ -46,26 +47,6 @@ const NOTIFICATION_ICONS: Record<NotificationType, { icon: React.ElementType; co
     bgClass: 'bg-[var(--ricash-primary)]/5',
   },
 };
-
-function getRelativeTime(dateStr: string): string {
-  try {
-    const now = new Date();
-    const date = new Date(dateStr);
-    const diffMs = now.getTime() - date.getTime();
-    const diffMin = Math.floor(diffMs / 60000);
-    const diffH = Math.floor(diffMin / 60);
-    const diffD = Math.floor(diffH / 24);
-
-    if (diffMin < 1) return "À l'instant";
-    if (diffMin < 60) return `il y a ${diffMin}min`;
-    if (diffH < 24) return `il y a ${diffH}h`;
-    if (diffD < 7) return `il y a ${diffD}j`;
-    if (diffD < 30) return `il y a ${Math.floor(diffD / 7)} sem.`;
-    return `il y a ${Math.floor(diffD / 30)} mois`;
-  } catch {
-    return dateStr;
-  }
-}
 
 export default function NotificationsView() {
   const navigate = useRouterStore((s) => s.navigate);
@@ -165,7 +146,7 @@ export default function NotificationsView() {
                           </p>
                         </div>
                         <span className="text-xs text-muted-foreground whitespace-nowrap shrink-0 mt-0.5">
-                          {getRelativeTime(notif.createdAt)}
+                          {formatTimeAgo(notif.createdAt)}
                         </span>
                       </div>
                     </div>

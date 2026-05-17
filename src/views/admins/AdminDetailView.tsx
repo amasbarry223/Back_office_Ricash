@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ArrowLeft, Ban, CheckCircle, Mail, Phone, Calendar, Shield, Hash } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -17,10 +17,10 @@ export default function AdminDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
   const goBack = useRouterStore((s) => s.goBack);
-  const getAdminById = useUsersStore((s) => s.getAdminById);
+  const admins = useUsersStore((s) => s.admins);
   const updateAdminStatus = useUsersStore((s) => s.updateAdminStatus);
 
-  const admin = getAdminById(params.id);
+  const admin = useMemo(() => admins.find(a => a.id === params.id), [admins, params.id]);
 
   if (!admin) {
     return (

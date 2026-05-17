@@ -88,7 +88,7 @@ export default function TransactionDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
   const goBack = useRouterStore((s) => s.goBack);
-  const getTransactionById = useTransactionsStore((s) => s.getTransactionById);
+  const transactions = useTransactionsStore((s) => s.transactions);
   const updateTransactionStatus = useTransactionsStore((s) => s.updateTransactionStatus);
   const user = useAuthStore((s) => s.user);
 
@@ -98,8 +98,8 @@ export default function TransactionDetailView() {
 
   const transaction = useMemo(() => {
     const id = params.id;
-    return id ? getTransactionById(id) : undefined;
-  }, [params.id, getTransactionById]);
+    return id ? transactions.find(t => t.id === id) : undefined;
+  }, [params.id, transactions]);
 
   if (!transaction) {
     return (

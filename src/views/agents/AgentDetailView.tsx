@@ -67,7 +67,7 @@ function formatDateTime(dateStr: string): string {
 export default function AgentDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
-  const getAgentById = useAgentsStore((s) => s.getAgentById);
+  const agents = useAgentsStore((s) => s.agents);
   const updateAgentStatus = useAgentsStore((s) => s.updateAgentStatus);
   const approveAgent = useAgentsStore((s) => s.approveAgent);
   const floatMovementsList = useAgentsStore((s) => s.floatMovements);
@@ -76,7 +76,7 @@ export default function AgentDetailView() {
   const [commissionRate, setCommissionRate] = useState('');
 
   const agentId = params.id ?? '';
-  const agent = getAgentById(agentId);
+  const agent = useMemo(() => agents.find(a => a.id === agentId), [agents, agentId]);
 
   // All useMemo before early return
   const agentTransactions = useMemo(

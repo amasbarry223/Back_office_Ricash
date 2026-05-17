@@ -79,14 +79,14 @@ const LOGIN_HISTORY = generateLoginHistory();
 export default function UserDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
-  const getClientById = useUsersStore((s) => s.getClientById);
+  const clients = useUsersStore((s) => s.clients);
   const updateClientStatus = useUsersStore((s) => s.updateClientStatus);
   const updateClientKyc = useUsersStore((s) => s.updateClientKyc);
   const transactions = useTransactionsStore((s) => s.transactions);
   const kycRecords = useKycStore((s) => s.records);
 
   const clientId = params.id ?? '';
-  const client = getClientById(clientId);
+  const client = useMemo(() => clients.find(c => c.id === clientId), [clients, clientId]);
 
   // All useMemo before the early return
   const clientTransactions = useMemo(

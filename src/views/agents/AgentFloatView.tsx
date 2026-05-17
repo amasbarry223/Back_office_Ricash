@@ -45,7 +45,7 @@ function formatDateTime(dateStr: string): string {
 export default function AgentFloatView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
-  const getAgentById = useAgentsStore((s) => s.getAgentById);
+  const agents = useAgentsStore((s) => s.agents);
   const floatRequestsList = useAgentsStore((s) => s.floatRequests);
   const floatMovementsList = useAgentsStore((s) => s.floatMovements);
   const createFloatRequest = useAgentsStore((s) => s.createFloatRequest);
@@ -56,7 +56,7 @@ export default function AgentFloatView() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const agentId = params.id ?? '';
-  const agent = getAgentById(agentId);
+  const agent = useMemo(() => agents.find(a => a.id === agentId), [agents, agentId]);
 
   // All useMemo before early return
   const floatRequests = useMemo(

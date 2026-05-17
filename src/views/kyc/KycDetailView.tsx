@@ -68,7 +68,7 @@ export default function KycDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
   const goBack = useRouterStore((s) => s.goBack);
-  const getRecordById = useKycStore((s) => s.getRecordById);
+  const kycRecords = useKycStore((s) => s.records);
   const approveKyc = useKycStore((s) => s.approveKyc);
   const rejectKyc = useKycStore((s) => s.rejectKyc);
   const user = useAuthStore((s) => s.user);
@@ -81,8 +81,8 @@ export default function KycDetailView() {
 
   const record = useMemo(() => {
     const id = params.id;
-    return id ? getRecordById(id) : undefined;
-  }, [params.id, getRecordById]);
+    return id ? kycRecords.find(r => r.id === id) : undefined;
+  }, [params.id, kycRecords]);
 
   if (!record) {
     return (

@@ -202,3 +202,31 @@ Stage Summary:
 - All broken pagination fixed
 - Dead code removed
 - App compiles and serves successfully with no errors
+
+---
+Task ID: 14
+Agent: Main Orchestrator
+Task: Fix remaining runtime issues and visual bugs
+
+Work Log:
+- Fixed DashboardLayout padding overlap: removed extra `paddingTop: calc(var(--header-height) + 24px)` from main content area since AppHeader is already in normal flow as a flex child
+- Fixed detail views stale data bug: Replaced `getXById()` method calls (which use `get()` internally and don't trigger re-renders) with raw state subscriptions + `useMemo` for finding items:
+  - UserDetailView: `getClientById(clientId)` → `clients.find(c => c.id === clientId)` with `useMemo`
+  - AgentDetailView: `getAgentById(agentId)` → `agents.find(a => a.id === agentId)` with `useMemo`
+  - AgentFloatView: `getAgentById(agentId)` → `agents.find(a => a.id === agentId)` with `useMemo`
+  - TransactionDetailView: `getTransactionById(id)` → `transactions.find(t => t.id === id)` with `useMemo`
+  - KycDetailView: `getRecordById(id)` → `kycRecords.find(r => r.id === id)` with `useMemo`
+  - AdminDetailView: `getAdminById(params.id)` → `admins.find(a => a.id === params.id)` with `useMemo`
+- Fixed LoginView duplicate redirect: Removed `useEffect` that navigates to dashboard when authenticated (page.tsx already handles this), preventing race conditions
+- Fixed LoginView error clearing loop: Replaced `useEffect` that clears error on email/password changes with direct handler functions that clear error on input change, avoiding the effect dependency loop
+- Fixed mobile sidebar: Replaced collapsed sidebar on mobile with proper overlay pattern (backdrop + fixed sidebar) that opens/closes with hamburger menu
+- Cleaned up unused imports (useRouterStore in LoginView, useEffect in LoginView)
+- Added useMemo import to AdminDetailView
+- All lint checks pass clean
+- Dev server serves successfully with no runtime errors
+
+Stage Summary:
+- 5 detail views now properly react to store changes (status updates reflect immediately)
+- Login flow is cleaner with no duplicate redirects
+- Mobile experience improved with proper sidebar overlay
+- Content layout fixed (no more double padding at top)

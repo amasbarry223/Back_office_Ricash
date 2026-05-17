@@ -1,38 +1,32 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock, Mail } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
-import { useRouterStore } from '@/stores/router-store';
 
 export default function LoginView() {
   const login = useAuthStore((s) => s.login);
   const isLoading = useAuthStore((s) => s.isLoading);
   const error = useAuthStore((s) => s.error);
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const clearError = useAuthStore((s) => s.clearError);
-  const navigate = useRouterStore((s) => s.navigate);
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // Redirect to dashboard if already authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate('dashboard');
-    }
-  }, [isAuthenticated, navigate]);
-
   // Clear error when user types
-  useEffect(() => {
-    if (error) {
-      clearError();
-    }
-  }, [email, password, error, clearError]);
+  const handleEmailChange = (value: string) => {
+    setEmail(value);
+    if (error) clearError();
+  };
+
+  const handlePasswordChange = (value: string) => {
+    setPassword(value);
+    if (error) clearError();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,7 +75,7 @@ export default function LoginView() {
                   type="email"
                   placeholder="exemple@ricash.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   className="pl-9"
                   required
                   autoComplete="email"
@@ -100,7 +94,7 @@ export default function LoginView() {
                   type="password"
                   placeholder="••••••••"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
                   className="pl-9"
                   required
                   autoComplete="current-password"

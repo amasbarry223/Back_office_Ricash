@@ -58,7 +58,9 @@ function formatDate(dateStr: string): string {
 }
 
 export default function UsersView() {
-  const { clients, updateClientStatus, updateClientKyc } = useUsersStore();
+  const clients = useUsersStore((s) => s.clients);
+  const updateClientStatus = useUsersStore((s) => s.updateClientStatus);
+  const updateClientKyc = useUsersStore((s) => s.updateClientKyc);
   const navigate = useRouterStore((s) => s.navigate);
 
 
@@ -224,7 +226,7 @@ export default function UsersView() {
       render: (value: unknown) => formatDate(value as string),
     },
     {
-      key: 'id',
+      key: 'actions',
       label: 'Actions',
       width: '60px',
       render: (_value: unknown, row: Record<string, unknown>) => {

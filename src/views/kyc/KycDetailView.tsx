@@ -68,7 +68,9 @@ export default function KycDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
   const goBack = useRouterStore((s) => s.goBack);
-  const { getRecordById, approveKyc, rejectKyc } = useKycStore();
+  const getRecordById = useKycStore((s) => s.getRecordById);
+  const approveKyc = useKycStore((s) => s.approveKyc);
+  const rejectKyc = useKycStore((s) => s.rejectKyc);
   const user = useAuthStore((s) => s.user);
 
   const [zoom, setZoom] = useState(1);

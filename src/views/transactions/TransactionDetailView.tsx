@@ -88,7 +88,8 @@ export default function TransactionDetailView() {
   const params = useRouterStore((s) => s.params);
   const navigate = useRouterStore((s) => s.navigate);
   const goBack = useRouterStore((s) => s.goBack);
-  const { getTransactionById, updateTransactionStatus } = useTransactionsStore();
+  const getTransactionById = useTransactionsStore((s) => s.getTransactionById);
+  const updateTransactionStatus = useTransactionsStore((s) => s.updateTransactionStatus);
   const user = useAuthStore((s) => s.user);
 
   const [isCancelling, setIsCancelling] = useState(false);

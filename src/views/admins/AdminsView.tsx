@@ -32,12 +32,15 @@ import { useUsersStore } from '@/stores/users-store';
 import { USER_STATUS_LABELS, type Role, type Admin } from '@/types';
 
 export default function AdminsView() {
-  const { navigate } = useRouterStore();
-  const { admins, updateAdminStatus, createAdmin } = useUsersStore();
+  const navigate = useRouterStore((s) => s.navigate);
+  const admins = useUsersStore((s) => s.admins);
+  const updateAdminStatus = useUsersStore((s) => s.updateAdminStatus);
+  const createAdmin = useUsersStore((s) => s.createAdmin);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  const [page, setPage] = useState(1);
 
   // Create admin form state
   const [newName, setNewName] = useState('');
@@ -291,10 +294,11 @@ export default function AdminsView() {
           data={filteredAdmins as unknown as Record<string, unknown>[]}
           emptyMessage="Aucun administrateur trouvé"
           pagination={{
-            page: 1,
+            page,
             perPage: 10,
             total: filteredAdmins.length,
           }}
+          onPageChange={setPage}
         />
 
         {/* Create Admin Dialog */}

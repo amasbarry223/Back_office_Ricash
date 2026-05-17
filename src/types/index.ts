@@ -30,7 +30,6 @@ export type RouteName =
   | 'agent-float'
   | 'admins'
   | 'admin-detail'
-  | 'super-admins'
   | 'transactions'
   | 'transaction-detail'
   | 'kyc'

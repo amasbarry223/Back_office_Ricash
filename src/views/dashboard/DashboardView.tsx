@@ -140,18 +140,37 @@ function ChartTooltip({
 export default function DashboardView() {
   const navigate = useRouterStore((s) => s.navigate);
 
-  // Store data
-  const txStats = useTransactionsStore((s) => s.getStats());
-  const recentTx = useTransactionsStore((s) => s.getRecentTransactions(10));
+  // Store data – select raw state to avoid infinite loops from function selectors
+  const transactions = useTransactionsStore((s) => s.transactions);
   const agents = useAgentsStore((s) => s.agents);
   const clients = useUsersStore((s) => s.clients);
-  const unreadNotifications = useNotificationsStore((s) =>
-    s.notifications.filter((n) => !n.read),
+  const notifications = useNotificationsStore((s) => s.notifications);
+
+  // Derived data – computed via useMemo for stable references
+  const txStats = useMemo(() => ({
+    total: transactions.length,
+    totalAmount: transactions.filter(t => t.status === 'SUCCESS').reduce((sum, t) => sum + t.amount, 0),
+    pending: transactions.filter(t => t.status === 'PENDING' || t.status === 'IN_PROGRESS').length,
+    failed: transactions.filter(t => t.status === 'FAILED').length,
+  }), [transactions]);
+
+  const recentTx = useMemo(() =>
+    [...transactions]
+      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .slice(0, 10),
+    [transactions],
+  );
+
+  const unreadNotifications = useMemo(() =>
+    notifications.filter((n) => !n.read),
+    [notifications],
   );
 
   // Derived stats
-  const activeAgents = agents.filter((a) => a.status === 'APPROVED').length;
-  const globalFloat = agents.reduce((sum, a) => sum + a.floatBalance, 0);
+  const { activeAgents, globalFloat } = useMemo(() => ({
+    activeAgents: agents.filter((a) => a.status === 'APPROVED').length,
+    globalFloat: agents.reduce((sum, a) => sum + a.floatBalance, 0),
+  }), [agents]);
   const fraudAlerts = unreadNotifications.filter((n) => n.type === 'FRAUD_ALERT').length;
 
   // Chart data – generated once

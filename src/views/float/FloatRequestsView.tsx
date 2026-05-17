@@ -17,16 +17,19 @@ import { useAgentsStore } from '@/stores/agents-store';
 import type { FloatRequest } from '@/types';
 
 export default function FloatRequestsView() {
-  const { navigate } = useRouterStore();
+  const navigate = useRouterStore((s) => s.navigate);
   const user = useAuthStore((s) => s.user);
-  const { floatRequests, approveFloatRequest, rejectFloatRequest, getPendingRequestsCount } =
-    useAgentsStore();
+  const floatRequests = useAgentsStore((s) => s.floatRequests);
+  const approveFloatRequest = useAgentsStore((s) => s.approveFloatRequest);
+  const rejectFloatRequest = useAgentsStore((s) => s.rejectFloatRequest);
 
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectComment, setRejectComment] = useState('');
   const [activeTab, setActiveTab] = useState('pending');
+  const [pendingPage, setPendingPage] = useState(1);
+  const [historyPage, setHistoryPage] = useState(1);
 
-  const pendingCount = getPendingRequestsCount();
+  const pendingCount = useMemo(() => floatRequests.filter(r => r.status === 'PENDING').length, [floatRequests]);
 
   const pendingRequests = useMemo(
     () => floatRequests.filter((r) => r.status === 'PENDING'),
@@ -314,10 +317,11 @@ export default function FloatRequestsView() {
             data={pendingRequests as unknown as Record<string, unknown>[]}
             emptyMessage="Aucune demande en attente"
             pagination={{
-              page: 1,
+              page: pendingPage,
               perPage: 10,
               total: pendingRequests.length,
             }}
+            onPageChange={setPendingPage}
           />
         </TabsContent>
 
@@ -327,10 +331,11 @@ export default function FloatRequestsView() {
             data={allRequests as unknown as Record<string, unknown>[]}
             emptyMessage="Aucune demande de float"
             pagination={{
-              page: 1,
+              page: historyPage,
               perPage: 10,
               total: allRequests.length,
             }}
+            onPageChange={setHistoryPage}
           />
         </TabsContent>
       </Tabs>

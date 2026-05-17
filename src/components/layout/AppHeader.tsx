@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Menu, Bell, LogOut, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
@@ -22,10 +22,12 @@ interface AppHeaderProps {
 }
 
 export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
-  const { user, logout } = useAuthStore();
-  const { breadcrumb } = useRouterStore();
-  const unreadCount = useNotificationsStore((s) => s.getUnreadCount());
-  const { navigate } = useRouterStore();
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
+  const breadcrumb = useRouterStore((s) => s.breadcrumb);
+  const notifications = useNotificationsStore((s) => s.notifications);
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
+  const navigate = useRouterStore((s) => s.navigate);
 
   const getInitials = (name: string) => {
     return name

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   LayoutDashboard,
   Shield,
@@ -130,10 +130,16 @@ interface AppSidebarProps {
 }
 
 export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppSidebarProps) {
-  const { user, canAccess, logout } = useAuthStore();
-  const { currentRoute, navigate } = useRouterStore();
-  const kycPending = useKycStore((s) => s.getPendingCount());
-  const floatPending = useAgentsStore((s) => s.getPendingRequestsCount());
+  const user = useAuthStore((s) => s.user);
+  const canAccess = useAuthStore((s) => s.canAccess);
+  const logout = useAuthStore((s) => s.logout);
+  const currentRoute = useRouterStore((s) => s.currentRoute);
+  const navigate = useRouterStore((s) => s.navigate);
+  // Select raw state and compute counts via useMemo to avoid getSnapshot issues
+  const kycRecords = useKycStore((s) => s.records);
+  const floatRequests = useAgentsStore((s) => s.floatRequests);
+  const kycPending = useMemo(() => kycRecords.filter(r => r.status === 'PENDING').length, [kycRecords]);
+  const floatPending = useMemo(() => floatRequests.filter(r => r.status === 'PENDING').length, [floatRequests]);
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {

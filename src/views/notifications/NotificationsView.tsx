@@ -68,10 +68,12 @@ function getRelativeTime(dateStr: string): string {
 }
 
 export default function NotificationsView() {
-  const { navigate } = useRouterStore();
-  const { notifications, markAsRead, markAllAsRead, getUnreadCount } = useNotificationsStore();
+  const navigate = useRouterStore((s) => s.navigate);
+  const notifications = useNotificationsStore((s) => s.notifications);
+  const markAsRead = useNotificationsStore((s) => s.markAsRead);
+  const markAllAsRead = useNotificationsStore((s) => s.markAllAsRead);
 
-  const unreadCount = getUnreadCount();
+  const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
 
   const sortedNotifications = useMemo(
     () =>

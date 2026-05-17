@@ -52,7 +52,8 @@ function formatDate(dateStr: string): string {
 }
 
 export default function AgentsView() {
-  const { agents, updateAgentStatus } = useAgentsStore();
+  const agents = useAgentsStore((s) => s.agents);
+  const updateAgentStatus = useAgentsStore((s) => s.updateAgentStatus);
   const navigate = useRouterStore((s) => s.navigate);
 
   const [query, setQuery] = useState('');
@@ -202,7 +203,7 @@ export default function AgentsView() {
       render: (value: unknown) => formatDate(value as string),
     },
     {
-      key: 'id',
+      key: 'actions',
       label: 'Actions',
       width: '60px',
       render: (_value: unknown, row: Record<string, unknown>) => {

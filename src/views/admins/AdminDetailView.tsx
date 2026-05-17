@@ -14,8 +14,11 @@ import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 
 export default function AdminDetailView() {
-  const { params, navigate, goBack } = useRouterStore();
-  const { getAdminById, updateAdminStatus } = useUsersStore();
+  const params = useRouterStore((s) => s.params);
+  const navigate = useRouterStore((s) => s.navigate);
+  const goBack = useRouterStore((s) => s.goBack);
+  const getAdminById = useUsersStore((s) => s.getAdminById);
+  const updateAdminStatus = useUsersStore((s) => s.updateAdminStatus);
 
   const admin = getAdminById(params.id);
 

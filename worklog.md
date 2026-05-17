@@ -174,3 +174,31 @@ Stage Summary:
 - All 18 view files, 3 layout components, 7 common components, 8 stores, 5 mock files
 - Full RBAC with super_admin and admin roles
 - French UI throughout
+
+---
+Task ID: 13
+Agent: Main Orchestrator
+Task: Fix Zustand getSnapshot infinite loop errors and all code quality issues
+
+Work Log:
+- Fixed critical infinite loop in DashboardView: `useTransactionsStore((s) => s.getStats())` and `s.getRecentTransactions(10)` create new objects/arrays each render → replaced with selecting raw `transactions` state + useMemo for derived values
+- Fixed same pattern in AppSidebar: `useKycStore((s) => s.getPendingCount())` and `useAgentsStore((s) => s.getPendingRequestsCount())` → replaced with raw state + useMemo
+- Fixed AppHeader: `useNotificationsStore((s) => s.getUnreadCount())` → raw state + useMemo
+- Fixed duplicate `useAuthStore` import in KycView.tsx
+- Fixed missing `useAuthStore` import in KycView.tsx
+- Converted all full-store subscriptions (`useXxxStore()` without selectors) to individual selectors across 15+ files:
+  - LoginView, UsersView, AgentsView, TransactionsView, KycView, FloatRequestsView, NotificationsView, ConfigView, AdminsView, AdminDetailView, TransactionDetailView, KycDetailView, AppHeader, AppSidebar, page.tsx
+- Fixed non-memoized computed values: `activeAgents`, `globalFloat` in DashboardView → wrapped in useMemo
+- Fixed duplicate column keys: Changed 'id' to 'actions' in UsersView, TransactionsView, KycView, AgentsView
+- Fixed broken pagination in AdminsView (hardcoded page:1) → added page state + onPageChange
+- Fixed broken pagination in FloatRequestsView (both tabs) → added pendingPage/historyPage states + onPageChange
+- Removed dead 'super-admins' route from RouteName type
+- ESLint passes clean, no TypeScript compilation errors
+
+Stage Summary:
+- All Zustand infinite loop errors fixed (3 critical: getStats, getRecentTransactions, notifications.filter)
+- All full-store subscriptions converted to individual selectors (15+ files)
+- All duplicate column keys fixed
+- All broken pagination fixed
+- Dead code removed
+- App compiles and serves successfully with no errors

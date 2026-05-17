@@ -11,6 +11,7 @@ import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useKycStore } from '@/stores/kyc-store';
+import { useAuthStore } from '@/stores/auth-store';
 import {
   KYC_STATUS_LABELS,
   DOCUMENT_TYPE_LABELS,
@@ -40,7 +41,9 @@ const KYC_LEVEL_COLORS: Record<number, string> = {
 };
 
 export default function KycView() {
-  const { records, approveKyc, rejectKyc } = useKycStore();
+  const records = useKycStore((s) => s.records);
+  const approveKyc = useKycStore((s) => s.approveKyc);
+  const rejectKyc = useKycStore((s) => s.rejectKyc);
   const navigate = useRouterStore((s) => s.navigate);
   const user = useAuthStore((s) => s.user);
 
@@ -252,7 +255,7 @@ export default function KycView() {
         ),
       },
       {
-        key: 'id',
+        key: 'actions',
         label: 'Actions',
         width: '200px',
         render: (_val: unknown, row: Record<string, unknown>) => (

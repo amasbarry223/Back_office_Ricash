@@ -10,7 +10,11 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
 
 export default function LoginView() {
-  const { login, isLoading, error, isAuthenticated, clearError } = useAuthStore();
+  const login = useAuthStore((s) => s.login);
+  const isLoading = useAuthStore((s) => s.isLoading);
+  const error = useAuthStore((s) => s.error);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const clearError = useAuthStore((s) => s.clearError);
   const navigate = useRouterStore((s) => s.navigate);
 
   const [email, setEmail] = useState('');

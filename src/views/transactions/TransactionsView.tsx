@@ -50,7 +50,7 @@ const TYPE_COLORS: Record<TransactionType, string> = {
 };
 
 export default function TransactionsView() {
-  const { transactions } = useTransactionsStore();
+  const transactions = useTransactionsStore((s) => s.transactions);
   const navigate = useRouterStore((s) => s.navigate);
 
   // Filter state
@@ -327,7 +327,7 @@ export default function TransactionsView() {
         ),
       },
       {
-        key: 'id',
+        key: 'actions',
         label: 'Actions',
         width: '110px',
         render: (_val: unknown, row: Record<string, unknown>) => (

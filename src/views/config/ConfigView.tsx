@@ -30,8 +30,13 @@ import {
 } from '@/types';
 
 export default function ConfigView() {
-  const { navigate } = useRouterStore();
-  const { fees, kycLimits, general, updateFee, updateKycLimit, updateGeneral } = useConfigStore();
+  const navigate = useRouterStore((s) => s.navigate);
+  const fees = useConfigStore((s) => s.fees);
+  const kycLimits = useConfigStore((s) => s.kycLimits);
+  const general = useConfigStore((s) => s.general);
+  const updateFee = useConfigStore((s) => s.updateFee);
+  const updateKycLimit = useConfigStore((s) => s.updateKycLimit);
+  const updateGeneral = useConfigStore((s) => s.updateGeneral);
 
   // --- Fees editing state ---
   const [editingFeeId, setEditingFeeId] = useState<string | null>(null);

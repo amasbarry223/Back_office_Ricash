@@ -45,8 +45,9 @@ const ROUTE_ROLES: Record<string, Array<'super_admin' | 'admin'>> = {
 };
 
 function RouteRenderer() {
-  const { currentRoute } = useRouterStore();
-  const { isAuthenticated, canAccess } = useAuthStore();
+  const currentRoute = useRouterStore((s) => s.currentRoute);
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const canAccess = useAuthStore((s) => s.canAccess);
 
   // If not authenticated, show login
   if (!isAuthenticated) {
@@ -116,8 +117,9 @@ function RouteRenderer() {
 }
 
 export default function Home() {
-  const { isAuthenticated } = useAuthStore();
-  const { navigate, currentRoute } = useRouterStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const navigate = useRouterStore((s) => s.navigate);
+  const currentRoute = useRouterStore((s) => s.currentRoute);
   // Wait for Zustand persist hydration to avoid SSR mismatch
   const [hydrated, setHydrated] = useState(false);
 

@@ -3,6 +3,7 @@
 import React from 'react';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { Card } from '@/components/ui/card';
+import { useCountUp } from '@/hooks/use-count-up';
 
 interface StatCardProps {
   title: string;
@@ -15,6 +16,10 @@ interface StatCardProps {
   };
   color: 'blue' | 'green' | 'orange' | 'red';
   loading?: boolean;
+  /** Stagger index for mount animation (1-8) */
+  stagger?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
+  /** Enable count-up animation for numeric values */
+  animateValue?: boolean;
 }
 
 const COLOR_MAP = {
@@ -54,12 +59,25 @@ export default function StatCard({
   trend,
   color,
   loading = false,
+  stagger,
+  animateValue = true,
 }: StatCardProps) {
   const colorConfig = COLOR_MAP[color];
 
+  // Count-up animation for numeric values
+  const numericValue = typeof value === 'number' ? value : 0;
+  const animatedCount = useCountUp(
+    numericValue,
+    1200,
+    animateValue && typeof value === 'number' && !loading
+  );
+
+  // Stagger delay for mount animation
+  const staggerDelay = stagger ? (stagger - 1) * 60 : 0;
+
   if (loading) {
     return (
-      <Card className="p-6">
+      <Card className="p-6 animate-in" style={{ animationDelay: `${staggerDelay}ms` }}>
         <div className="flex items-start justify-between mb-5">
           <div className="shimmer size-11 rounded-xl" />
           <div className="shimmer size-6 rounded-full" />
@@ -73,8 +91,17 @@ export default function StatCard({
   const trendConfig = trend ? TREND_CONFIG[trend.direction] : null;
   const TrendIcon = trendConfig?.Icon;
 
+  // Display value: animated count for numbers, raw string for strings
+  const displayValue = typeof value === 'number'
+    ? animatedCount.toLocaleString('fr-FR')
+    : value;
+
   return (
-    <Card interactive className="p-6">
+    <Card
+      interactive
+      className="p-6 animate-in"
+      style={{ animationDelay: `${staggerDelay}ms` }}
+    >
       <div className="flex items-start justify-between mb-5">
         {/* Icon */}
         <div className={`flex items-center justify-center size-11 rounded-xl ring-1 ${colorConfig.bg} ${colorConfig.ring}`}>
@@ -90,10 +117,10 @@ export default function StatCard({
         )}
       </div>
 
-      {/* Value */}
+      {/* Value with count-up animation */}
       <div className="space-y-1.5">
         <p className="text-2xl font-bold text-foreground tracking-tight">
-          {typeof value === 'number' ? value.toLocaleString('fr-FR') : value}
+          {displayValue}
           {unit && <span className="text-sm font-normal text-muted-foreground ml-1.5">{unit}</span>}
         </p>
         <p className="text-sm text-muted-foreground">{title}</p>

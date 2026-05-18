@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════════════════════
+   RICASH — Micro-Interactions & Animations
+   ═══════════════════════════════════════════════════════════════
+
+   Règles d'or :
+   ⚡ Durée     : 100-200ms (micro), 200-400ms (transitions)
+   🎯 Easing    : ease-out (entrées), ease-in (sorties)
+   📱 Respect   : prefers-reduced-motion TOUJOURS
+   🚫 Jamais    : animations qui bloquent, loops infinis sans raison
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── 1. FADE IN UP (mount animation) ──────────────────────── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ─── 2. SKELETON SHIMMER (loading state) ──────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* ─── 3. TOAST NOTIFICATION ────────────────────────────────── */
+@keyframes slideInRight {
+  from { transform: translateX(110%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}
+
+@keyframes slideOutRight {
+  from { transform: translateX(0);    opacity: 1; }
+  to   { transform: translateX(110%); opacity: 0; }
+}
+
+/* ─── 4. MODAL / DIALOG ────────────────────────────────────── */
+@keyframes modalBackdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalSlideIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);     }
+}
+
+@keyframes modalSlideOut {
+  from { opacity: 1; transform: scale(1)    translateY(0);     }
+  to   { opacity: 0; transform: scale(0.95) translateY(-10px); }
+}
+
+/* ─── 5. BUTTON SUCCESS PULSE ──────────────────────────────── */
+@keyframes successPulse {
+  0%   { transform: scale(1);    }
+  50%  { transform: scale(1.05); }
+  100% { transform: scale(1);    }
+}
+
+/* ─── 6. DROPDOWN & POPOVER ────────────────────────────────── */
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-8px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+@keyframes dropdownOut {
+  from { opacity: 1; transform: translateY(0)    scale(1);    }
+  to   { opacity: 0; transform: translateY(-8px) scale(0.97); }
+}
+
+/* ─── 7. COUNTER PULSE (for stats) ─────────────────────────── */
+@keyframes countBump {
+  0%   { transform: scale(1);   }
+  50%  { transform: scale(1.08); }
+  100% { transform: scale(1);   }
+}
+
+/* ─── 8. TOGGLE / SWITCH THUMB ─────────────────────────────── */
+/* Applied via CSS transition with cubic-bezier in the switch component */
+
+/* ─── 9. ACCORDION / COLLAPSE ──────────────────────────────── */
+@keyframes accordionOpen {
+  from { opacity: 0; height: 0; }
+  to   { opacity: 1; height: var(--accordion-height, auto); }
+}
+
+@keyframes accordionClose {
+  from { opacity: 1; height: var(--accordion-height, auto); }
+  to   { opacity: 0; height: 0; }
+}
+
+/* ─── 10. TABLE ROW HOVER ──────────────────────────────────── */
+/* Handled via CSS transition on the table row, see below */
+
+/* ─── 11. PAGE TRANSITIONS ─────────────────────────────────── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+@keyframes pageExit {
+  from { opacity: 1; transform: translateY(0);   }
+  to   { opacity: 0; transform: translateY(-8px); }
+}
+
+/* ─── 12. SPINNER ROTATION ─────────────────────────────────── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ─── 13. BADGE / DOT PULSE (notifications) ────────────────── */
+@keyframes dotPulse {
+  0%, 100% { transform: scale(1);   opacity: 1; }
+  50%      { transform: scale(1.4); opacity: 0.7; }
+}
+
+/* ─── 14. SIDEBAR INDICATOR SLIDE ──────────────────────────── */
+@keyframes indicatorSlideIn {
+  from { height: 0; opacity: 0; }
+  to   { height: 20px; opacity: 1; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   UTILITY CLASSES — Animation
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Mount animations ─── */
+.animate-in {
+  animation: fadeInUp 250ms ease-out both;
+}
+
+.animate-in-fade {
+  animation: fadeIn 200ms ease-out both;
+}
+
+.animate-in-down {
+  animation: fadeInDown 250ms ease-out both;
+}
+
+.animate-in-scale {
+  animation: fadeInScale 200ms ease-out both;
+}
+
+/* ─── Staggered list items ─── */
+.stagger-1 { animation-delay: 0ms; }
+.stagger-2 { animation-delay: 50ms; }
+.stagger-3 { animation-delay: 100ms; }
+.stagger-4 { animation-delay: 150ms; }
+.stagger-5 { animation-delay: 200ms; }
+.stagger-6 { animation-delay: 250ms; }
+.stagger-7 { animation-delay: 300ms; }
+.stagger-8 { animation-delay: 350ms; }
+
+/* ─── Skeleton shimmer ─── */
+.skeleton-shimmer {
+  border-radius: var(--radius-md, 6px);
+  background: linear-gradient(
+    90deg,
+    var(--muted, #f0f0f0) 25%,
+    var(--border, #e0e0e0) 50%,
+    var(--muted, #f0f0f0) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* ─── Toast animations ─── */
+.toast-enter {
+  animation: slideInRight 300ms ease-out both;
+}
+
+.toast-exit {
+  animation: slideOutRight 250ms ease-in both;
+}
+
+/* ─── Modal / Dialog animations ─── */
+.modal-backdrop-in {
+  animation: modalBackdropIn 200ms ease-out both;
+}
+
+.modal-content-in {
+  animation: modalSlideIn 250ms ease-out both;
+}
+
+.modal-content-out {
+  animation: modalSlideOut 150ms ease-in both;
+}
+
+/* ─── Button success pulse ─── */
+.btn-success-pulse {
+  animation: successPulse 400ms ease-out;
+}
+
+/* ─── Dropdown / Popover ─── */
+.dropdown-animate-in {
+  animation: dropdownIn 180ms ease-out both;
+  transform-origin: top center;
+}
+
+.dropdown-animate-out {
+  animation: dropdownOut 120ms ease-in both;
+  transform-origin: top center;
+}
+
+/* ─── Page transitions ─── */
+.page-enter {
+  animation: pageEnter 250ms ease-out both;
+}
+
+.page-exit {
+  animation: pageExit 150ms ease-in both;
+}
+
+/* ─── Counter bump ─── */
+.count-bump {
+  animation: countBump 300ms ease-out;
+}
+
+/* ─── Notification dot pulse ─── */
+.dot-pulse {
+  animation: dotPulse 2s ease-in-out infinite;
+}
+
+/* ─── Spinner ─── */
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+/* ─── Sidebar indicator ─── */
+.indicator-slide-in {
+  animation: indicatorSlideIn 200ms ease-out both;
+}
+
+/* ─── Interactive row hover (table) ─── */
+.row-interactive {
+  transition: background-color 100ms ease, transform 100ms ease;
+}
+
+.row-interactive:hover {
+  background-color: var(--ricash-surface-hover, #F8FAFC);
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   COMPONENT-SPECIFIC ENHANCEMENTS
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── Dialog / AlertDialog entrance ─── */
+[data-slot="dialog-overlay"] {
+  animation: modalBackdropIn 200ms ease-out both;
+}
+
+[data-slot="dialog-content"] {
+  animation: modalSlideIn 250ms ease-out both;
+}
+
+/* ─── Dropdown Menu entrance ─── */
+[data-radix-popper-content-wrapper] > [data-slot="dropdown-menu-content"] {
+  animation: dropdownIn 180ms ease-out both;
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin, top center);
+}
+
+/* ─── Popover entrance ─── */
+[data-radix-popper-content-wrapper] > [data-slot="popover-content"] {
+  animation: dropdownIn 180ms ease-out both;
+  transform-origin: var(--radix-popover-content-transform-origin, top center);
+}
+
+/* ─── Tooltip entrance ─── */
+[data-slot="tooltip-content"] {
+  animation: fadeInScale 150ms ease-out both;
+  transform-origin: var(--radix-tooltip-content-transform-origin, center);
+}
+
+/* ─── Select content entrance ─── */
+[data-radix-popper-content-wrapper] > [data-slot="select-content"] {
+  animation: dropdownIn 180ms ease-out both;
+  transform-origin: var(--radix-select-content-transform-origin, top center);
+}
+
+/* ─── Switch thumb premium bounce ─── */
+[data-slot="switch-thumb"] {
+  transition: transform 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ─── Accordion content ─── */
+[data-slot="accordion-content"] {
+  overflow: hidden;
+  transition: height 250ms ease-out, opacity 250ms ease-out;
+}
+
+/* ─── Sonner toast override for slide-in ─── */
+[data-sonner-toast] {
+  animation: slideInRight 300ms ease-out both !important;
+}
+
+[data-sonner-toast][data-removed="true"] {
+  animation: slideOutRight 250ms ease-in both !important;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   ACCESSIBILITY — prefers-reduced-motion
+   ═══════════════════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -28,6 +28,7 @@ import UnauthorizedView from '@/views/errors/UnauthorizedView';
 import NotFoundView from '@/views/errors/NotFoundView';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import PageTransition from '@/components/common/PageTransition';
 
 // Route access control map — properly typed with RouteName
 const ROUTE_ROLES: Partial<Record<RouteName, Role[]>> = {
@@ -148,7 +149,9 @@ function RouteRenderer() {
   return (
     <DashboardLayout>
       <ErrorBoundary>
-        {renderView()}
+        <PageTransition>
+          {renderView()}
+        </PageTransition>
       </ErrorBoundary>
     </DashboardLayout>
   );

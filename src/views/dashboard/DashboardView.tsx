@@ -227,6 +227,7 @@ export default function DashboardView() {
             icon={<ArrowLeftRight className="size-5" />}
             color="blue"
             trend={{ value: 12, direction: 'up' }}
+            stagger={1}
           />
         </div>
         <div onClick={() => navigate('transactions')} className="cursor-pointer">
@@ -236,6 +237,8 @@ export default function DashboardView() {
             icon={<Banknote className="size-5" />}
             color="green"
             trend={{ value: 8, direction: 'up' }}
+            stagger={2}
+            animateValue={false}
           />
         </div>
         <div onClick={() => navigate('transactions')} className="cursor-pointer">
@@ -244,6 +247,7 @@ export default function DashboardView() {
             value={txStats.pending}
             icon={<Clock className="size-5" />}
             color="orange"
+            stagger={3}
           />
         </div>
         <div onClick={() => navigate('notifications')} className="cursor-pointer">
@@ -252,6 +256,7 @@ export default function DashboardView() {
             value={fraudAlerts}
             icon={<AlertTriangle className="size-5" />}
             color="red"
+            stagger={4}
           />
         </div>
         <div onClick={() => navigate('agents')} className="cursor-pointer">
@@ -260,6 +265,7 @@ export default function DashboardView() {
             value={activeAgents}
             icon={<UserCheck className="size-5" />}
             color="blue"
+            stagger={5}
           />
         </div>
         <div onClick={() => navigate('clients')} className="cursor-pointer">
@@ -269,6 +275,7 @@ export default function DashboardView() {
             icon={<Users className="size-5" />}
             color="green"
             trend={{ value: 15, direction: 'up' }}
+            stagger={6}
           />
         </div>
         <div onClick={() => navigate('float')} className="cursor-pointer">
@@ -277,6 +284,8 @@ export default function DashboardView() {
             value={formatXOF(globalFloat)}
             icon={<Wallet className="size-5" />}
             color="green"
+            stagger={7}
+            animateValue={false}
           />
         </div>
         <div onClick={() => navigate('kyc')} className="cursor-pointer">
@@ -285,12 +294,13 @@ export default function DashboardView() {
             value={kycPending}
             icon={<IdCard className="size-5" />}
             color="orange"
+            stagger={8}
           />
         </div>
       </section>
 
       {/* ---- Chart + Alerts Row ---- */}
-      <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-in" style={{ animationDelay: '400ms' }}>
         {/* Line Chart */}
         <Card className="xl:col-span-2 bg-card ricash-card-shadow">
           <CardHeader className="pb-2">

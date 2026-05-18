@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Loader2 } from "lucide-react"
+import { Loader2, Check } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
@@ -68,6 +68,8 @@ interface ButtonProps
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
   loading?: boolean
+  /** Show success state with check icon + green pulse */
+  success?: boolean
 }
 
 function Button({
@@ -76,6 +78,7 @@ function Button({
   size,
   asChild = false,
   loading = false,
+  success = false,
   disabled,
   children,
   ...props
@@ -85,7 +88,11 @@ function Button({
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size }),
+        success && "bg-[var(--ricash-success)] hover:bg-[var(--ricash-success)] text-white btn-success-pulse",
+        className
+      )}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...props}
@@ -94,6 +101,11 @@ function Button({
         <>
           <Loader2 className="size-4 animate-spin" />
           <span className="opacity-70">{children}</span>
+        </>
+      ) : success ? (
+        <>
+          <Check className="size-4" />
+          <span>{children}</span>
         </>
       ) : (
         children

@@ -115,7 +115,7 @@ export default function DataTable({
   // Loading skeleton rows
   if (loading) {
     return (
-      <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden">
+      <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden animate-in">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -184,10 +184,12 @@ export default function DataTable({
               <TableRow
                 key={row.id ? String(row.id) : `row-${rowIdx}`}
                 className={`
+                  row-interactive
                   ${rowIdx % 2 === 1 ? 'bg-muted/20' : ''}
                   ${onRowClick ? 'cursor-pointer hover:bg-muted/40' : ''}
                 `}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
+                style={{ animationDelay: `${Math.min(rowIdx * 30, 300)}ms` }}
               >
                 {columns.map((col) => (
                   <TableCell key={`cell-${row.id ?? rowIdx}-${col.key}`}>

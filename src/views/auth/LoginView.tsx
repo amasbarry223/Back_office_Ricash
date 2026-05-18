@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Loader2, Lock, Mail } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
+import AnimateIn from '@/components/common/AnimateIn';
 
 export default function LoginView() {
   const login = useAuthStore((s) => s.login);
@@ -35,7 +36,8 @@ export default function LoginView() {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 ricash-login-bg">
-      <Card className="w-full max-w-md shadow-lg" style={{ boxShadow: 'var(--ricash-shadow-lg)' }}>
+      <AnimateIn as="div" className="w-full max-w-md">
+      <Card className="shadow-lg" style={{ boxShadow: 'var(--ricash-shadow-lg)' }}>
         <CardHeader className="text-center pb-2">
           {/* Ricash Logo */}
           <div className="flex flex-col items-center gap-1">
@@ -145,6 +147,7 @@ export default function LoginView() {
           )}
         </CardContent>
       </Card>
+      </AnimateIn>
     </div>
   );
 }

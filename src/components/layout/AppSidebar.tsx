@@ -242,8 +242,8 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                       <span
                         className={`
                           absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full
-                          transition-all duration-150
-                          ${isActive ? 'h-5 bg-ricash-accent' : 'h-0 bg-transparent'}
+                          transition-all duration-200 ease-out
+                          ${isActive ? 'h-5 bg-ricash-accent indicator-slide-in' : 'h-0 bg-transparent'}
                         `}
                       />
 
@@ -274,7 +274,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
 
                       {/* Collapsed badge dot */}
                       {effectiveCollapsed && badgeCount > 0 && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-ricash-accent ring-2 ring-[var(--ricash-sidebar-bg)]" />
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-ricash-accent ring-2 ring-[var(--ricash-sidebar-bg)] dot-pulse" />
                       )}
                     </button>
                   );

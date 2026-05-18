@@ -27,7 +27,7 @@ export default function NotFoundView() {
 
         {/* Back to dashboard button */}
         <Button
-          className="mt-2 bg-ricash-brand hover:bg-ricash-brand/90 text-white font-semibold"
+          variant="primary" className="mt-2"
           onClick={() => navigate('dashboard')}
         >
           Retour au tableau de bord

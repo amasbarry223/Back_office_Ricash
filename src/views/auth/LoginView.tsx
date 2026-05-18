@@ -61,39 +61,33 @@ export default function LoginView() {
             {/* Email field */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="email">Adresse email</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="exemple@ricash.com"
-                  value={email}
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                  className="pl-9"
-                  required
-                  autoComplete="email"
-                  disabled={isLoading}
-                />
-              </div>
+              <Input
+                id="email"
+                type="email"
+                placeholder="exemple@ricash.com"
+                value={email}
+                onChange={(e) => handleEmailChange(e.target.value)}
+                iconLeft={<Mail />}
+                required
+                autoComplete="email"
+                disabled={isLoading}
+              />
             </div>
 
             {/* Password field */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="password">Mot de passe</Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => handlePasswordChange(e.target.value)}
-                  className="pl-9"
-                  required
-                  autoComplete="current-password"
-                  disabled={isLoading}
-                />
-              </div>
+              <Input
+                id="password"
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => handlePasswordChange(e.target.value)}
+                iconLeft={<Lock />}
+                required
+                autoComplete="current-password"
+                disabled={isLoading}
+              />
             </div>
 
             {/* Forgot password link */}
@@ -106,7 +100,8 @@ export default function LoginView() {
             {/* Login button */}
             <Button
               type="submit"
-              className="w-full h-10 text-white font-semibold bg-ricash-brand hover:bg-ricash-brand/90"
+              variant="primary"
+              className="w-full"
               disabled={isLoading}
             >
               {isLoading ? (

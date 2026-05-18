@@ -75,7 +75,6 @@ export default function SearchBar({
         delete newFilters[key];
       }
       setActiveFilters(newFilters);
-      // Filter changes are immediate (no debounce)
       onSearch(query, newFilters);
     },
     [activeFilters, query, onSearch],
@@ -128,24 +127,23 @@ export default function SearchBar({
   return (
     <div className="space-y-3">
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
-        {/* Search input */}
+        {/* Search input with icon */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
             type="text"
             placeholder={placeholder}
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
-            className="pl-9 h-9"
+            iconLeft={<Search />}
+            iconRight={query ? (
+              <button
+                onClick={() => handleQueryChange('')}
+                className="pointer-events-auto text-[var(--ricash-neutral)] hover:text-foreground transition-colors"
+              >
+                <X className="size-3.5" />
+              </button>
+            ) : undefined}
           />
-          {query && (
-            <button
-              onClick={() => handleQueryChange('')}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="size-3.5" />
-            </button>
-          )}
         </div>
 
         {/* Filter selects */}
@@ -156,7 +154,7 @@ export default function SearchBar({
                 value={(activeFilters[filter.key] as string) ?? ''}
                 onValueChange={(val) => handleFilterChange(filter.key, val)}
               >
-                <SelectTrigger className="h-9 w-full">
+                <SelectTrigger className="h-10 w-full">
                   <SelectValue placeholder={getSelectPlaceholder(filter)} />
                 </SelectTrigger>
                 <SelectContent>
@@ -173,7 +171,6 @@ export default function SearchBar({
                 value={(activeFilters[filter.key] as string) ?? ''}
                 onChange={(e) => handleFilterChange(filter.key, e.target.value)}
                 placeholder={getSelectPlaceholder(filter)}
-                className="h-9"
               />
             ) : null}
           </div>
@@ -185,9 +182,9 @@ export default function SearchBar({
             variant="ghost"
             size="sm"
             onClick={clearAll}
-            className="text-muted-foreground hover:text-foreground text-xs h-9"
+            className="text-muted-foreground hover:text-foreground text-xs"
           >
-            <X className="size-3.5 mr-1" />
+            <X className="size-3.5" />
             Réinitialiser
           </Button>
         )}
@@ -202,14 +199,14 @@ export default function SearchBar({
             return (
               <Badge
                 key={key}
-                variant="secondary"
-                className="text-xs gap-1 py-0.5 pr-1"
+                variant="neutral"
+                className="text-xs gap-1.5 py-0.5 pr-1.5"
               >
-                <span className="text-muted-foreground">{filterConfig?.label ?? key}:</span>
-                <span>{getFilterLabel(key)}</span>
+                <span className="text-[var(--ricash-neutral)]">{filterConfig?.label ?? key}:</span>
+                <span className="text-foreground">{getFilterLabel(key)}</span>
                 <button
                   onClick={() => removeFilter(key)}
-                  className="ml-0.5 hover:text-foreground text-muted-foreground"
+                  className="ml-0.5 hover:text-foreground text-[var(--ricash-neutral)] transition-colors"
                 >
                   <X className="size-3" />
                 </button>

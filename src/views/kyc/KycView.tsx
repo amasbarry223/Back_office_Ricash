@@ -356,7 +356,7 @@ export default function KycView() {
             : 'Êtes-vous sûr de vouloir rejeter ce dossier KYC ? Le client devra soumettre de nouveaux documents.'
         }
         confirmLabel={confirmAction?.action === 'approve' ? 'Approuver' : 'Rejeter'}
-        variant={confirmAction?.action === 'reject' ? 'destructive' : 'default'}
+        variant={confirmAction?.action === 'reject' ? 'destructive' : 'primary'}
         onConfirm={handleConfirmAction}
       />
     </div>

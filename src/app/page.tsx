@@ -70,10 +70,10 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
             {this.state.error?.message || 'Erreur inattendue. Veuillez réessayer.'}
           </p>
           <Button
+            variant="primary"
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
           >
-            <RefreshCw className="size-4 mr-2" />
+            <RefreshCw className="size-4" />
             Réessayer
           </Button>
         </div>

@@ -118,12 +118,8 @@ export default function AgentDetailView() {
         const isCredit = (value as string) === 'CREDIT';
         return (
           <Badge
-            variant="outline"
-            className={`text-xs font-medium ${
-              isCredit
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                : 'border-red-200 bg-red-50 text-red-700'
-            }`}
+            variant={isCredit ? 'success' : 'error'}
+            className="text-xs font-medium"
           >
             {isCredit ? <ArrowDownLeft className="size-3 mr-1" /> : <ArrowUpRight className="size-3 mr-1" />}
             {isCredit ? 'CRÉDIT' : 'DÉBIT'}
@@ -342,7 +338,7 @@ export default function AgentDetailView() {
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <ShieldCheck className="size-3" /> Niveau KYC
                   </p>
-                  <Badge variant="outline" className="text-xs font-medium border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
+                  <Badge variant="info" className="text-xs font-medium">
                     Niveau {agent.kycLevel}
                   </Badge>
                 </div>
@@ -421,7 +417,7 @@ export default function AgentDetailView() {
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Niveau KYC actuel</p>
-                    <Badge variant="outline" className="text-lg font-semibold px-3 py-1 border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
+                    <Badge variant="info" className="text-lg font-semibold px-3 py-1">
                       Niveau {agent.kycLevel}
                     </Badge>
                   </div>

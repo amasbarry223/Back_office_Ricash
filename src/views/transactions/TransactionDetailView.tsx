@@ -434,7 +434,7 @@ export default function TransactionDetailView() {
         confirmLabel={
           confirmAction?.action === 'cancel' ? 'Annuler' : confirmAction?.action === 'markFailed' ? 'Marquer échouée' : 'Marquer réussie'
         }
-        variant={confirmAction?.action === 'cancel' || confirmAction?.action === 'markFailed' ? 'destructive' : 'default'}
+        variant={confirmAction?.action === 'cancel' || confirmAction?.action === 'markFailed' ? 'destructive' : 'primary'}
         onConfirm={handleConfirmAction}
         loading={isCancelling || isMarkingSuccess || isMarkingFailed}
       />

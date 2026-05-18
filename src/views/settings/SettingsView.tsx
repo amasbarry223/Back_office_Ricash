@@ -283,7 +283,7 @@ export default function SettingsView() {
                     </Button>
                   ) : (
                     <div className="flex gap-2">
-                      <Button size="sm" className="bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={savingProfile} onClick={handleSaveProfile}>
+                      <Button variant="primary" size="sm" disabled={savingProfile} onClick={handleSaveProfile}>
                         {savingProfile ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />}
                         Sauvegarder
                       </Button>
@@ -323,7 +323,7 @@ export default function SettingsView() {
                   <div className="space-y-2">
                     <Label>Rôle</Label>
                     <div className="flex items-center gap-2 py-2">
-                      <Badge className={userRole === 'super_admin' ? 'bg-ricash-brand text-white' : 'bg-ricash-accent text-white'}>
+                      <Badge variant="brand">
                         {userRole === 'super_admin' ? 'Super Admin' : 'Admin'}
                       </Badge>
                     </div>
@@ -399,7 +399,7 @@ export default function SettingsView() {
                 </div>
                 <div className="flex justify-end pt-2">
                   <Button
-                    className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                    variant="primary"
                     disabled={savingPassword || !passwords.current || !passwords.new || !passwords.confirm}
                     onClick={handleChangePassword}
                   >
@@ -711,7 +711,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                variant="primary"
                 disabled={savingSystem}
                 onClick={handleSaveSystem}
               >
@@ -794,7 +794,7 @@ export default function SettingsView() {
                             <TableCell className="text-right">
                               {isEditing ? (
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button size="sm" className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={isSaving} onClick={() => saveFee(fee.id)}>
+                                  <Button variant="primary" size="xs" disabled={isSaving} onClick={() => saveFee(fee.id)}>
                                     {isSaving ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />} Sauvegarder
                                   </Button>
                                   <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={cancelEditFee} disabled={isSaving}>Annuler</Button>
@@ -866,7 +866,7 @@ export default function SettingsView() {
                             <TableCell className="text-right">
                               {isEditing ? (
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button size="sm" className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={isSaving} onClick={() => saveKyc(limit.level)}>
+                                  <Button variant="primary" size="xs" disabled={isSaving} onClick={() => saveKyc(limit.level)}>
                                     {isSaving ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />} Sauvegarder
                                   </Button>
                                   <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={cancelEditKyc} disabled={isSaving}>Annuler</Button>
@@ -927,7 +927,7 @@ export default function SettingsView() {
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Button className="bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={savingGeneral} onClick={saveGeneral}>
+                  <Button variant="primary" disabled={savingGeneral} onClick={saveGeneral}>
                     {savingGeneral ? <Loader2 className="size-4 mr-1.5 animate-spin" /> : <Save className="size-4 mr-1.5" />} Sauvegarder
                   </Button>
                 </div>
@@ -1032,7 +1032,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                variant="primary"
                 disabled={savingAdminAgent}
                 onClick={handleSaveAdminAgent}
               >
@@ -1151,7 +1151,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                variant="primary"
                 disabled={savingAdminLimits}
                 onClick={handleSaveAdminLimits}
               >
@@ -1180,7 +1180,7 @@ export default function SettingsView() {
 
       {/* Role badge */}
       <div className="flex items-center gap-2">
-        <Badge className={userRole === 'super_admin' ? 'bg-ricash-brand text-white' : 'bg-ricash-accent text-white'}>
+        <Badge variant="brand">
           {userRole === 'super_admin' ? 'Super Admin' : 'Admin'}
         </Badge>
         <span className="text-sm text-muted-foreground">

@@ -4,11 +4,30 @@ import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
 
+// ─── Ricash Badge System ────────────────────────────────────
+// Pill-shaped badges with semantic color variants.
+// Each variant uses Ricash design tokens for light/dark mode.
+
 const badgeVariants = cva(
-  "inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit whitespace-nowrap shrink-0 [&>svg]:size-3 gap-1 [&>svg]:pointer-events-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive transition-[color,box-shadow] overflow-hidden",
+  "inline-flex items-center justify-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium whitespace-nowrap shrink-0 [&>svg]:size-3 [&>svg]:pointer-events-none transition-colors duration-150",
   {
     variants: {
       variant: {
+        // ─── Semantic variants using Ricash tokens ───
+        success:
+          "bg-[var(--ricash-success-bg)] text-[var(--ricash-success)] border border-[var(--ricash-success-border)]",
+        warning:
+          "bg-[var(--ricash-warning-bg)] text-[var(--ricash-warning)] border border-[var(--ricash-warning-border)]",
+        error:
+          "bg-[var(--ricash-danger-bg)] text-[var(--ricash-danger)] border border-[var(--ricash-danger-border)]",
+        info:
+          "bg-[var(--ricash-info-bg)] text-[var(--ricash-info)] border border-[var(--ricash-info-border)]",
+        neutral:
+          "bg-[var(--ricash-neutral-bg)] text-[var(--ricash-neutral)] border border-[var(--ricash-neutral-border)]",
+        brand:
+          "bg-[var(--ricash-primary-bg)] text-[var(--ricash-primary)] border border-[var(--ricash-primary-border)]",
+
+        // ─── Legacy shadcn variants (backward compat) ───
         default:
           "border-transparent bg-primary text-primary-foreground [a&]:hover:bg-primary/90",
         secondary:
@@ -24,6 +43,28 @@ const badgeVariants = cva(
     },
   }
 )
+
+// ─── StatusDot: Small colored dot for badge prefixes ────────
+const DOT_COLORS: Record<string, string> = {
+  success: "bg-[var(--ricash-success)]",
+  warning: "bg-[var(--ricash-warning)]",
+  error: "bg-[var(--ricash-danger)]",
+  info: "bg-[var(--ricash-info)]",
+  neutral: "bg-[var(--ricash-neutral)]",
+  brand: "bg-[var(--ricash-primary)]",
+}
+
+function StatusDot({ color = "neutral", className }: { color?: string; className?: string }) {
+  return (
+    <span
+      className={cn(
+        "size-1.5 rounded-full shrink-0",
+        DOT_COLORS[color] ?? DOT_COLORS.neutral,
+        className
+      )}
+    />
+  )
+}
 
 function Badge({
   className,
@@ -43,4 +84,4 @@ function Badge({
   )
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants, StatusDot }

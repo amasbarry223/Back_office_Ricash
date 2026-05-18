@@ -273,8 +273,8 @@ export default function ConfigView() {
                           {isEditing ? (
                             <div className="flex items-center justify-end gap-1">
                               <Button
-                                size="sm"
-                                className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                                variant="primary"
+                                size="xs"
                                 disabled={isSaving}
                                 onClick={() => saveFee(fee.id)}
                               >
@@ -416,8 +416,8 @@ export default function ConfigView() {
                           {isEditing ? (
                             <div className="flex items-center justify-end gap-1">
                               <Button
-                                size="sm"
-                                className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                                variant="primary"
+                                size="xs"
                                 disabled={isSaving}
                                 onClick={() => saveKyc(limit.level)}
                               >
@@ -530,7 +530,7 @@ export default function ConfigView() {
             {/* Save button */}
             <div className="flex justify-end pt-2">
               <Button
-                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+                variant="primary"
                 disabled={savingGeneral}
                 onClick={saveGeneral}
               >

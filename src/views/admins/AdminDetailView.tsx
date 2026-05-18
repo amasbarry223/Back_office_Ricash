@@ -90,12 +90,7 @@ export default function AdminDetailView() {
       label: 'Rôle',
       value: (
         <Badge
-          variant="outline"
-          className={
-            admin.role === 'super_admin'
-              ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
-              : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
-          }
+          variant={admin.role === 'super_admin' ? 'brand' : 'neutral'}
         >
           {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
         </Badge>
@@ -146,12 +141,7 @@ export default function AdminDetailView() {
       >
         <div className="flex items-center gap-2">
           <Badge
-            variant="outline"
-            className={
-              admin.role === 'super_admin'
-                ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
-                : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
-            }
+            variant={admin.role === 'super_admin' ? 'brand' : 'neutral'}
           >
             {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
           </Badge>

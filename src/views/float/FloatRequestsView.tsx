@@ -291,7 +291,7 @@ export default function FloatRequestsView() {
           <TabsTrigger value="pending" className="gap-1.5">
             En attente
             {pendingCount > 0 && (
-              <Badge className="bg-orange-500 text-white text-[10px] px-1.5 py-0 h-5 min-w-[20px] flex items-center justify-center">
+              <Badge variant="warning" className="text-[10px] px-1.5 py-0 h-5 min-w-[20px] flex items-center justify-center">
                 {pendingCount}
               </Badge>
             )}
@@ -335,7 +335,7 @@ export default function FloatRequestsView() {
         title="Approuver la demande"
         description="Êtes-vous sûr de vouloir approuver cette demande de float ? Le montant sera crédité au compte de l'agent."
         confirmLabel="Approuver"
-        variant="default"
+        variant="primary"
         onConfirm={handleConfirmApprove}
       />
     </div>

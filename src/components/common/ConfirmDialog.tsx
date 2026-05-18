@@ -12,7 +12,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -37,12 +36,12 @@ export default function ConfirmDialog({
   onConfirm,
   loading = false,
 }: ConfirmDialogProps) {
-  const confirmButtonClass =
+  const buttonVariant =
     variant === 'destructive'
-      ? 'bg-ricash-danger hover:bg-ricash-danger-light text-white'
+      ? 'danger' as const
       : variant === 'warning'
-        ? 'bg-ricash-warning hover:bg-ricash-warning-light text-white'
-        : 'bg-ricash-brand hover:bg-ricash-brand/90 text-white';
+        ? 'primary' as const
+        : 'primary' as const;
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -56,18 +55,11 @@ export default function ConfirmDialog({
             {cancelLabel}
           </AlertDialogCancel>
           <Button
-            className={confirmButtonClass}
+            variant={buttonVariant}
             onClick={onConfirm}
-            disabled={loading}
+            loading={loading}
           >
-            {loading ? (
-              <>
-                <Loader2 className="size-4 animate-spin mr-1.5" />
-                Traitement…
-              </>
-            ) : (
-              confirmLabel
-            )}
+            {confirmLabel}
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

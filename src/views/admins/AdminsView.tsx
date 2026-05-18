@@ -141,12 +141,7 @@ export default function AdminsView() {
         const admin = row as unknown as Admin;
         return (
           <Badge
-            variant="outline"
-            className={
-              admin.role === 'super_admin'
-                ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
-                : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
-            }
+            variant={admin.role === 'super_admin' ? 'brand' : 'neutral'}
           >
             {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
           </Badge>
@@ -269,8 +264,8 @@ export default function AdminsView() {
         >
           <RoleGuard roles={['super_admin']}>
             <Button
+              variant="primary"
               onClick={() => setShowCreateDialog(true)}
-              className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
             >
               <Plus className="size-4 mr-1.5" />
               Créer un Admin
@@ -352,8 +347,8 @@ export default function AdminsView() {
                 Annuler
               </Button>
               <Button
+                variant="primary"
                 onClick={handleCreateAdmin}
-                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
               >
                 Créer
               </Button>

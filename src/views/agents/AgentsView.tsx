@@ -215,7 +215,7 @@ export default function AgentsView() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="size-8" onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon-sm" onClick={(e) => e.stopPropagation()}>
                 <MoreHorizontal className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -330,7 +330,7 @@ export default function AgentsView() {
             : 'Êtes-vous sûr de vouloir réactiver cet agent ?'
         }
         confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : 'Réactiver'}
-        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'primary'}
         onConfirm={handleConfirmAction}
       />
     </div>

@@ -125,12 +125,8 @@ export default function AgentFloatView() {
         const isCredit = (value as string) === 'CREDIT';
         return (
           <Badge
-            variant="outline"
-            className={`text-xs font-medium ${
-              isCredit
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                : 'border-red-200 bg-red-50 text-red-700'
-            }`}
+            variant={isCredit ? 'success' : 'error'}
+            className="text-xs font-medium"
           >
             {isCredit ? <ArrowDownLeft className="size-3 mr-1" /> : <ArrowUpRight className="size-3 mr-1" />}
             {isCredit ? 'CRÉDIT' : 'DÉBIT'}
@@ -317,7 +313,7 @@ export default function AgentFloatView() {
             <Button
               onClick={handleSubmitRequest}
               disabled={isSubmitting || !amount || !justification.trim()}
-              className="gap-1.5 bg-ricash-brand hover:bg-ricash-brand/90 text-white"
+              variant="primary"
             >
               <Send className="size-4" />
               {isSubmitting ? 'Soumission en cours…' : 'Soumettre la demande'}

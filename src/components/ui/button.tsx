@@ -1,59 +1,106 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
+import { Loader2 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
+// ─── Ricash Button System ───────────────────────────────────
+// Professional button with 6 variants, 4 sizes, loading state,
+// and smooth micro-interactions (hover lift, active press).
+
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  // Base styles shared by ALL variants
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-all duration-150 ease-out select-none outline-none shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 [&_svg]:shrink-0 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-        outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+        // ─── Primary: Ricash brand color, white text ───
+        primary:
+          "bg-[var(--ricash-primary)] text-white shadow-[var(--ricash-shadow-xs)] hover:bg-[var(--ricash-primary-light)] hover:-translate-y-px hover:shadow-[var(--ricash-shadow-sm)] active:bg-[var(--ricash-primary-dark)] active:translate-y-0 active:shadow-none focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-primary)]/30 focus-visible:ring-offset-1",
+
+        // ─── Secondary: Light fill, dark text ───
         secondary:
-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+          "bg-[var(--ricash-primary-bg)] text-[var(--ricash-primary)] shadow-[var(--ricash-shadow-xs)] hover:bg-[var(--ricash-primary)]/15 hover:-translate-y-px hover:shadow-[var(--ricash-shadow-sm)] active:bg-[var(--ricash-primary)]/20 active:translate-y-0 active:shadow-none focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-primary)]/20 focus-visible:ring-offset-1",
+
+        // ─── Ghost: No background, subtle hover ───
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-transparent text-[var(--ricash-primary)] hover:bg-[var(--ricash-primary-bg)] hover:-translate-y-px active:bg-[var(--ricash-primary)]/10 active:translate-y-0 focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-primary)]/20 focus-visible:ring-offset-1",
+
+        // ─── Danger: Red destructive action ───
+        danger:
+          "bg-[var(--ricash-danger)] text-white shadow-[var(--ricash-shadow-xs)] hover:bg-[var(--ricash-danger-light)] hover:-translate-y-px hover:shadow-[var(--ricash-shadow-sm)] active:bg-[var(--ricash-danger)] active:translate-y-0 active:shadow-none focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-danger)]/30 focus-visible:ring-offset-1",
+
+        // ─── Outline: Bordered, transparent fill ───
+        outline:
+          "border border-[var(--ricash-primary-border)] bg-transparent text-[var(--ricash-primary)] shadow-[var(--ricash-shadow-xs)] hover:bg-[var(--ricash-primary-bg)] hover:border-[var(--ricash-primary)] hover:-translate-y-px hover:shadow-[var(--ricash-shadow-sm)] active:bg-[var(--ricash-primary)]/12 active:translate-y-0 active:shadow-none focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-primary)]/20 focus-visible:ring-offset-1",
+
+        // ─── Link: Text-only with underline on hover ───
+        link:
+          "bg-transparent text-[var(--ricash-primary)] underline-offset-4 hover:underline hover:text-[var(--ricash-primary-light)] focus-visible:ring-[3px] focus-visible:ring-[var(--ricash-primary)]/20 focus-visible:ring-offset-1",
+
+        // ─── Legacy shadcn variants (kept for backward compat) ───
+        default:
+          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90 hover:-translate-y-px active:bg-primary/95 active:translate-y-0 focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-offset-1",
+        destructive:
+          "bg-destructive text-white shadow-xs hover:bg-destructive/90 hover:-translate-y-px active:bg-destructive/95 active:translate-y-0 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
       },
       size: {
-        default: "h-9 px-4 py-2 has-[>svg]:px-3",
-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
-        icon: "size-9",
+        xs: "h-8 px-3 text-xs rounded-md gap-1",
+        sm: "h-9 px-3.5 text-sm rounded-lg gap-1.5",
+        md: "h-10 px-5 text-sm rounded-lg",
+        lg: "h-12 px-7 text-base rounded-xl",
+        icon: "size-10 rounded-lg",
+        "icon-sm": "size-9 rounded-lg",
+        "icon-xs": "size-8 rounded-md",
+        default: "h-10 px-5 text-sm rounded-lg",
       },
     },
     defaultVariants: {
-      variant: "default",
-      size: "default",
+      variant: "primary",
+      size: "md",
     },
   }
 )
+
+interface ButtonProps
+  extends React.ComponentProps<"button">,
+    VariantProps<typeof buttonVariants> {
+  asChild?: boolean
+  loading?: boolean
+}
 
 function Button({
   className,
   variant,
   size,
   asChild = false,
+  loading = false,
+  disabled,
+  children,
   ...props
-}: React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-  }) {
+}: ButtonProps) {
   const Comp = asChild ? Slot : "button"
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       {...props}
-    />
+    >
+      {loading ? (
+        <>
+          <Loader2 className="size-4 animate-spin" />
+          <span className="opacity-70">{children}</span>
+        </>
+      ) : (
+        children
+      )}
+    </Comp>
   )
 }
 
 export { Button, buttonVariants }
+export type { ButtonProps }

@@ -38,7 +38,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
       <div className="flex items-center gap-3 flex-1 min-w-0">
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={onToggleSidebar}
           className="shrink-0 text-muted-foreground hover:text-foreground"
         >
@@ -74,13 +74,13 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
         {/* Notification Bell */}
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={() => navigate('notifications')}
           className="relative text-muted-foreground hover:text-foreground"
         >
           <Bell className="size-5" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-ricash-danger text-white hover:bg-ricash-danger text-[10px] px-1 py-0 h-4 min-w-[16px] justify-center border-0">
+            <Badge variant="error" className="absolute -top-1 -right-1 text-[10px] px-1 py-0 h-4 min-w-[16px] justify-center border-0">
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
           )}
@@ -92,7 +92,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-accent/50">
                 <Avatar className="size-8">
-                  <AvatarFallback className="bg-ricash-brand text-white text-xs font-semibold">
+                  <AvatarFallback className="bg-[var(--ricash-primary)] text-white text-xs font-semibold">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -107,7 +107,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium">{user.name}</p>
                   <p className="text-xs text-muted-foreground">{user.email}</p>
-                  <Badge variant="secondary" className="w-fit text-[10px] mt-1">
+                  <Badge variant="brand" className="w-fit text-[10px] mt-1">
                     {roleLabel(user.role)}
                   </Badge>
                 </div>

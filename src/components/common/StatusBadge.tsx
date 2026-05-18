@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Badge } from '@/components/ui/badge';
+import { Badge, StatusDot } from '@/components/ui/badge';
 import {
   USER_STATUS_LABELS,
   AGENT_STATUS_LABELS,
@@ -20,53 +20,38 @@ interface StatusBadgeProps {
   type: 'user' | 'transaction' | 'kyc' | 'agent' | 'float_request';
 }
 
-// All colors now use CSS custom property tokens — dark mode compatible
-const USER_COLORS: Record<UserStatus, string> = {
-  ACTIVE: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
-  INACTIVE: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
-  SUSPENDED: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+// Map status values to semantic badge variant names
+const USER_VARIANT: Record<UserStatus, 'success' | 'neutral' | 'warning'> = {
+  ACTIVE: 'success',
+  INACTIVE: 'neutral',
+  SUSPENDED: 'warning',
 };
 
-const TRANSACTION_COLORS: Record<TransactionStatus, string> = {
-  SUCCESS: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
-  FAILED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
-  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
-  CANCELLED: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
-  IN_PROGRESS: 'bg-ricash-info-bg text-ricash-info border-ricash-info-border',
+const TRANSACTION_VARIANT: Record<TransactionStatus, 'success' | 'error' | 'warning' | 'neutral' | 'info'> = {
+  SUCCESS: 'success',
+  FAILED: 'error',
+  PENDING: 'warning',
+  CANCELLED: 'neutral',
+  IN_PROGRESS: 'info',
 };
 
-const KYC_COLORS: Record<KycStatus, string> = {
-  VERIFIED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
-  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
-  REJECTED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
-  EXPIRED: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
+const KYC_VARIANT: Record<KycStatus, 'success' | 'warning' | 'error' | 'neutral'> = {
+  VERIFIED: 'success',
+  PENDING: 'warning',
+  REJECTED: 'error',
+  EXPIRED: 'neutral',
 };
 
-const AGENT_COLORS: Record<AgentStatus, string> = {
-  APPROVED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
-  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
-  SUSPENDED: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+const AGENT_VARIANT: Record<AgentStatus, 'success' | 'warning' | 'warning'> = {
+  APPROVED: 'success',
+  PENDING: 'warning',
+  SUSPENDED: 'warning',
 };
 
-const FLOAT_REQUEST_COLORS: Record<string, string> = {
-  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
-  APPROVED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
-  REJECTED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
-};
-
-const STATUS_DOT_COLORS: Record<string, string> = {
-  ACTIVE: 'bg-ricash-success',
-  INACTIVE: 'bg-ricash-neutral',
-  SUSPENDED: 'bg-ricash-warning',
-  SUCCESS: 'bg-ricash-success',
-  FAILED: 'bg-ricash-danger',
-  PENDING: 'bg-ricash-warning',
-  CANCELLED: 'bg-ricash-neutral',
-  IN_PROGRESS: 'bg-ricash-info',
-  VERIFIED: 'bg-ricash-success',
-  REJECTED: 'bg-ricash-danger',
-  EXPIRED: 'bg-ricash-neutral',
-  APPROVED: 'bg-ricash-success',
+const FLOAT_VARIANT: Record<string, 'warning' | 'success' | 'error'> = {
+  PENDING: 'warning',
+  APPROVED: 'success',
+  REJECTED: 'error',
 };
 
 function getLabel(status: string, type: StatusBadgeProps['type']): string {
@@ -86,19 +71,19 @@ function getLabel(status: string, type: StatusBadgeProps['type']): string {
   }
 }
 
-function getColorClass(status: string, type: StatusBadgeProps['type']): string {
-  const fallback = 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border';
+function getVariant(status: string, type: StatusBadgeProps['type']): 'success' | 'warning' | 'error' | 'info' | 'neutral' {
+  const fallback: 'neutral' = 'neutral';
   switch (type) {
     case 'user':
-      return USER_COLORS[status as UserStatus] ?? fallback;
+      return USER_VARIANT[status as UserStatus] ?? fallback;
     case 'transaction':
-      return TRANSACTION_COLORS[status as TransactionStatus] ?? fallback;
+      return TRANSACTION_VARIANT[status as TransactionStatus] ?? fallback;
     case 'kyc':
-      return KYC_COLORS[status as KycStatus] ?? fallback;
+      return KYC_VARIANT[status as KycStatus] ?? fallback;
     case 'agent':
-      return AGENT_COLORS[status as AgentStatus] ?? fallback;
+      return AGENT_VARIANT[status as AgentStatus] ?? fallback;
     case 'float_request':
-      return FLOAT_REQUEST_COLORS[status] ?? fallback;
+      return FLOAT_VARIANT[status] ?? fallback;
     default:
       return fallback;
   }
@@ -106,12 +91,11 @@ function getColorClass(status: string, type: StatusBadgeProps['type']): string {
 
 export default function StatusBadge({ status, type }: StatusBadgeProps) {
   const label = getLabel(status, type);
-  const colorClass = getColorClass(status, type);
-  const dotColor = STATUS_DOT_COLORS[status] ?? 'bg-ricash-neutral';
+  const variant = getVariant(status, type);
 
   return (
-    <Badge variant="outline" className={`${colorClass} font-medium text-xs gap-1.5 border`}>
-      <span className={`size-1.5 rounded-full ${dotColor} shrink-0`} />
+    <Badge variant={variant} className="font-medium">
+      <StatusDot color={variant} />
       {label}
     </Badge>
   );

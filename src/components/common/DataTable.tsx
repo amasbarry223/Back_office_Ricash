@@ -213,10 +213,9 @@ export default function DataTable({
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
-              size="sm"
+              size="xs"
               disabled={currentPage <= 1}
               onClick={() => onPageChange?.(currentPage - 1)}
-              className="h-8 text-xs"
             >
               Précédent
             </Button>
@@ -228,10 +227,10 @@ export default function DataTable({
               ) : (
                 <Button
                   key={`page-${page}`}
-                  variant={page === currentPage ? 'default' : 'outline'}
-                  size="sm"
+                  variant={page === currentPage ? 'primary' : 'outline'}
+                  size="xs"
                   onClick={() => onPageChange?.(page)}
-                  className={`h-8 w-8 text-xs p-0 ${page === currentPage ? 'bg-ricash-brand hover:bg-ricash-brand/90 text-white' : ''}`}
+                  className="w-8 p-0"
                 >
                   {page}
                 </Button>
@@ -239,10 +238,9 @@ export default function DataTable({
             )}
             <Button
               variant="outline"
-              size="sm"
+              size="xs"
               disabled={currentPage >= totalPages}
               onClick={() => onPageChange?.(currentPage + 1)}
-              className="h-8 text-xs"
             >
               Suivant
             </Button>

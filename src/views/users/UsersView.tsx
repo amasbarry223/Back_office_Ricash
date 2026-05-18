@@ -218,7 +218,7 @@ export default function UsersView() {
       label: 'Niveau KYC',
       width: '110px',
       render: (value: unknown) => (
-        <Badge variant="outline" className="text-xs font-medium border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
+        <Badge variant="info" className="text-xs font-medium">
           Niveau {value as number}
         </Badge>
       ),
@@ -249,7 +249,7 @@ export default function UsersView() {
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="size-8" onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon-sm" onClick={(e) => e.stopPropagation()}>
                 <MoreHorizontal className="size-4" />
               </Button>
             </DropdownMenuTrigger>
@@ -342,7 +342,7 @@ export default function UsersView() {
               : 'Êtes-vous sûr de vouloir réactiver ce client ?'
         }
         confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : confirmAction?.action === 'forceKyc' ? 'Forcer KYC' : 'Activer'}
-        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'primary'}
         onConfirm={handleConfirmAction}
       />
     </div>

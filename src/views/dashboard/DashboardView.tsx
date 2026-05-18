@@ -249,7 +249,7 @@ export default function DashboardView() {
         <div onClick={() => navigate('notifications')} className="cursor-pointer">
           <StatCard
             title="Alertes fraude"
-            value={Math.max(fraudAlerts, 2)}
+            value={fraudAlerts}
             icon={<AlertTriangle className="size-5" />}
             color="red"
           />

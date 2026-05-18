@@ -182,7 +182,7 @@ export default function DataTable({
           <TableBody>
             {sortedData.map((row, rowIdx) => (
               <TableRow
-                key={`row-${rowIdx}`}
+                key={row.id ? String(row.id) : `row-${rowIdx}`}
                 className={`
                   ${rowIdx % 2 === 1 ? 'bg-muted/20' : ''}
                   ${onRowClick ? 'cursor-pointer' : ''}
@@ -190,7 +190,7 @@ export default function DataTable({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
                 {columns.map((col) => (
-                  <TableCell key={`cell-${rowIdx}-${col.key}`}>
+                  <TableCell key={`cell-${row.id ?? rowIdx}-${col.key}`}>
                     {col.render
                       ? col.render(row[col.key], row)
                       : row[col.key] !== null && row[col.key] !== undefined

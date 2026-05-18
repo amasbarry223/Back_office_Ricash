@@ -445,10 +445,6 @@ export default function TransactionsView() {
           total: filteredTransactions.length,
         }}
         onPageChange={setPage}
-        onSort={(key, direction) => {
-          // Sort is handled internally by DataTable
-          console.log(`Sorting by ${key} ${direction}`);
-        }}
         emptyMessage="Aucune transaction trouvée"
       />
     </div>

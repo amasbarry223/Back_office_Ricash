@@ -323,20 +323,25 @@ export default function KycDetailView() {
             <CardContent className="space-y-4">
               {/* Large document preview area */}
               <div
-                className="relative flex items-center justify-center rounded-xl overflow-hidden border border-gray-200"
+                className="relative flex items-center justify-center rounded-xl overflow-hidden border-2 border-dashed border-gray-300"
                 style={{
                   minHeight: '400px',
-                  backgroundColor: '#f5f5f5',
+                  background: 'linear-gradient(135deg, var(--ricash-primary)/5 0%, var(--ricash-accent)/8 50%, var(--ricash-primary)/5 100%)',
                 }}
               >
                 <div
                   className="flex flex-col items-center justify-center transition-transform duration-200"
                   style={{ transform: `scale(${zoom})` }}
                 >
-                  <IdCard className="size-24 text-gray-300 mb-3" />
-                  <p className="text-gray-400 text-sm font-medium">Aperçu du document</p>
-                  <p className="text-gray-300 text-xs mt-1">
+                  <div className="flex items-center justify-center size-28 rounded-2xl bg-white/80 shadow-lg border border-gray-200 mb-4">
+                    <IdCard className="size-16 text-[var(--ricash-primary)]/40" />
+                  </div>
+                  <p className="text-[var(--ricash-primary)]/60 text-sm font-semibold">Aperçu du document</p>
+                  <p className="text-muted-foreground text-xs mt-1">
                     {DOCUMENT_TYPE_LABELS[record.documentType] ?? record.documentType}
+                  </p>
+                  <p className="text-muted-foreground/60 text-[10px] mt-2 italic">
+                    Mode démo — aucune image réelle
                   </p>
                 </div>
               </div>

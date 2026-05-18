@@ -244,11 +244,12 @@ export default function KycView() {
                 { label: `Dossier ${row.clientName}` },
               ]))
             }
-            className="flex items-center justify-center size-10 rounded-lg bg-gray-100 hover:bg-gray-200 border border-gray-200 transition-colors cursor-pointer"
+            className="relative flex items-center justify-center size-10 rounded-lg border-2 border-dashed border-gray-300 hover:border-[var(--ricash-accent)] hover:bg-[var(--ricash-accent)]/5 transition-colors cursor-pointer overflow-hidden"
             title="Voir le document"
             aria-label={`Voir le document de ${String(row.clientName)}`}
           >
-            <IdCard className="size-5 text-gray-400" />
+            <div className="absolute inset-0 bg-gradient-to-br from-[var(--ricash-primary)]/10 to-[var(--ricash-accent)]/10" />
+            <IdCard className="size-5 text-[var(--ricash-primary)]/60 relative z-10" />
           </button>
         ),
       },
@@ -341,9 +342,6 @@ export default function KycView() {
           total: filteredRecords.length,
         }}
         onPageChange={setPage}
-        onSort={(key, direction) => {
-          console.log(`Sorting by ${key} ${direction}`);
-        }}
         emptyMessage="Aucun dossier KYC trouvé"
       />
 

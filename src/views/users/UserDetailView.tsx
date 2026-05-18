@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   ArrowLeft,
   Ban,
@@ -20,6 +20,7 @@ import PageHeader from '@/components/common/PageHeader';
 import StatusBadge from '@/components/common/StatusBadge';
 import DataTable from '@/components/common/DataTable';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { useTransactionsStore } from '@/stores/transactions-store';
@@ -59,6 +60,10 @@ export default function UserDetailView() {
   const updateClientKyc = useUsersStore((s) => s.updateClientKyc);
   const transactions = useTransactionsStore((s) => s.transactions);
   const kycRecords = useKycStore((s) => s.records);
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ action: 'suspend' | 'activate' | 'forceKyc'; label: string } | null>(null);
 
   const clientId = params.id ?? '';
   const client = useMemo(() => clients.find(c => c.id === clientId), [clients, clientId]);
@@ -239,6 +244,38 @@ export default function UserDetailView() {
     },
   ], []);
 
+  // Handlers — declared before early return to follow rules of hooks
+  const handleToggleStatus = useCallback(() => {
+    if (!client) return;
+    const isSuspend = client.status === 'ACTIVE';
+    setConfirmAction({
+      action: isSuspend ? 'suspend' : 'activate',
+      label: isSuspend ? 'Suspendre ce client' : 'Activer ce client',
+    });
+    setConfirmOpen(true);
+  }, [client]);
+
+  const handleForceKyc = useCallback(() => {
+    setConfirmAction({ action: 'forceKyc', label: 'Forcer le KYC' });
+    setConfirmOpen(true);
+  }, []);
+
+  const handleConfirmAction = useCallback(() => {
+    if (!confirmAction || !client) return;
+    if (confirmAction.action === 'suspend') {
+      updateClientStatus(client.id, 'SUSPENDED');
+      toast.success('Client suspendu', { description: 'Le statut a été mis à jour avec succès.' });
+    } else if (confirmAction.action === 'activate') {
+      updateClientStatus(client.id, 'ACTIVE');
+      toast.success('Client activé', { description: 'Le statut a été mis à jour avec succès.' });
+    } else if (confirmAction.action === 'forceKyc') {
+      updateClientKyc(client.id, 2 as KycLevel);
+      toast.success('KYC forcé', { description: 'Le niveau KYC du client a été forcé à Niveau 2.' });
+    }
+    setConfirmOpen(false);
+    setConfirmAction(null);
+  }, [confirmAction, client, updateClientStatus, updateClientKyc]);
+
   if (!client) {
     return (
       <div className="space-y-6">
@@ -256,21 +293,6 @@ export default function UserDetailView() {
       </div>
     );
   }
-
-  const handleToggleStatus = () => {
-    const newStatus: UserStatus = client.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
-    updateClientStatus(client.id, newStatus);
-    toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
-      description: 'Le statut a été mis à jour avec succès.',
-    });
-  };
-
-  const handleForceKyc = () => {
-    updateClientKyc(client.id, 2 as KycLevel);
-    toast.success('KYC forcé', {
-      description: 'Le niveau KYC du client a été forcé à Niveau 2.',
-    });
-  };
 
   return (
     <div className="space-y-6">
@@ -472,6 +494,23 @@ export default function UserDetailView() {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'suspend'
+            ? 'Êtes-vous sûr de vouloir suspendre ce client ? Il ne pourra plus effectuer de transactions.'
+            : confirmAction?.action === 'forceKyc'
+              ? 'Êtes-vous sûr de vouloir forcer le niveau KYC de ce client à Niveau 2 ?'
+              : 'Êtes-vous sûr de vouloir réactiver ce client ?'
+        }
+        confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : confirmAction?.action === 'forceKyc' ? 'Forcer KYC' : 'Activer'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
+      />
     </div>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { ArrowLeft, Ban, CheckCircle, Mail, Phone, Calendar, Shield, Hash } from 'lucide-react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,7 @@ import { Separator } from '@/components/ui/separator';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { formatDateTimeLong } from '@/lib/format';
@@ -22,6 +23,34 @@ export default function AdminDetailView() {
   const updateAdminStatus = useUsersStore((s) => s.updateAdminStatus);
 
   const admin = useMemo(() => admins.find(a => a.id === params.id), [admins, params.id]);
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ action: 'suspend' | 'reactivate'; label: string } | null>(null);
+
+  // Handlers — declared before early return to follow rules of hooks
+  const handleSuspend = useCallback(() => {
+    setConfirmAction({ action: 'suspend', label: 'Suspendre cet administrateur' });
+    setConfirmOpen(true);
+  }, []);
+
+  const handleReactivate = useCallback(() => {
+    setConfirmAction({ action: 'reactivate', label: 'Réactiver cet administrateur' });
+    setConfirmOpen(true);
+  }, []);
+
+  const handleConfirmAction = useCallback(() => {
+    if (!confirmAction || !admin) return;
+    if (confirmAction.action === 'suspend') {
+      updateAdminStatus(admin.id, 'SUSPENDED');
+      toast.success('Administrateur suspendu avec succès');
+    } else {
+      updateAdminStatus(admin.id, 'ACTIVE');
+      toast.success('Administrateur réactivé avec succès');
+    }
+    setConfirmOpen(false);
+    setConfirmAction(null);
+  }, [confirmAction, admin, updateAdminStatus]);
 
   if (!admin) {
     return (
@@ -38,16 +67,6 @@ export default function AdminDetailView() {
   const formatDateSafe = (dateStr?: string) => {
     if (!dateStr) return 'Jamais';
     return formatDateTimeLong(dateStr);
-  };
-
-  const handleSuspend = () => {
-    updateAdminStatus(admin.id, 'SUSPENDED');
-    toast.success('Administrateur suspendu avec succès');
-  };
-
-  const handleReactivate = () => {
-    updateAdminStatus(admin.id, 'ACTIVE');
-    toast.success('Administrateur réactivé avec succès');
   };
 
   const detailItems = [
@@ -216,6 +235,21 @@ export default function AdminDetailView() {
           </CardContent>
         </Card>
       </RoleGuard>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'suspend'
+            ? 'Êtes-vous sûr de vouloir suspendre cet administrateur ? Il perdra ses accès au back-office.'
+            : 'Êtes-vous sûr de vouloir réactiver cet administrateur ?'
+        }
+        confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : 'Réactiver'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
+      />
     </div>
   );
 }

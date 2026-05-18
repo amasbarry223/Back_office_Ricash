@@ -44,7 +44,7 @@ const KYC_COLORS: Record<KycStatus, string> = {
 const AGENT_COLORS: Record<AgentStatus, string> = {
   APPROVED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
   PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
-  SUSPENDED: 'bg-red-100 text-red-700 border-red-200',
+  SUSPENDED: 'bg-orange-100 text-orange-700 border-orange-200',
 };
 
 const FLOAT_REQUEST_COLORS: Record<string, string> = {
@@ -70,6 +70,7 @@ const STATUS_DOT_COLORS: Record<string, string> = {
   EXPIRED: 'bg-gray-400',
   // Agent
   APPROVED: 'bg-emerald-500',
+  SUSPENDED: 'bg-orange-500',
   // Float request
   PENDING: 'bg-orange-500',
   APPROVED: 'bg-emerald-500',

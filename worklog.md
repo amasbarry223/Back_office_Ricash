@@ -1,6 +1,30 @@
 # Ricash Back-Office — Worklog
 
 ---
+Task ID: 16
+Agent: Main Orchestrator
+Task: Analyze codebase for friction points, fix issues, and improve UX
+
+Work Log:
+- Fixed FloatRequestsView RBAC: approve/reject now available to both super_admin and admin
+- Added ConfirmDialog to UserDetailView and AdminDetailView for critical actions
+- Removed console.log from TransactionsView and KycView
+- Fixed DataTable row keys to use data ID instead of array index
+- Added sticky footer to DashboardLayout
+- Fixed Dashboard fraud alerts (removed hardcoded Math.max)
+- Fixed AgentDetailView duplicate commission input
+- Added 250ms debounce to SearchBar
+- Fixed StatusBadge consistency (agent SUSPENDED uses orange not red)
+- Improved KYC document preview visuals
+- Fixed ConfigView generalEdits sync with store
+- Fixed hooks ordering in detail views
+- All lint checks pass, dev server HTTP 200
+
+Stage Summary:
+- 13 friction points identified and fixed across 10+ files
+- RBAC, UX safety, performance, visual polish, and code quality all improved
+
+---
 Task ID: 1
 Agent: Main Orchestrator
 Task: Create foundation files (types, CSS, directory structure)

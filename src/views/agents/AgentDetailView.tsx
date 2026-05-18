@@ -353,41 +353,6 @@ export default function AgentDetailView() {
                   <p className="text-sm font-medium">{formatDate(agent.createdAt)}</p>
                 </div>
               </div>
-
-              {/* Approve section for PENDING agents */}
-              {agent.status === 'PENDING' && (
-                <RoleGuard roles={['super_admin', 'admin']}>
-                  <div className="mt-6 pt-6 border-t">
-                    <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
-                      <h3 className="text-sm font-semibold text-orange-800 mb-3">Approbation requise</h3>
-                      <div className="flex items-end gap-3">
-                        <div className="space-y-1.5">
-                          <Label htmlFor="commission-inline" className="text-xs">Taux de commission (%)</Label>
-                          <Input
-                            id="commission-inline"
-                            type="number"
-                            min="0.1"
-                            max="100"
-                            step="0.1"
-                            value={commissionRate}
-                            onChange={(e) => setCommissionRate(e.target.value)}
-                            placeholder="ex: 1.5"
-                            className="w-32 h-9 text-sm"
-                          />
-                        </div>
-                        <Button
-                          size="sm"
-                          onClick={handleApprove}
-                          className="bg-emerald-600 hover:bg-emerald-700 text-white gap-1.5"
-                        >
-                          <CheckCircle className="size-4" />
-                          Approuver cet agent
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </RoleGuard>
-              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Save, Pencil, Loader2, DollarSign, ShieldCheck, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -49,14 +49,18 @@ export default function ConfigView() {
   const [savingKycLevel, setSavingKycLevel] = useState<number | null>(null);
 
   // --- General config state ---
-  const [generalEdits, setGeneralEdits] = useState<{
-    activeCountries: string[];
-    activeOperators: Operator[];
-  }>({
-    activeCountries: [...general.activeCountries],
-    activeOperators: [...general.activeOperators],
-  });
   const [savingGeneral, setSavingGeneral] = useState(false);
+
+  // Derive generalEdits from store data, with local override tracking
+  const [generalOverrides, setGeneralOverrides] = useState<{
+    activeCountries: string[] | null;
+    activeOperators: Operator[] | null;
+  }>({ activeCountries: null, activeOperators: null });
+
+  const generalEdits = useMemo(() => ({
+    activeCountries: generalOverrides.activeCountries ?? [...general.activeCountries],
+    activeOperators: generalOverrides.activeOperators ?? [...general.activeOperators],
+  }), [generalOverrides, general.activeCountries, general.activeOperators]);
 
   // === Fee handlers ===
   const startEditFee = (fee: FeeConfig) => {
@@ -111,21 +115,19 @@ export default function ConfigView() {
 
   // === General config handlers ===
   const toggleCountry = (code: string) => {
-    setGeneralEdits((prev) => {
-      const countries = prev.activeCountries.includes(code)
-        ? prev.activeCountries.filter((c) => c !== code)
-        : [...prev.activeCountries, code];
-      return { ...prev, activeCountries: countries };
-    });
+    const current = generalEdits.activeCountries;
+    const updated = current.includes(code)
+      ? current.filter((c) => c !== code)
+      : [...current, code];
+    setGeneralOverrides((prev) => ({ ...prev, activeCountries: updated }));
   };
 
   const toggleOperator = (op: Operator) => {
-    setGeneralEdits((prev) => {
-      const operators = prev.activeOperators.includes(op)
-        ? prev.activeOperators.filter((o) => o !== op)
-        : [...prev.activeOperators, op];
-      return { ...prev, activeOperators: operators };
-    });
+    const current = generalEdits.activeOperators;
+    const updated = current.includes(op)
+      ? current.filter((o) => o !== op)
+      : [...current, op];
+    setGeneralOverrides((prev) => ({ ...prev, activeOperators: updated }));
   };
 
   const saveGeneral = async () => {
@@ -135,6 +137,8 @@ export default function ConfigView() {
       activeCountries: generalEdits.activeCountries,
       activeOperators: generalEdits.activeOperators,
     });
+    // Reset overrides so next render picks up new store values
+    setGeneralOverrides({ activeCountries: null, activeOperators: null });
     setSavingGeneral(false);
     toast.success('Paramètres généraux mis à jour avec succès');
   };

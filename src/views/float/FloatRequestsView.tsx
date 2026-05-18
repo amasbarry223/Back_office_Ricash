@@ -170,7 +170,7 @@ export default function FloatRequestsView() {
 
         return (
           <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-            <RoleGuard roles={['super_admin']}>
+            <RoleGuard roles={['super_admin', 'admin']}>
               <Button
                 size="sm"
                 variant="ghost"

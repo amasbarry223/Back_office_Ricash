@@ -89,6 +89,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
           <main className="flex-1 p-4 sm:p-6">
             {children}
           </main>
+          <footer className="shrink-0 border-t border-border/50 px-6 py-3 text-center">
+            <p className="text-xs text-muted-foreground">
+              © {new Date().getFullYear()} <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>RICASH</span> — Back-Office v4.0 · Tous droits réservés
+            </p>
+          </footer>
         </div>
       </div>
     </TooltipProvider>

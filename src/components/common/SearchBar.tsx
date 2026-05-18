@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { Search, X, Filter } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -38,13 +38,32 @@ export default function SearchBar({
 }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounced search trigger
+  const debouncedSearch = useCallback(
+    (q: string, f: Record<string, unknown>) => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+      debounceRef.current = setTimeout(() => {
+        onSearch(q, f);
+      }, 250);
+    },
+    [onSearch],
+  );
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, []);
 
   const handleQueryChange = useCallback(
     (value: string) => {
       setQuery(value);
-      onSearch(value, activeFilters);
+      debouncedSearch(value, activeFilters);
     },
-    [activeFilters, onSearch]
+    [activeFilters, debouncedSearch],
   );
 
   const handleFilterChange = useCallback(
@@ -56,9 +75,10 @@ export default function SearchBar({
         delete newFilters[key];
       }
       setActiveFilters(newFilters);
+      // Filter changes are immediate (no debounce)
       onSearch(query, newFilters);
     },
-    [activeFilters, query, onSearch]
+    [activeFilters, query, onSearch],
   );
 
   const removeFilter = useCallback(
@@ -68,12 +88,13 @@ export default function SearchBar({
       setActiveFilters(newFilters);
       onSearch(query, newFilters);
     },
-    [activeFilters, query, onSearch]
+    [activeFilters, query, onSearch],
   );
 
   const clearAll = useCallback(() => {
     setQuery('');
     setActiveFilters({});
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     onSearch('', {});
   }, [onSearch]);
 

@@ -218,7 +218,7 @@ export default function UsersView() {
       label: 'Niveau KYC',
       width: '110px',
       render: (value: unknown) => (
-        <Badge variant="outline" className="text-xs font-medium border-[var(--ricash-accent)]/30 bg-[var(--ricash-accent)]/5 text-[var(--ricash-accent)]">
+        <Badge variant="outline" className="text-xs font-medium border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
           Niveau {value as number}
         </Badge>
       ),

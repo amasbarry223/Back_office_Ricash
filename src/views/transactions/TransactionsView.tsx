@@ -213,7 +213,7 @@ export default function TransactionsView() {
         sortable: true,
         width: '160px',
         render: (_val: unknown, row: Record<string, unknown>) => (
-          <span className="font-mono text-xs font-semibold text-[var(--ricash-primary)]">
+          <span className="font-mono text-xs font-semibold text-ricash-brand">
             {String(row.ref)}
           </span>
         ),
@@ -294,7 +294,7 @@ export default function TransactionsView() {
         width: '110px',
         render: (_val: unknown, row: Record<string, unknown>) =>
           row.agentCode ? (
-            <span className="font-mono text-xs text-[var(--ricash-accent)]">
+            <span className="font-mono text-xs text-ricash-accent">
               {String(row.agentCode)}
             </span>
           ) : (
@@ -318,7 +318,7 @@ export default function TransactionsView() {
           <Button
             variant="ghost"
             size="sm"
-            className="h-8 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80"
+            className="h-8 text-xs text-ricash-brand hover:text-ricash-brand/80"
             onClick={(e) => {
               e.stopPropagation();
               navigate('transaction-detail', { id: String(row.id) }, buildBreadcrumb([

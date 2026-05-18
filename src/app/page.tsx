@@ -182,7 +182,7 @@ export default function Home() {
   // Show nothing during hydration to prevent SSR mismatch
   if (!hydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--ricash-bg, #F4F7FB)' }}>
+      <div className="min-h-screen flex items-center justify-center ricash-bg">
         <div className="flex flex-col items-center gap-3">
           <div className="shimmer size-12 rounded-xl" />
         </div>
@@ -191,7 +191,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: 'var(--ricash-bg, #F4F7FB)' }}>
+    <div className="min-h-screen ricash-bg">
       <RouteRenderer />
     </div>
   );

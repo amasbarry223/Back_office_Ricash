@@ -244,12 +244,12 @@ export default function KycView() {
                 { label: `Dossier ${row.clientName}` },
               ]))
             }
-            className="relative flex items-center justify-center size-10 rounded-lg border-2 border-dashed border-gray-300 hover:border-[var(--ricash-accent)] hover:bg-[var(--ricash-accent)]/5 transition-colors cursor-pointer overflow-hidden"
+            className="relative flex items-center justify-center size-10 rounded-lg border-2 border-dashed border-gray-300 hover:border-ricash-accent hover:bg-ricash-accent/5 transition-colors cursor-pointer overflow-hidden"
             title="Voir le document"
             aria-label={`Voir le document de ${String(row.clientName)}`}
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-[var(--ricash-primary)]/10 to-[var(--ricash-accent)]/10" />
-            <IdCard className="size-5 text-[var(--ricash-primary)]/60 relative z-10" />
+            <div className="absolute inset-0 bg-gradient-to-br from-ricash-brand/10 to-ricash-accent/10" />
+            <IdCard className="size-5 text-ricash-brand/60 relative z-10" />
           </button>
         ),
       },
@@ -271,7 +271,7 @@ export default function KycView() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-8 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80"
+              className="h-8 text-xs text-ricash-brand hover:text-ricash-brand/80"
               onClick={(e) => {
                 e.stopPropagation();
                 navigate('kyc-detail', { id: String(row.id) }, buildBreadcrumb([

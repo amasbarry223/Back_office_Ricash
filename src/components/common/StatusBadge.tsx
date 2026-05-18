@@ -20,61 +20,53 @@ interface StatusBadgeProps {
   type: 'user' | 'transaction' | 'kyc' | 'agent' | 'float_request';
 }
 
+// All colors now use CSS custom property tokens — dark mode compatible
 const USER_COLORS: Record<UserStatus, string> = {
-  ACTIVE: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  INACTIVE: 'bg-gray-100 text-gray-600 border-gray-200',
-  SUSPENDED: 'bg-orange-100 text-orange-700 border-orange-200',
+  ACTIVE: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  INACTIVE: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
+  SUSPENDED: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
 };
 
 const TRANSACTION_COLORS: Record<TransactionStatus, string> = {
-  SUCCESS: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  FAILED: 'bg-red-100 text-red-700 border-red-200',
-  PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
-  CANCELLED: 'bg-gray-100 text-gray-600 border-gray-200',
-  IN_PROGRESS: 'bg-sky-100 text-sky-700 border-sky-200',
+  SUCCESS: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  FAILED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
+  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+  CANCELLED: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
+  IN_PROGRESS: 'bg-ricash-info-bg text-ricash-info border-ricash-info-border',
 };
 
 const KYC_COLORS: Record<KycStatus, string> = {
-  VERIFIED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
-  REJECTED: 'bg-red-100 text-red-700 border-red-200',
-  EXPIRED: 'bg-gray-100 text-gray-600 border-gray-200',
+  VERIFIED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+  REJECTED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
+  EXPIRED: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
 };
 
 const AGENT_COLORS: Record<AgentStatus, string> = {
-  APPROVED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
-  SUSPENDED: 'bg-orange-100 text-orange-700 border-orange-200',
+  APPROVED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+  SUSPENDED: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
 };
 
 const FLOAT_REQUEST_COLORS: Record<string, string> = {
-  PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
-  APPROVED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-  REJECTED: 'bg-red-100 text-red-700 border-red-200',
+  PENDING: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+  APPROVED: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  REJECTED: 'bg-ricash-danger-bg text-ricash-danger border-ricash-danger-border',
 };
 
 const STATUS_DOT_COLORS: Record<string, string> = {
-  // User
-  ACTIVE: 'bg-emerald-500',
-  INACTIVE: 'bg-gray-400',
-  SUSPENDED: 'bg-orange-500',
-  // Transaction
-  SUCCESS: 'bg-emerald-500',
-  FAILED: 'bg-red-500',
-  PENDING: 'bg-orange-500',
-  CANCELLED: 'bg-gray-400',
-  IN_PROGRESS: 'bg-sky-500',
-  // KYC
-  VERIFIED: 'bg-emerald-500',
-  REJECTED: 'bg-red-500',
-  EXPIRED: 'bg-gray-400',
-  // Agent
-  APPROVED: 'bg-emerald-500',
-  SUSPENDED: 'bg-orange-500',
-  // Float request
-  PENDING: 'bg-orange-500',
-  APPROVED: 'bg-emerald-500',
-  REJECTED: 'bg-red-500',
+  ACTIVE: 'bg-ricash-success',
+  INACTIVE: 'bg-ricash-neutral',
+  SUSPENDED: 'bg-ricash-warning',
+  SUCCESS: 'bg-ricash-success',
+  FAILED: 'bg-ricash-danger',
+  PENDING: 'bg-ricash-warning',
+  CANCELLED: 'bg-ricash-neutral',
+  IN_PROGRESS: 'bg-ricash-info',
+  VERIFIED: 'bg-ricash-success',
+  REJECTED: 'bg-ricash-danger',
+  EXPIRED: 'bg-ricash-neutral',
+  APPROVED: 'bg-ricash-success',
 };
 
 function getLabel(status: string, type: StatusBadgeProps['type']): string {
@@ -95,26 +87,27 @@ function getLabel(status: string, type: StatusBadgeProps['type']): string {
 }
 
 function getColorClass(status: string, type: StatusBadgeProps['type']): string {
+  const fallback = 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border';
   switch (type) {
     case 'user':
-      return USER_COLORS[status as UserStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+      return USER_COLORS[status as UserStatus] ?? fallback;
     case 'transaction':
-      return TRANSACTION_COLORS[status as TransactionStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+      return TRANSACTION_COLORS[status as TransactionStatus] ?? fallback;
     case 'kyc':
-      return KYC_COLORS[status as KycStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+      return KYC_COLORS[status as KycStatus] ?? fallback;
     case 'agent':
-      return AGENT_COLORS[status as AgentStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+      return AGENT_COLORS[status as AgentStatus] ?? fallback;
     case 'float_request':
-      return FLOAT_REQUEST_COLORS[status] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+      return FLOAT_REQUEST_COLORS[status] ?? fallback;
     default:
-      return 'bg-gray-100 text-gray-600 border-gray-200';
+      return fallback;
   }
 }
 
 export default function StatusBadge({ status, type }: StatusBadgeProps) {
   const label = getLabel(status, type);
   const colorClass = getColorClass(status, type);
-  const dotColor = STATUS_DOT_COLORS[status] ?? 'bg-gray-400';
+  const dotColor = STATUS_DOT_COLORS[status] ?? 'bg-ricash-neutral';
 
   return (
     <Badge variant="outline" className={`${colorClass} font-medium text-xs gap-1.5 border`}>

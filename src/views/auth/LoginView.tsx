@@ -34,26 +34,18 @@ export default function LoginView() {
   };
 
   return (
-    <div
-      className="min-h-screen flex items-center justify-center p-4"
-      style={{
-        background: 'linear-gradient(135deg, #F4F7FB 0%, #D6E4F0 40%, #1A3C6E 100%)',
-      }}
-    >
-      <Card className="w-full max-w-md shadow-lg ricash-card-shadow">
+    <div className="min-h-screen flex items-center justify-center p-4 ricash-login-bg">
+      <Card className="w-full max-w-md shadow-lg" style={{ boxShadow: 'var(--ricash-shadow-lg)' }}>
         <CardHeader className="text-center pb-2">
           {/* Ricash Logo */}
           <div className="flex flex-col items-center gap-1">
-            <h1
-              className="text-4xl font-bold tracking-wider"
-              style={{ color: 'var(--ricash-primary)' }}
-            >
+            <h1 className="text-4xl font-bold tracking-wider text-ricash-brand">
               RICASH
             </h1>
             <p className="text-sm text-muted-foreground font-medium">
               Back-Office v4.0
             </p>
-            <div className="w-12 h-1 rounded-full mx-auto mt-2" style={{ backgroundColor: 'var(--ricash-accent)' }} />
+            <div className="w-12 h-1 rounded-full mx-auto mt-2 bg-ricash-accent" />
           </div>
         </CardHeader>
 
@@ -61,7 +53,7 @@ export default function LoginView() {
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             {/* Error message */}
             {error && (
-              <div className="rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              <div className="rounded-md bg-ricash-danger-bg border border-ricash-danger-border px-4 py-3 text-sm text-ricash-danger">
                 {error}
               </div>
             )}
@@ -114,10 +106,7 @@ export default function LoginView() {
             {/* Login button */}
             <Button
               type="submit"
-              className="w-full h-10 text-white font-semibold"
-              style={{
-                backgroundColor: 'var(--ricash-primary)',
-              }}
+              className="w-full h-10 text-white font-semibold bg-ricash-brand hover:bg-ricash-brand/90"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -138,18 +127,18 @@ export default function LoginView() {
                 Comptes de démonstration
               </p>
               <div className="flex flex-col gap-2">
-                <div className="rounded-md bg-muted/60 px-3 py-2">
+                <div className="rounded-md bg-ricash-brand-bg px-3 py-2">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                    <span className="font-semibold text-ricash-brand">
                       Super Admin
                     </span>
                     <br />
                     superadmin@ricash.com / ricash2025
                   </p>
                 </div>
-                <div className="rounded-md bg-muted/60 px-3 py-2">
+                <div className="rounded-md bg-ricash-brand-bg px-3 py-2">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                    <span className="font-semibold text-ricash-brand">
                       Admin
                     </span>
                     <br />

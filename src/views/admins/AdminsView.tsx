@@ -144,8 +144,8 @@ export default function AdminsView() {
             variant="outline"
             className={
               admin.role === 'super_admin'
-                ? 'bg-[var(--ricash-primary)]/10 text-[var(--ricash-primary)] border-[var(--ricash-primary)]/20 font-medium text-xs'
-                : 'bg-[var(--ricash-accent)]/10 text-[var(--ricash-accent)] border-[var(--ricash-accent)]/20 font-medium text-xs'
+                ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
+                : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
             }
           >
             {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
@@ -182,7 +182,7 @@ export default function AdminsView() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80"
+              className="h-7 text-xs text-ricash-brand hover:text-ricash-brand/80"
               onClick={() =>
                 navigate('admin-detail', { id: admin.id }, buildBreadcrumb([
                   { label: 'Administration', route: 'admins' },
@@ -270,7 +270,7 @@ export default function AdminsView() {
           <RoleGuard roles={['super_admin']}>
             <Button
               onClick={() => setShowCreateDialog(true)}
-              className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+              className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
             >
               <Plus className="size-4 mr-1.5" />
               Créer un Admin
@@ -353,7 +353,7 @@ export default function AdminsView() {
               </Button>
               <Button
                 onClick={handleCreateAdmin}
-                className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
               >
                 Créer
               </Button>

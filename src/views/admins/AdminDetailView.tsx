@@ -93,8 +93,8 @@ export default function AdminDetailView() {
           variant="outline"
           className={
             admin.role === 'super_admin'
-              ? 'bg-[var(--ricash-primary)]/10 text-[var(--ricash-primary)] border-[var(--ricash-primary)]/20 font-medium text-xs'
-              : 'bg-[var(--ricash-accent)]/10 text-[var(--ricash-accent)] border-[var(--ricash-accent)]/20 font-medium text-xs'
+              ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
+              : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
           }
         >
           {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}
@@ -149,8 +149,8 @@ export default function AdminDetailView() {
             variant="outline"
             className={
               admin.role === 'super_admin'
-                ? 'bg-[var(--ricash-primary)]/10 text-[var(--ricash-primary)] border-[var(--ricash-primary)]/20 font-medium text-xs'
-                : 'bg-[var(--ricash-accent)]/10 text-[var(--ricash-accent)] border-[var(--ricash-accent)]/20 font-medium text-xs'
+                ? 'bg-ricash-brand/10 text-ricash-brand border-ricash-brand/20 font-medium text-xs'
+                : 'bg-ricash-accent-bg text-ricash-accent border-ricash-accent/20 font-medium text-xs'
             }
           >
             {admin.role === 'super_admin' ? 'Super Admin' : 'Admin'}

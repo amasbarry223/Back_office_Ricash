@@ -168,8 +168,8 @@ export default function ConfigView() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-lg bg-[var(--ricash-accent)]/10">
-                <DollarSign className="size-4 text-[var(--ricash-accent)]" />
+              <div className="flex items-center justify-center size-8 rounded-lg bg-ricash-accent-bg">
+                <DollarSign className="size-4 text-ricash-accent" />
               </div>
               <div>
                 <CardTitle className="text-lg">Frais de service</CardTitle>
@@ -274,7 +274,7 @@ export default function ConfigView() {
                             <div className="flex items-center justify-end gap-1">
                               <Button
                                 size="sm"
-                                className="h-7 text-xs bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                                className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                                 disabled={isSaving}
                                 onClick={() => saveFee(fee.id)}
                               >
@@ -299,7 +299,7 @@ export default function ConfigView() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80"
+                              className="h-7 text-xs text-ricash-brand hover:text-ricash-brand/80"
                               onClick={() => startEditFee(fee)}
                             >
                               <Pencil className="size-3.5 mr-1" />
@@ -320,8 +320,8 @@ export default function ConfigView() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-lg bg-[var(--ricash-primary)]/10">
-                <ShieldCheck className="size-4 text-[var(--ricash-primary)]" />
+              <div className="flex items-center justify-center size-8 rounded-lg bg-ricash-brand/10">
+                <ShieldCheck className="size-4 text-ricash-brand" />
               </div>
               <div>
                 <CardTitle className="text-lg">Plafonds KYC</CardTitle>
@@ -417,7 +417,7 @@ export default function ConfigView() {
                             <div className="flex items-center justify-end gap-1">
                               <Button
                                 size="sm"
-                                className="h-7 text-xs bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                                className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                                 disabled={isSaving}
                                 onClick={() => saveKyc(limit.level)}
                               >
@@ -442,7 +442,7 @@ export default function ConfigView() {
                             <Button
                               size="sm"
                               variant="ghost"
-                              className="h-7 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80"
+                              className="h-7 text-xs text-ricash-brand hover:text-ricash-brand/80"
                               onClick={() => startEditKyc(limit)}
                             >
                               <Pencil className="size-3.5 mr-1" />
@@ -530,7 +530,7 @@ export default function ConfigView() {
             {/* Save button */}
             <div className="flex justify-end pt-2">
               <Button
-                className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                 disabled={savingGeneral}
                 onClick={saveGeneral}
               >

@@ -283,7 +283,7 @@ export default function SettingsView() {
                     </Button>
                   ) : (
                     <div className="flex gap-2">
-                      <Button size="sm" className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white" disabled={savingProfile} onClick={handleSaveProfile}>
+                      <Button size="sm" className="bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={savingProfile} onClick={handleSaveProfile}>
                         {savingProfile ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />}
                         Sauvegarder
                       </Button>
@@ -323,7 +323,7 @@ export default function SettingsView() {
                   <div className="space-y-2">
                     <Label>Rôle</Label>
                     <div className="flex items-center gap-2 py-2">
-                      <Badge className={userRole === 'super_admin' ? 'bg-[var(--ricash-primary)] text-white' : 'bg-[var(--ricash-accent)] text-white'}>
+                      <Badge className={userRole === 'super_admin' ? 'bg-ricash-brand text-white' : 'bg-ricash-accent text-white'}>
                         {userRole === 'super_admin' ? 'Super Admin' : 'Admin'}
                       </Badge>
                     </div>
@@ -399,7 +399,7 @@ export default function SettingsView() {
                 </div>
                 <div className="flex justify-end pt-2">
                   <Button
-                    className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                    className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                     disabled={savingPassword || !passwords.current || !passwords.new || !passwords.confirm}
                     onClick={handleChangePassword}
                   >
@@ -423,8 +423,8 @@ export default function SettingsView() {
               <CardContent>
                 <div className="flex items-center justify-between p-4 rounded-lg bg-muted/30 border">
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center size-10 rounded-lg bg-[var(--ricash-primary)]/10">
-                      <Shield className="size-5 text-[var(--ricash-primary)]" />
+                    <div className="flex items-center justify-center size-10 rounded-lg bg-ricash-brand/10">
+                      <Shield className="size-5 text-ricash-brand" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">2FA via application</p>
@@ -490,7 +490,7 @@ export default function SettingsView() {
                   { key: 'fraudAlerts' as const, label: 'Alertes fraude', desc: 'Activités suspectes détectées', icon: AlertTriangle, color: 'text-red-500' },
                   { key: 'lowFloatAlerts' as const, label: 'Alertes float bas', desc: 'Quand le float d\'un agent est faible', icon: Info, color: 'text-orange-500' },
                   { key: 'kycExpiryAlerts' as const, label: 'Expiration KYC', desc: 'Documents KYC arrivant à expiration', icon: Shield, color: 'text-amber-500' },
-                  { key: 'transactionAlerts' as const, label: 'Alertes transactions', desc: 'Transactions importantes ou inhabituelles', icon: Bell, color: 'text-[var(--ricash-primary)]' },
+                  { key: 'transactionAlerts' as const, label: 'Alertes transactions', desc: 'Transactions importantes ou inhabituelles', icon: Bell, color: 'text-ricash-brand' },
                   { key: 'systemAlerts' as const, label: 'Alertes système', desc: 'Maintenance, mises à jour et incidents', icon: Server, color: 'text-muted-foreground' },
                 ].map((item) => {
                   const Icon = item.icon;
@@ -537,14 +537,14 @@ export default function SettingsView() {
                       onClick={() => updateAppearance({ theme: theme.value })}
                       className={`p-4 rounded-lg border-2 text-left transition-all ${
                         appearance.theme === theme.value
-                          ? 'border-[var(--ricash-primary)] bg-[var(--ricash-primary)]/5'
+                          ? 'border-[var(--ricash-primary)] bg-ricash-brand/5'
                           : 'border-border hover:border-[var(--ricash-primary)]/40'
                       }`}
                     >
                       <p className="text-sm font-semibold">{theme.label}</p>
                       <p className="text-xs text-muted-foreground mt-1">{theme.desc}</p>
                       {appearance.theme === theme.value && (
-                        <CheckCircle2 className="size-4 text-[var(--ricash-primary)] mt-2" />
+                        <CheckCircle2 className="size-4 text-ricash-brand mt-2" />
                       )}
                     </button>
                   ))}
@@ -711,7 +711,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                 disabled={savingSystem}
                 onClick={handleSaveSystem}
               >
@@ -740,8 +740,8 @@ export default function SettingsView() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center size-8 rounded-lg bg-[var(--ricash-accent)]/10">
-                    <DollarSign className="size-4 text-[var(--ricash-accent)]" />
+                  <div className="flex items-center justify-center size-8 rounded-lg bg-ricash-accent-bg">
+                    <DollarSign className="size-4 text-ricash-accent" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Frais de service</CardTitle>
@@ -794,13 +794,13 @@ export default function SettingsView() {
                             <TableCell className="text-right">
                               {isEditing ? (
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button size="sm" className="h-7 text-xs bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white" disabled={isSaving} onClick={() => saveFee(fee.id)}>
+                                  <Button size="sm" className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={isSaving} onClick={() => saveFee(fee.id)}>
                                     {isSaving ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />} Sauvegarder
                                   </Button>
                                   <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={cancelEditFee} disabled={isSaving}>Annuler</Button>
                                 </div>
                               ) : (
-                                <Button size="sm" variant="ghost" className="h-7 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80" onClick={() => startEditFee(fee)}>
+                                <Button size="sm" variant="ghost" className="h-7 text-xs text-ricash-brand hover:text-ricash-brand/80" onClick={() => startEditFee(fee)}>
                                   <Pencil className="size-3.5 mr-1" /> Modifier
                                 </Button>
                               )}
@@ -818,8 +818,8 @@ export default function SettingsView() {
             <Card>
               <CardHeader>
                 <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center size-8 rounded-lg bg-[var(--ricash-primary)]/10">
-                    <ShieldCheck className="size-4 text-[var(--ricash-primary)]" />
+                  <div className="flex items-center justify-center size-8 rounded-lg bg-ricash-brand/10">
+                    <ShieldCheck className="size-4 text-ricash-brand" />
                   </div>
                   <div>
                     <CardTitle className="text-lg">Plafonds KYC</CardTitle>
@@ -866,13 +866,13 @@ export default function SettingsView() {
                             <TableCell className="text-right">
                               {isEditing ? (
                                 <div className="flex items-center justify-end gap-1">
-                                  <Button size="sm" className="h-7 text-xs bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white" disabled={isSaving} onClick={() => saveKyc(limit.level)}>
+                                  <Button size="sm" className="h-7 text-xs bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={isSaving} onClick={() => saveKyc(limit.level)}>
                                     {isSaving ? <Loader2 className="size-3.5 mr-1 animate-spin" /> : <Save className="size-3.5 mr-1" />} Sauvegarder
                                   </Button>
                                   <Button size="sm" variant="ghost" className="h-7 text-xs" onClick={cancelEditKyc} disabled={isSaving}>Annuler</Button>
                                 </div>
                               ) : (
-                                <Button size="sm" variant="ghost" className="h-7 text-xs text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80" onClick={() => startEditKyc(limit)}>
+                                <Button size="sm" variant="ghost" className="h-7 text-xs text-ricash-brand hover:text-ricash-brand/80" onClick={() => startEditKyc(limit)}>
                                   <Pencil className="size-3.5 mr-1" /> Modifier
                                 </Button>
                               )}
@@ -927,7 +927,7 @@ export default function SettingsView() {
                   </div>
                 </div>
                 <div className="flex justify-end pt-2">
-                  <Button className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white" disabled={savingGeneral} onClick={saveGeneral}>
+                  <Button className="bg-ricash-brand hover:bg-ricash-brand/90 text-white" disabled={savingGeneral} onClick={saveGeneral}>
                     {savingGeneral ? <Loader2 className="size-4 mr-1.5 animate-spin" /> : <Save className="size-4 mr-1.5" />} Sauvegarder
                   </Button>
                 </div>
@@ -1032,7 +1032,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                 disabled={savingAdminAgent}
                 onClick={handleSaveAdminAgent}
               >
@@ -1133,13 +1133,13 @@ export default function SettingsView() {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="p-4 rounded-lg bg-[var(--ricash-primary)]/5 border border-[var(--ricash-primary)]/20">
+                  <div className="p-4 rounded-lg bg-ricash-brand/5 border border-ricash-brand/20">
                     <p className="text-xs text-muted-foreground">Transaction max</p>
-                    <p className="text-lg font-bold text-[var(--ricash-primary)]">{formatNumber(adminLimits.maxTransactionApproval)} XOF</p>
+                    <p className="text-lg font-bold text-ricash-brand">{formatNumber(adminLimits.maxTransactionApproval)} XOF</p>
                   </div>
-                  <div className="p-4 rounded-lg bg-[var(--ricash-accent)]/5 border border-[var(--ricash-accent)]/20">
+                  <div className="p-4 rounded-lg bg-ricash-accent/5 border border-[var(--ricash-accent)]/20">
                     <p className="text-xs text-muted-foreground">Plafond journalier</p>
-                    <p className="text-lg font-bold text-[var(--ricash-accent)]">{formatNumber(adminLimits.maxDailyApproval)} XOF</p>
+                    <p className="text-lg font-bold text-ricash-accent">{formatNumber(adminLimits.maxDailyApproval)} XOF</p>
                   </div>
                   <div className="p-4 rounded-lg bg-green-50 border border-green-200">
                     <p className="text-xs text-muted-foreground">Float max</p>
@@ -1151,7 +1151,7 @@ export default function SettingsView() {
 
             <div className="flex justify-end">
               <Button
-                className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+                className="bg-ricash-brand hover:bg-ricash-brand/90 text-white"
                 disabled={savingAdminLimits}
                 onClick={handleSaveAdminLimits}
               >
@@ -1180,7 +1180,7 @@ export default function SettingsView() {
 
       {/* Role badge */}
       <div className="flex items-center gap-2">
-        <Badge className={userRole === 'super_admin' ? 'bg-[var(--ricash-primary)] text-white' : 'bg-[var(--ricash-accent)] text-white'}>
+        <Badge className={userRole === 'super_admin' ? 'bg-ricash-brand text-white' : 'bg-ricash-accent text-white'}>
           {userRole === 'super_admin' ? 'Super Admin' : 'Admin'}
         </Badge>
         <span className="text-sm text-muted-foreground">
@@ -1205,7 +1205,7 @@ export default function SettingsView() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
                     isActive
-                      ? 'bg-[var(--ricash-primary)] text-white shadow-sm'
+                      ? 'bg-ricash-brand text-white shadow-sm'
                       : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                   }`}
                 >

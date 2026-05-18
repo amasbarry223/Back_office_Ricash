@@ -106,16 +106,16 @@ export default function DataTable({
       return <ArrowUpDown className="size-3.5 ml-1 text-muted-foreground/50" />;
     }
     return sortDirection === 'asc' ? (
-      <ArrowUp className="size-3.5 ml-1 text-[var(--ricash-accent)]" />
+      <ArrowUp className="size-3.5 ml-1 text-ricash-accent" />
     ) : (
-      <ArrowDown className="size-3.5 ml-1 text-[var(--ricash-accent)]" />
+      <ArrowDown className="size-3.5 ml-1 text-ricash-accent" />
     );
   };
 
   // Loading skeleton rows
   if (loading) {
     return (
-      <div className="bg-white rounded-xl ricash-card-shadow overflow-hidden">
+      <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
@@ -147,7 +147,7 @@ export default function DataTable({
   // Empty state
   if (!loading && sortedData.length === 0) {
     return (
-      <div className="bg-white rounded-xl ricash-card-shadow overflow-hidden">
+      <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden">
         <div className="flex flex-col items-center justify-center py-16 px-4">
           <div className="flex items-center justify-center size-12 rounded-full bg-muted mb-4">
             <Inbox className="size-6 text-muted-foreground" />
@@ -159,7 +159,7 @@ export default function DataTable({
   }
 
   return (
-    <div className="bg-white rounded-xl ricash-card-shadow overflow-hidden">
+    <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden">
       <div className="overflow-x-auto">
         <Table>
           <TableHeader>
@@ -185,7 +185,7 @@ export default function DataTable({
                 key={row.id ? String(row.id) : `row-${rowIdx}`}
                 className={`
                   ${rowIdx % 2 === 1 ? 'bg-muted/20' : ''}
-                  ${onRowClick ? 'cursor-pointer' : ''}
+                  ${onRowClick ? 'cursor-pointer hover:bg-muted/40' : ''}
                 `}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
               >
@@ -231,7 +231,7 @@ export default function DataTable({
                   variant={page === currentPage ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => onPageChange?.(page)}
-                  className={`h-8 w-8 text-xs p-0 ${page === currentPage ? 'bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90' : ''}`}
+                  className={`h-8 w-8 text-xs p-0 ${page === currentPage ? 'bg-ricash-brand hover:bg-ricash-brand/90 text-white' : ''}`}
                 >
                   {page}
                 </Button>

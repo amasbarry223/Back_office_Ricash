@@ -68,7 +68,7 @@ const ALERT_ICON_MAP: Record<NotificationType, React.ReactNode> = {
   LOW_FLOAT: <Wallet className="size-5 text-orange-500" />,
   KYC_EXPIRED: <FileWarning className="size-5 text-yellow-500" />,
   SYSTEM: <AlertCircle className="size-5 text-muted-foreground" />,
-  TRANSACTION_ALERT: <Bell className="size-5 text-[var(--ricash-primary)]" />,
+  TRANSACTION_ALERT: <Bell className="size-5 text-ricash-brand" />,
 };
 
 const ALERT_BG_MAP: Record<NotificationType, string> = {
@@ -94,7 +94,7 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-white rounded-lg shadow-lg border border-border/60 px-3 py-2 text-xs">
+    <div className="bg-card rounded-lg shadow-lg border border-border/60 px-3 py-2 text-xs">
       <p className="font-medium text-foreground mb-1">{label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.color }} className="flex items-center gap-1.5">
@@ -161,7 +161,7 @@ export default function DashboardView() {
         label: 'Référence',
         width: '180px',
         render: (_: unknown, row: Record<string, unknown>) => (
-          <span className="font-mono text-xs text-[var(--ricash-primary)]">
+          <span className="font-mono text-xs text-ricash-brand">
             {String(row.ref)}
           </span>
         ),
@@ -292,7 +292,7 @@ export default function DashboardView() {
       {/* ---- Chart + Alerts Row ---- */}
       <section className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         {/* Line Chart */}
-        <Card className="xl:col-span-2 bg-white ricash-card-shadow">
+        <Card className="xl:col-span-2 bg-card ricash-card-shadow">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold">
               Évolution des transactions (30 jours)
@@ -329,20 +329,20 @@ export default function DashboardView() {
                     type="monotone"
                     dataKey="montant"
                     name="montant"
-                    stroke="#1A3C6E"
+                    stroke="var(--ricash-primary)"
                     strokeWidth={2.5}
                     dot={false}
-                    activeDot={{ r: 5, strokeWidth: 0, fill: '#1A3C6E' }}
+                    activeDot={{ r: 5, strokeWidth: 0, fill: 'var(--ricash-primary)' }}
                   />
                   <Line
                     yAxisId="volume"
                     type="monotone"
                     dataKey="volume"
                     name="volume"
-                    stroke="#00B0A0"
+                    stroke="var(--ricash-accent)"
                     strokeWidth={2}
                     dot={false}
-                    activeDot={{ r: 4, strokeWidth: 0, fill: '#00B0A0' }}
+                    activeDot={{ r: 4, strokeWidth: 0, fill: 'var(--ricash-accent)' }}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -350,11 +350,11 @@ export default function DashboardView() {
             {/* Legend */}
             <div className="flex items-center justify-center gap-6 mt-2 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
-                <span className="size-3 rounded-full bg-[#1A3C6E]" />
+                <span className="size-3 rounded-full bg-ricash-brand" />
                 Montant (XOF)
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="size-3 rounded-full bg-[#00B0A0]" />
+                <span className="size-3 rounded-full bg-ricash-accent" />
                 Volume
               </span>
             </div>
@@ -362,13 +362,13 @@ export default function DashboardView() {
         </Card>
 
         {/* Active Alerts */}
-        <Card className="bg-white ricash-card-shadow flex flex-col">
+        <Card className="bg-card ricash-card-shadow flex flex-col">
           <CardHeader className="pb-2">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <AlertTriangle className="size-4 text-orange-500" />
+              <AlertTriangle className="size-4 text-ricash-warning" />
               Alertes actives
               {unreadNotifications.length > 0 && (
-                <span className="ml-auto bg-red-500 text-white text-[10px] font-bold rounded-full size-5 flex items-center justify-center">
+                <span className="ml-auto bg-ricash-danger text-white text-[10px] font-bold rounded-full size-5 flex items-center justify-center">
                   {unreadNotifications.length}
                 </span>
               )}

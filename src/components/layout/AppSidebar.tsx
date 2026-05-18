@@ -179,7 +179,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
         {!effectiveCollapsed ? (
           <div className="flex items-center gap-3">
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/10">
-              <span className="text-[var(--ricash-accent)] font-bold text-lg">R</span>
+              <span className="text-ricash-accent font-bold text-lg">R</span>
             </div>
             <div className="flex flex-col">
               <span className="text-white font-bold text-lg leading-tight tracking-wide">RICASH</span>
@@ -189,7 +189,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
         ) : (
           <div className="flex items-center justify-center w-full">
             <div className="flex items-center justify-center w-9 h-9 rounded-lg bg-white/10">
-              <span className="text-[var(--ricash-accent)] font-bold text-lg">R</span>
+              <span className="text-ricash-accent font-bold text-lg">R</span>
             </div>
           </div>
         )}
@@ -224,28 +224,28 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                         ${effectiveCollapsed ? 'justify-center px-2 py-2.5' : 'px-3 py-2.5'}
                         ${
                           isActive
-                            ? 'bg-white/10 text-white border-l-[3px] border-[var(--ricash-accent)]'
+                            ? 'bg-white/10 text-white border-l-[3px] border-ricash-accent'
                             : 'text-white/60 hover:text-white hover:bg-white/5 border-l-[3px] border-transparent'
                         }
                       `}
                     >
                       <Icon
                         className={`shrink-0 ${effectiveCollapsed ? 'size-5' : 'size-4 mr-3'} ${
-                          isActive ? 'text-[var(--ricash-accent)]' : 'text-white/60 group-hover:text-white'
+                          isActive ? 'text-ricash-accent' : 'text-white/60 group-hover:text-white'
                         }`}
                       />
                       {!effectiveCollapsed && (
                         <>
                           <span className="flex-1 text-left text-sm font-medium">{item.label}</span>
                           {badgeCount > 0 && (
-                            <Badge className="bg-[var(--ricash-accent)] text-white hover:bg-[var(--ricash-accent)]/90 text-[10px] px-1.5 py-0 h-5 min-w-[20px] justify-center">
+                            <Badge className="bg-ricash-accent text-white hover:bg-ricash-accent/90 text-[10px] px-1.5 py-0 h-5 min-w-[20px] justify-center">
                               {badgeCount}
                             </Badge>
                           )}
                         </>
                       )}
                       {effectiveCollapsed && badgeCount > 0 && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[var(--ricash-accent)]" />
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-ricash-accent" />
                       )}
                     </button>
                   );
@@ -260,7 +260,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                           <TooltipContent side="right" className="font-medium">
                             {item.label}
                             {badgeCount > 0 && (
-                              <Badge className="ml-2 bg-[var(--ricash-accent)] text-white hover:bg-[var(--ricash-accent)]/90 text-[10px] px-1.5 py-0 h-5">
+                              <Badge className="ml-2 bg-ricash-accent text-white hover:bg-ricash-accent/90 text-[10px] px-1.5 py-0 h-5">
                                 {badgeCount}
                               </Badge>
                             )}
@@ -302,7 +302,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
           <Separator className="bg-white/10 mx-3" />
           <div className={`shrink-0 p-3 ${effectiveCollapsed ? 'flex flex-col items-center' : 'flex items-center gap-3'}`}>
             <Avatar className="size-9 shrink-0">
-              <AvatarFallback className="bg-[var(--ricash-accent)] text-white text-xs font-semibold">
+              <AvatarFallback className="bg-ricash-accent text-white text-xs font-semibold">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>

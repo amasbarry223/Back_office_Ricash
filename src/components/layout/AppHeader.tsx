@@ -33,7 +33,6 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
   return (
     <header
       className="sticky top-0 z-[100] h-16 ricash-header border-b border-border/50 flex items-center px-4 lg:px-6"
-      style={{ backdropFilter: 'blur(8px)' }}
     >
       {/* Left side: Hamburger + Breadcrumb */}
       <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -81,7 +80,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
         >
           <Bell className="size-5" />
           {unreadCount > 0 && (
-            <Badge className="absolute -top-1 -right-1 bg-[var(--ricash-danger)] text-white hover:bg-[var(--ricash-danger)] text-[10px] px-1 py-0 h-4 min-w-[16px] justify-center border-0">
+            <Badge className="absolute -top-1 -right-1 bg-ricash-danger text-white hover:bg-ricash-danger text-[10px] px-1 py-0 h-4 min-w-[16px] justify-center border-0">
               {unreadCount > 99 ? '99+' : unreadCount}
             </Badge>
           )}
@@ -93,7 +92,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-accent/50">
                 <Avatar className="size-8">
-                  <AvatarFallback className="bg-[var(--ricash-primary)] text-white text-xs font-semibold">
+                  <AvatarFallback className="bg-ricash-brand text-white text-xs font-semibold">
                     {getInitials(user.name)}
                   </AvatarFallback>
                 </Avatar>
@@ -116,7 +115,7 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={logout}
-                className="text-[var(--ricash-danger)] focus:text-[var(--ricash-danger)] cursor-pointer"
+                className="text-ricash-danger focus:text-ricash-danger cursor-pointer"
               >
                 <LogOut className="size-4 mr-2" />
                 Déconnexion

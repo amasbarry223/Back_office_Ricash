@@ -137,7 +137,7 @@ export default function KycDetailView() {
           <Card className="ricash-card-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <User className="size-4 text-[var(--ricash-primary)]" />
+                <User className="size-4 text-ricash-brand" />
                 Informations client
               </CardTitle>
             </CardHeader>
@@ -176,7 +176,7 @@ export default function KycDetailView() {
           <Card className="ricash-card-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <ShieldCheck className="size-4 text-[var(--ricash-accent)]" />
+                <ShieldCheck className="size-4 text-ricash-accent" />
                 Vérification
               </CardTitle>
             </CardHeader>
@@ -316,7 +316,7 @@ export default function KycDetailView() {
           <Card className="ricash-card-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <IdCard className="size-4 text-[var(--ricash-primary)]" />
+                <IdCard className="size-4 text-ricash-brand" />
                 Document
               </CardTitle>
             </CardHeader>
@@ -334,9 +334,9 @@ export default function KycDetailView() {
                   style={{ transform: `scale(${zoom})` }}
                 >
                   <div className="flex items-center justify-center size-28 rounded-2xl bg-white/80 shadow-lg border border-gray-200 mb-4">
-                    <IdCard className="size-16 text-[var(--ricash-primary)]/40" />
+                    <IdCard className="size-16 text-ricash-brand/40" />
                   </div>
-                  <p className="text-[var(--ricash-primary)]/60 text-sm font-semibold">Aperçu du document</p>
+                  <p className="text-ricash-brand/60 text-sm font-semibold">Aperçu du document</p>
                   <p className="text-muted-foreground text-xs mt-1">
                     {DOCUMENT_TYPE_LABELS[record.documentType] ?? record.documentType}
                   </p>

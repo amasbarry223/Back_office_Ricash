@@ -43,8 +43,8 @@ const NOTIFICATION_ICONS: Record<NotificationType, { icon: React.ElementType; co
   },
   TRANSACTION_ALERT: {
     icon: ArrowLeftRight,
-    colorClass: 'text-[var(--ricash-primary)]',
-    bgClass: 'bg-[var(--ricash-primary)]/5',
+    colorClass: 'text-ricash-brand',
+    bgClass: 'bg-ricash-brand/5',
   },
 };
 
@@ -89,7 +89,7 @@ export default function NotificationsView() {
           <Button
             variant="outline"
             size="sm"
-            className="text-[var(--ricash-primary)] hover:text-[var(--ricash-primary)]/80 border-[var(--ricash-primary)]/30"
+            className="text-ricash-brand hover:text-ricash-brand/80 border-ricash-brand/30"
             onClick={handleMarkAllAsRead}
           >
             <CheckCheck className="size-4 mr-1.5" />
@@ -116,7 +116,7 @@ export default function NotificationsView() {
                 className={`cursor-pointer transition-all duration-150 hover:shadow-md ${
                   notif.read
                     ? 'bg-white border-border/50'
-                    : 'bg-white border-l-4 border-l-[var(--ricash-accent)] shadow-sm'
+                    : 'bg-card border-l-4 border-l-ricash-accent shadow-sm'
                 }`}
                 onClick={() => handleClickNotification(notif)}
               >
@@ -138,7 +138,7 @@ export default function NotificationsView() {
                               {notif.title}
                             </h3>
                             {!notif.read && (
-                              <span className="size-2 rounded-full bg-[var(--ricash-accent)] shrink-0" />
+                              <span className="size-2 rounded-full bg-ricash-accent shrink-0" />
                             )}
                           </div>
                           <p className="text-sm text-muted-foreground mt-0.5 line-clamp-2">

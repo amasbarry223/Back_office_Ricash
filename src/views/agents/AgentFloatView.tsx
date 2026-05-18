@@ -279,7 +279,7 @@ export default function AgentFloatView() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
-            <Send className="size-5 text-[var(--ricash-primary)]" />
+            <Send className="size-5 text-ricash-brand" />
             Demande de rechargement
           </CardTitle>
           <CardDescription>
@@ -317,7 +317,7 @@ export default function AgentFloatView() {
             <Button
               onClick={handleSubmitRequest}
               disabled={isSubmitting || !amount || !justification.trim()}
-              className="gap-1.5 bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+              className="gap-1.5 bg-ricash-brand hover:bg-ricash-brand/90 text-white"
             >
               <Send className="size-4" />
               {isSubmitting ? 'Soumission en cours…' : 'Soumettre la demande'}
@@ -329,7 +329,7 @@ export default function AgentFloatView() {
       {/* Section 3 — Historique des demandes */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <FileText className="size-5 text-[var(--ricash-primary)]" />
+          <FileText className="size-5 text-ricash-brand" />
           Historique des demandes
         </h2>
         <DataTable
@@ -342,7 +342,7 @@ export default function AgentFloatView() {
       {/* Section 4 — Historique mouvements */}
       <div className="space-y-3">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          <TrendingUp className="size-5 text-[var(--ricash-primary)]" />
+          <TrendingUp className="size-5 text-ricash-brand" />
           Historique des mouvements
         </h2>
         <DataTable

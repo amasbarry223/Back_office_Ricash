@@ -189,7 +189,7 @@ export default function TransactionDetailView() {
               {/* Reference */}
               <div>
                 <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Référence</p>
-                <p className="text-xl font-bold font-mono text-[var(--ricash-primary)]">{transaction.ref}</p>
+                <p className="text-xl font-bold font-mono text-ricash-brand">{transaction.ref}</p>
               </div>
 
               {/* Type + Status row */}
@@ -223,7 +223,7 @@ export default function TransactionDetailView() {
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Montant net</p>
-                  <p className="text-lg font-bold text-[var(--ricash-accent)]">{formatXOF(netAmount)}</p>
+                  <p className="text-lg font-bold text-ricash-accent">{formatXOF(netAmount)}</p>
                 </div>
               </div>
 
@@ -282,7 +282,7 @@ export default function TransactionDetailView() {
           <Card className="ricash-card-shadow">
             <CardHeader className="pb-3">
               <CardTitle className="text-base flex items-center gap-2">
-                <User className="size-4 text-[var(--ricash-primary)]" />
+                <User className="size-4 text-ricash-brand" />
                 Client
               </CardTitle>
             </CardHeader>
@@ -302,7 +302,7 @@ export default function TransactionDetailView() {
               <Button
                 variant="link"
                 size="sm"
-                className="text-[var(--ricash-primary)] p-0 h-auto text-xs"
+                className="text-ricash-brand p-0 h-auto text-xs"
                 onClick={() =>
                   navigate('client-detail', { id: transaction.clientId }, buildBreadcrumb([
                     { label: 'Transactions', route: 'transactions' },
@@ -321,14 +321,14 @@ export default function TransactionDetailView() {
             <Card className="ricash-card-shadow">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Briefcase className="size-4 text-[var(--ricash-accent)]" />
+                  <Briefcase className="size-4 text-ricash-accent" />
                   Agent
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
                 <div>
                   <p className="text-xs text-muted-foreground">Code</p>
-                  <p className="text-sm font-mono font-semibold text-[var(--ricash-accent)]">
+                  <p className="text-sm font-mono font-semibold text-ricash-accent">
                     {transaction.agentCode}
                   </p>
                 </div>
@@ -339,7 +339,7 @@ export default function TransactionDetailView() {
                 <Button
                   variant="link"
                   size="sm"
-                  className="text-[var(--ricash-accent)] p-0 h-auto text-xs"
+                  className="text-ricash-accent p-0 h-auto text-xs"
                   onClick={() =>
                     navigate('agent-detail', { id: transaction.agentId! }, buildBreadcrumb([
                       { label: 'Transactions', route: 'transactions' },

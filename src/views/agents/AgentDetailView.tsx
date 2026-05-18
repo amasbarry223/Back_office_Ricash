@@ -294,7 +294,7 @@ export default function AgentDetailView() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <User className="size-5 text-[var(--ricash-primary)]" />
+                <User className="size-5 text-ricash-brand" />
                 Informations de l&apos;agent
               </CardTitle>
             </CardHeader>
@@ -342,7 +342,7 @@ export default function AgentDetailView() {
                   <p className="text-xs text-muted-foreground flex items-center gap-1">
                     <ShieldCheck className="size-3" /> Niveau KYC
                   </p>
-                  <Badge variant="outline" className="text-xs font-medium border-[var(--ricash-accent)]/30 bg-[var(--ricash-accent)]/5 text-[var(--ricash-accent)]">
+                  <Badge variant="outline" className="text-xs font-medium border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
                     Niveau {agent.kycLevel}
                   </Badge>
                 </div>
@@ -364,8 +364,8 @@ export default function AgentDetailView() {
               <CardContent className="py-8">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
-                    <div className="flex items-center justify-center size-14 rounded-xl bg-[var(--ricash-accent)]/10">
-                      <Wallet className="size-7 text-[var(--ricash-accent)]" />
+                    <div className="flex items-center justify-center size-14 rounded-xl bg-ricash-accent-bg">
+                      <Wallet className="size-7 text-ricash-accent" />
                     </div>
                     <div>
                       <p className="text-sm text-muted-foreground">Float actuel</p>
@@ -416,12 +416,12 @@ export default function AgentDetailView() {
             <Card>
               <CardContent className="py-6">
                 <div className="flex items-center gap-4">
-                  <div className="flex items-center justify-center size-14 rounded-xl bg-[var(--ricash-primary)]/10">
-                    <ShieldCheck className="size-7 text-[var(--ricash-primary)]" />
+                  <div className="flex items-center justify-center size-14 rounded-xl bg-ricash-brand/10">
+                    <ShieldCheck className="size-7 text-ricash-brand" />
                   </div>
                   <div>
                     <p className="text-sm text-muted-foreground">Niveau KYC actuel</p>
-                    <Badge variant="outline" className="text-lg font-semibold px-3 py-1 border-[var(--ricash-accent)]/30 bg-[var(--ricash-accent)]/5 text-[var(--ricash-accent)]">
+                    <Badge variant="outline" className="text-lg font-semibold px-3 py-1 border-ricash-accent/30 bg-ricash-accent/5 text-ricash-accent">
                       Niveau {agent.kycLevel}
                     </Badge>
                   </div>

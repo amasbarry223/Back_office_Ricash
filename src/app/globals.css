@@ -41,10 +41,27 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* ─── Ricash Semantic Colors in @theme ─── */
+  --color-ricash-success: var(--ricash-success);
+  --color-ricash-success-bg: var(--ricash-success-bg);
+  --color-ricash-warning: var(--ricash-warning);
+  --color-ricash-warning-bg: var(--ricash-warning-bg);
+  --color-ricash-danger: var(--ricash-danger);
+  --color-ricash-danger-bg: var(--ricash-danger-bg);
+  --color-ricash-info: var(--ricash-info);
+  --color-ricash-info-bg: var(--ricash-info-bg);
+  --color-ricash-neutral: var(--ricash-neutral);
+  --color-ricash-neutral-bg: var(--ricash-neutral-bg);
+  --color-ricash-brand: var(--ricash-primary);
+  --color-ricash-brand-bg: var(--ricash-primary-bg);
+  --color-ricash-accent: var(--ricash-accent);
 }
 
 :root {
   --radius: 0.625rem;
+
+  /* ─── shadcn/ui base tokens ─── */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -77,23 +94,76 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 
-  /* Ricash Custom Colors */
+  /* ═══════════════════════════════════════════════
+     RICASH DESIGN TOKENS — Light Mode
+     ═══════════════════════════════════════════════ */
+
+  /* ─── Brand (Primary) ─── */
   --ricash-primary: #1A3C6E;
-  --ricash-secondary: #2E75B6;
+  --ricash-primary-light: #2E5A8E;
+  --ricash-primary-dark: #0F2844;
+  --ricash-primary-bg: rgba(26, 60, 110, 0.08);
+  --ricash-primary-border: rgba(26, 60, 110, 0.15);
+
+  /* ─── Accent (Teal) ─── */
   --ricash-accent: #00B0A0;
-  --ricash-bg: #F4F7FB;
-  --ricash-sidebar-bg: #0F2544;
-  --ricash-card-bg: #FFFFFF;
-  --ricash-header-bg: rgba(255, 255, 255, 0.95);
+  --ricash-accent-light: #33C4B7;
+  --ricash-accent-dark: #008A7D;
+  --ricash-accent-bg: rgba(0, 176, 160, 0.08);
+
+  /* ─── Semantic: Success ─── */
   --ricash-success: #16A34A;
+  --ricash-success-light: #22C55E;
+  --ricash-success-bg: #F0FDF4;
+  --ricash-success-border: #BBF7D0;
+
+  /* ─── Semantic: Warning ─── */
   --ricash-warning: #D97706;
+  --ricash-warning-light: #F59E0B;
+  --ricash-warning-bg: #FFFBEB;
+  --ricash-warning-border: #FDE68A;
+
+  /* ─── Semantic: Danger ─── */
   --ricash-danger: #DC2626;
-  --ricash-neutral: #6B7280;
+  --ricash-danger-light: #EF4444;
+  --ricash-danger-bg: #FEF2F2;
+  --ricash-danger-border: #FECACA;
+
+  /* ─── Semantic: Info ─── */
+  --ricash-info: #0284C7;
+  --ricash-info-light: #0EA5E9;
+  --ricash-info-bg: #F0F9FF;
+  --ricash-info-border: #BAE6FD;
+
+  /* ─── Semantic: Neutral ─── */
+  --ricash-neutral: #64748B;
+  --ricash-neutral-light: #94A3B8;
+  --ricash-neutral-bg: #F8FAFC;
+  --ricash-neutral-border: #E2E8F0;
+
+  /* ─── Surfaces ─── */
+  --ricash-bg: #F4F7FB;
+  --ricash-surface: #FFFFFF;
+  --ricash-surface-hover: #F8FAFC;
+  --ricash-sidebar-bg: #0F2544;
+  --ricash-header-bg: rgba(255, 255, 255, 0.92);
+
+  /* ─── Layout ─── */
   --sidebar-width: 260px;
   --sidebar-collapsed: 64px;
   --header-height: 64px;
+
+  /* ─── Shadows ─── */
+  --ricash-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --ricash-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --ricash-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.06), 0 2px 4px -2px rgb(0 0 0 / 0.06);
+  --ricash-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.06);
+  --ricash-shadow-sidebar: 4px 0 24px rgb(0 0 0 / 0.12);
 }
 
+/* ═══════════════════════════════════════════════
+   DARK MODE
+   ═══════════════════════════════════════════════ */
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -126,6 +196,55 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Ricash dark mode overrides */
+  --ricash-primary: #5B8EC9;
+  --ricash-primary-light: #7DADE0;
+  --ricash-primary-dark: #3A6FA0;
+  --ricash-primary-bg: rgba(91, 142, 201, 0.12);
+  --ricash-primary-border: rgba(91, 142, 201, 0.20);
+
+  --ricash-accent: #33C4B7;
+  --ricash-accent-light: #5DD8CD;
+  --ricash-accent-dark: #008A7D;
+  --ricash-accent-bg: rgba(51, 196, 183, 0.12);
+
+  --ricash-success: #34D058;
+  --ricash-success-light: #5EE877;
+  --ricash-success-bg: rgba(52, 208, 88, 0.12);
+  --ricash-success-border: rgba(52, 208, 88, 0.20);
+
+  --ricash-warning: #FBBF24;
+  --ricash-warning-light: #FCD34D;
+  --ricash-warning-bg: rgba(251, 191, 36, 0.12);
+  --ricash-warning-border: rgba(251, 191, 36, 0.20);
+
+  --ricash-danger: #F87171;
+  --ricash-danger-light: #FCA5A5;
+  --ricash-danger-bg: rgba(248, 113, 113, 0.12);
+  --ricash-danger-border: rgba(248, 113, 113, 0.20);
+
+  --ricash-info: #38BDF8;
+  --ricash-info-light: #7DD3FC;
+  --ricash-info-bg: rgba(56, 189, 248, 0.12);
+  --ricash-info-border: rgba(56, 189, 248, 0.20);
+
+  --ricash-neutral: #94A3B8;
+  --ricash-neutral-light: #CBD5E1;
+  --ricash-neutral-bg: rgba(148, 163, 184, 0.10);
+  --ricash-neutral-border: rgba(148, 163, 184, 0.18);
+
+  --ricash-bg: #0F172A;
+  --ricash-surface: #1E293B;
+  --ricash-surface-hover: #273548;
+  --ricash-sidebar-bg: #0B1120;
+  --ricash-header-bg: rgba(15, 23, 42, 0.92);
+
+  --ricash-shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.20);
+  --ricash-shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.25), 0 1px 2px -1px rgb(0 0 0 / 0.20);
+  --ricash-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.25), 0 2px 4px -2px rgb(0 0 0 / 0.20);
+  --ricash-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.30), 0 4px 6px -4px rgb(0 0 0 / 0.20);
+  --ricash-shadow-sidebar: 4px 0 24px rgb(0 0 0 / 0.35);
 }
 
 @layer base {
@@ -137,22 +256,32 @@
   }
 }
 
-/* Ricash Custom Utility Classes (global scope for Tailwind v4 compat) */
+/* ═══════════════════════════════════════════════
+   RICASH UTILITY CLASSES
+   ═══════════════════════════════════════════════ */
+
 .ricash-bg {
   background-color: var(--ricash-bg);
+}
+.ricash-surface {
+  background-color: var(--ricash-surface);
 }
 .ricash-sidebar {
   background-color: var(--ricash-sidebar-bg);
 }
 .ricash-header {
   background-color: var(--ricash-header-bg);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 .ricash-card-shadow {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+  box-shadow: var(--ricash-shadow-sm);
+}
+.ricash-card-shadow-md {
+  box-shadow: var(--ricash-shadow-md);
 }
 .ricash-sidebar-shadow {
-  box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  box-shadow: var(--ricash-shadow-sidebar);
 }
 
 /* Custom Scrollbar */
@@ -163,11 +292,16 @@
   background: transparent;
 }
 .ricash-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.15);
+  background-color: var(--ricash-neutral-border, rgba(0, 0, 0, 0.15));
   border-radius: 3px;
 }
 .ricash-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.25);
+  background-color: var(--ricash-neutral-light, rgba(0, 0, 0, 0.25));
+}
+/* Firefox scrollbar */
+.ricash-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--ricash-neutral-border, rgba(0, 0, 0, 0.15)) transparent;
 }
 
 /* Loading Skeleton Shimmer */
@@ -176,7 +310,12 @@
   100% { background-position: 200% 0; }
 }
 .shimmer {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(
+    90deg,
+    var(--muted, #f0f0f0) 25%,
+    var(--border, #e0e0e0) 50%,
+    var(--muted, #f0f0f0) 75%
+  );
   background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+  animation: shimmer 1.5s ease-in-out infinite;
 }

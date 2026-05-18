@@ -18,26 +18,26 @@ interface StatCardProps {
 
 const COLOR_MAP = {
   blue: {
-    bg: 'bg-[var(--ricash-primary)]/10',
-    icon: 'text-[var(--ricash-primary)]',
+    bg: 'bg-ricash-brand-bg',
+    icon: 'text-ricash-brand',
   },
   green: {
-    bg: 'bg-emerald-50',
-    icon: 'text-emerald-600',
+    bg: 'bg-ricash-success-bg',
+    icon: 'text-ricash-success',
   },
   orange: {
-    bg: 'bg-orange-50',
-    icon: 'text-orange-600',
+    bg: 'bg-ricash-warning-bg',
+    icon: 'text-ricash-warning',
   },
   red: {
-    bg: 'bg-red-50',
-    icon: 'text-red-600',
+    bg: 'bg-ricash-danger-bg',
+    icon: 'text-ricash-danger',
   },
 };
 
 const TREND_COLORS = {
-  up: 'text-emerald-600',
-  down: 'text-red-600',
+  up: 'text-ricash-success',
+  down: 'text-ricash-danger',
   stable: 'text-muted-foreground',
 };
 
@@ -54,7 +54,7 @@ export default function StatCard({
 
   if (loading) {
     return (
-      <div className="bg-white rounded-xl p-6 ricash-card-shadow">
+      <div className="bg-card rounded-xl p-6 ricash-card-shadow">
         <div className="flex items-start justify-between mb-4">
           <div className="shimmer size-10 rounded-lg" />
           <div className="shimmer size-5 rounded" />
@@ -66,7 +66,7 @@ export default function StatCard({
   }
 
   return (
-    <div className="bg-white rounded-xl p-6 ricash-card-shadow hover:shadow-md transition-shadow">
+    <div className="bg-card rounded-xl p-6 ricash-card-shadow hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-4">
         <div className={`flex items-center justify-center size-10 rounded-lg ${colorConfig.bg}`}>
           <span className={colorConfig.icon}>{icon}</span>

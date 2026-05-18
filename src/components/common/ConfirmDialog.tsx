@@ -39,10 +39,10 @@ export default function ConfirmDialog({
 }: ConfirmDialogProps) {
   const confirmButtonClass =
     variant === 'destructive'
-      ? 'bg-red-600 hover:bg-red-700 text-white'
+      ? 'bg-ricash-danger hover:bg-ricash-danger-light text-white'
       : variant === 'warning'
-        ? 'bg-orange-600 hover:bg-orange-700 text-white'
-        : 'bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white';
+        ? 'bg-ricash-warning hover:bg-ricash-warning-light text-white'
+        : 'bg-ricash-brand hover:bg-ricash-brand/90 text-white';
 
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>

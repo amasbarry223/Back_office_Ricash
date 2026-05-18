@@ -12,7 +12,6 @@ import {
   Settings,
   Cog,
   Bell,
-  LogOut,
   ChevronLeft,
   ChevronRight,
 } from 'lucide-react';
@@ -20,13 +19,11 @@ import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
 import { useKycStore } from '@/stores/kyc-store';
 import { useAgentsStore } from '@/stores/agents-store';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Role, RouteName } from '@/types';
-import { getInitials, roleLabel, MOBILE_BREAKPOINT } from '@/lib/common';
+import { MOBILE_BREAKPOINT } from '@/lib/common';
 
 // ─── Navigation Configuration ───────────────────────────────
 
@@ -141,9 +138,7 @@ interface AppSidebarProps {
 }
 
 export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppSidebarProps) {
-  const user = useAuthStore((s) => s.user);
   const canAccess = useAuthStore((s) => s.canAccess);
-  const logout = useAuthStore((s) => s.logout);
   const currentRoute = useRouterStore((s) => s.currentRoute);
   const navigate = useRouterStore((s) => s.navigate);
   const kycRecords = useKycStore((s) => s.records);
@@ -327,50 +322,6 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
         </div>
       )}
 
-      {/* ─── User Profile (pinned to bottom) ─── */}
-      {user && (
-        <>
-          <Separator className="bg-white/10 mx-3" />
-          <div className={`shrink-0 p-3 ${effectiveCollapsed ? 'flex flex-col items-center' : 'flex items-center gap-3'}`}>
-            <Avatar className="size-9 shrink-0 ring-2 ring-white/10">
-              <AvatarFallback className="bg-ricash-accent text-white text-xs font-bold">
-                {getInitials(user.name)}
-              </AvatarFallback>
-            </Avatar>
-            {!effectiveCollapsed && (
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-semibold truncate">{user.name}</p>
-                <p className="text-white/40 text-xs truncate">{roleLabel(user.role)}</p>
-              </div>
-            )}
-            {!effectiveCollapsed && (
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                onClick={logout}
-                className="text-white/30 hover:text-white hover:bg-white/10 shrink-0"
-              >
-                <LogOut className="size-4" />
-              </Button>
-            )}
-            {effectiveCollapsed && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon-xs"
-                    onClick={logout}
-                    className="text-white/30 hover:text-white hover:bg-white/10 mt-2"
-                  >
-                    <LogOut className="size-4" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent side="right" sideOffset={8}>Déconnexion</TooltipContent>
-              </Tooltip>
-            )}
-          </div>
-        </>
-      )}
     </aside>
   );
 }

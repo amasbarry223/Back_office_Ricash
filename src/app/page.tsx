@@ -21,6 +21,7 @@ import KycView from '@/views/kyc/KycView';
 import KycDetailView from '@/views/kyc/KycDetailView';
 import FloatRequestsView from '@/views/float/FloatRequestsView';
 import ConfigView from '@/views/config/ConfigView';
+import SettingsView from '@/views/settings/SettingsView';
 import NotificationsView from '@/views/notifications/NotificationsView';
 import UnauthorizedView from '@/views/errors/UnauthorizedView';
 import NotFoundView from '@/views/errors/NotFoundView';
@@ -41,6 +42,7 @@ const ROUTE_ROLES: Record<string, Array<'super_admin' | 'admin'>> = {
   'kyc-detail': ['super_admin', 'admin'],
   float: ['super_admin', 'admin'],
   config: ['super_admin'],
+  settings: ['super_admin', 'admin'],
   notifications: ['super_admin', 'admin'],
 };
 
@@ -96,6 +98,8 @@ function RouteRenderer() {
         return <FloatRequestsView />;
       case 'config':
         return <ConfigView />;
+      case 'settings':
+        return <SettingsView />;
       case 'notifications':
         return <NotificationsView />;
       case 'unauthorized':

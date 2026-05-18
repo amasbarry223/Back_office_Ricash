@@ -210,22 +210,19 @@ Work Log:
 - Fixed AppHeader: `useNotificationsStore((s) => s.getUnreadCount())` → raw state + useMemo
 - Fixed duplicate `useAuthStore` import in KycView.tsx
 - Fixed missing `useAuthStore` import in KycView.tsx
-- Converted all full-store subscriptions (`useXxxStore()` without selectors) to individual selectors across 15+ files:
-  - LoginView, UsersView, AgentsView, TransactionsView, KycView, FloatRequestsView, NotificationsView, ConfigView, AdminsView, AdminDetailView, TransactionDetailView, KycDetailView, AppHeader, AppSidebar, page.tsx
+- Converted all full-store subscriptions (`useXxxStore()` without selectors) to individual selectors across 15+ files
 - Fixed non-memoized computed values: `activeAgents`, `globalFloat` in DashboardView → wrapped in useMemo
 - Fixed duplicate column keys: Changed 'id' to 'actions' in UsersView, TransactionsView, KycView, AgentsView
-- Fixed broken pagination in AdminsView (hardcoded page:1) → added page state + onPageChange
-- Fixed broken pagination in FloatRequestsView (both tabs) → added pendingPage/historyPage states + onPageChange
+- Fixed broken pagination in AdminsView and FloatRequestsView
 - Removed dead 'super-admins' route from RouteName type
 - ESLint passes clean, no TypeScript compilation errors
 
 Stage Summary:
-- All Zustand infinite loop errors fixed (3 critical: getStats, getRecentTransactions, notifications.filter)
-- All full-store subscriptions converted to individual selectors (15+ files)
+- All Zustand infinite loop errors fixed
+- All full-store subscriptions converted to individual selectors
 - All duplicate column keys fixed
 - All broken pagination fixed
-- Dead code removed
-- App compiles and serves successfully with no errors
+- App compiles and serves successfully
 
 ---
 Task ID: 14
@@ -233,27 +230,16 @@ Agent: Main Orchestrator
 Task: Fix remaining runtime issues and visual bugs
 
 Work Log:
-- Fixed DashboardLayout padding overlap: removed extra `paddingTop: calc(var(--header-height) + 24px)` from main content area since AppHeader is already in normal flow as a flex child
-- Fixed detail views stale data bug: Replaced `getXById()` method calls (which use `get()` internally and don't trigger re-renders) with raw state subscriptions + `useMemo` for finding items:
-  - UserDetailView: `getClientById(clientId)` → `clients.find(c => c.id === clientId)` with `useMemo`
-  - AgentDetailView: `getAgentById(agentId)` → `agents.find(a => a.id === agentId)` with `useMemo`
-  - AgentFloatView: `getAgentById(agentId)` → `agents.find(a => a.id === agentId)` with `useMemo`
-  - TransactionDetailView: `getTransactionById(id)` → `transactions.find(t => t.id === id)` with `useMemo`
-  - KycDetailView: `getRecordById(id)` → `kycRecords.find(r => r.id === id)` with `useMemo`
-  - AdminDetailView: `getAdminById(params.id)` → `admins.find(a => a.id === params.id)` with `useMemo`
-- Fixed LoginView duplicate redirect: Removed `useEffect` that navigates to dashboard when authenticated (page.tsx already handles this), preventing race conditions
-- Fixed LoginView error clearing loop: Replaced `useEffect` that clears error on email/password changes with direct handler functions that clear error on input change, avoiding the effect dependency loop
-- Fixed mobile sidebar: Replaced collapsed sidebar on mobile with proper overlay pattern (backdrop + fixed sidebar) that opens/closes with hamburger menu
-- Cleaned up unused imports (useRouterStore in LoginView, useEffect in LoginView)
-- Added useMemo import to AdminDetailView
+- Fixed DashboardLayout padding overlap
+- Fixed detail views stale data bug with raw state + useMemo pattern
+- Fixed LoginView duplicate redirect
+- Fixed mobile sidebar with proper overlay pattern
 - All lint checks pass clean
-- Dev server serves successfully with no runtime errors
 
 Stage Summary:
-- 5 detail views now properly react to store changes (status updates reflect immediately)
-- Login flow is cleaner with no duplicate redirects
+- 5 detail views now properly react to store changes
+- Login flow cleaner with no duplicate redirects
 - Mobile experience improved with proper sidebar overlay
-- Content layout fixed (no more double padding at top)
 
 ---
 Task ID: 15
@@ -261,42 +247,19 @@ Agent: Code Quality Fixer
 Task: Fix Critical Bugs and Improve Code Quality
 
 Work Log:
-- Fix 1: Changed shadcn `--primary` CSS variable from black (`oklch(0.205 0 0)`) to Ricash brand blue (`oklch(0.35 0.12 250)`) in `:root` of globals.css. `--primary-foreground` kept as white (`oklch(0.985 0 0)`)
-- Fix 2: Replaced duplicate "Super Admins" and "Admins" nav items in AppSidebar.tsx with a single "Administration" entry (icon: Shield, route: 'admins', roles: ['super_admin']). Removed unused `UserCog` import
-- Fix 3: Created `/src/lib/format.ts` with shared format utilities: `formatXOF`, `formatDate`, `formatDateTime`, `formatDateLong`, `formatDateTimeLong`, `formatTimeAgo`
-- Fix 4: Removed built-in CSV export button and `exportCSV` function from DataTable.tsx. Removed unused `Download` import from lucide-react
-- Fix 6: Added mobile sidebar close on navigation in DashboardLayout.tsx — subscribes to `currentRoute` from router store and closes `mobileMenuOpen` via `requestAnimationFrame` when route changes
-- Fix 8: Refactored 14 view files to use shared format utilities from `@/lib/format` instead of local duplicate functions:
-  - DashboardView.tsx: removed local formatXOF, formatDate, formatTimeAgo; imported from @/lib/format
-  - UsersView.tsx: removed local formatXOF, formatDate
-  - UserDetailView.tsx: removed local formatXOF, formatDate, formatDateTime
-  - AgentsView.tsx: removed local formatXOF, formatDate
-  - AgentDetailView.tsx: removed local formatXOF, formatDate, formatDateTime
-  - AgentFloatView.tsx: removed local formatXOF, formatDateTime
-  - TransactionsView.tsx: removed local formatXOF, formatDate (aliased formatDateTime as formatDate since original included time); removed unused ArrowUpDown import
-  - TransactionDetailView.tsx: removed local formatXOF, formatDateTime; uses formatDateTimeLong for month: 'long' format
-  - KycView.tsx: removed local formatDate
-  - KycDetailView.tsx: removed local formatDate, formatDateTime; uses formatDateLong and formatDateTimeLong for month: 'long' format
-  - FloatRequestsView.tsx: removed local formatAmount, formatDate; uses formatXOF and formatDateTime
-  - NotificationsView.tsx: removed local getRelativeTime; uses formatTimeAgo
-  - AdminsView.tsx: removed local formatDate; uses formatDateTime via formatDateSafe wrapper
-  - AdminDetailView.tsx: removed local formatDate; uses formatDateTimeLong via formatDateSafe wrapper
-- Fix 9: Removed unused `ArrowUpDown` import from TransactionsView.tsx
-- Fix 10: KycDetailView now uses formatDateLong instead of formatDate for month: 'long' format
-- Fix 11: TransactionDetailView now uses formatDateTimeLong instead of formatDateTime for month: 'long' format
-- Fix 12: AdminDetailView now uses formatDateTimeLong instead of formatDate for month: 'long' format
-- Fix 13: FloatRequestsView now uses formatXOF (replacing formatAmount) and formatDateTime (replacing formatDate with time)
-- Fix 14: NotificationsView now uses formatTimeAgo (replacing getRelativeTime)
+- Fixed primary CSS variable to match Ricash brand
+- Simplified sidebar navigation
+- Created shared format utilities in /src/lib/format.ts
+- Removed redundant CSV export button from DataTable
+- Added mobile sidebar close on navigation
+- Refactored 14 view files to use shared format utilities
 - All ESLint checks pass clean
-- Dev server running successfully
 
 Stage Summary:
-- Primary color now matches Ricash brand (#1A3C6E approximated as oklch(0.35 0.12 250))
-- Sidebar navigation simplified with single "Administration" entry instead of two duplicates
-- Shared format utilities eliminate ~15 duplicate function definitions across 14 view files
-- DataTable no longer shows redundant "Exporter CSV" button (views have their own)
-- Mobile sidebar now closes automatically when user navigates
-- All long-date formats (month: 'long') use proper formatDateLong/formatDateTimeLong utilities
+- Primary color matches Ricash brand
+- Shared format utilities eliminate ~15 duplicate function definitions
+- DataTable no longer shows redundant CSV export button
+- Mobile sidebar closes on navigation
 
 ---
 Task ID: 5
@@ -304,16 +267,42 @@ Agent: Subagent (mock-data-and-ui)
 Task: Add More Mock Data and UI Improvements
 
 Work Log:
-- Added 10 more clients (CLI-021 through CLI-030) to `/src/mocks/users.mock.ts` with diverse West African names, countries (ML, SN, CI, BF, GN, NE, TG, BJ), statuses (2 SUSPENDED, 2 INACTIVE), KYC levels (0-2), and balance ranges (0-1,000,000)
-- Added 20 more transactions (TXN-051 through TXN-070) to `/src/mocks/transactions.mock.ts` with July 2025 dates, varied types (DEPOSIT, WITHDRAWAL, TRANSFER, MERCHANT_PAYMENT, REFUND), channels, statuses, and operators. References new client IDs (CLI-021 to CLI-030) and existing agent IDs
-- Added 10 more KYC records (KYC-016 through KYC-025) to `/src/mocks/kyc.mock.ts` with mixed statuses: 6 PENDING (KYC-016, 017, 019, 023, 025 plus existing), 3 REJECTED (KYC-018, 022, 024), 3 VERIFIED (KYC-020, 021, plus existing), various document types (CNI, ATTESTATION, PASSPORT, CIP, CARTE_CONSULAIRE)
-- Added 5 more notifications (NOT-011 through NOT-015) to `/src/mocks/notifications.mock.ts` with recent dates, mix of types (FRAUD_ALERT, LOW_FLOAT, SYSTEM, KYC_EXPIRED, TRANSACTION_ALERT), 3 unread and 2 read
-- Updated LoginView gradient from `linear-gradient(135deg, #F4F7FB 0%, #E2EAF4 50%, #F4F7FB 100%)` to `linear-gradient(135deg, #F4F7FB 0%, #D6E4F0 40%, #1A3C6E 100%)` for stronger Ricash brand presence
-- Added decorative accent-colored divider below "Back-Office v4.0" text in LoginView: `<div className="w-12 h-1 rounded-full mx-auto mt-2" style={{ backgroundColor: 'var(--ricash-accent)' }} />`
-- Made all 7 DashboardView stat cards clickable with navigation: Volume transactions → transactions, Montant traité → transactions, Transactions en attente → transactions, Alertes fraude → notifications, Agents actifs → agents, Clients enregistrés → clients, Float global → float
+- Added more clients, transactions, KYC records, and notifications
+- Updated LoginView gradient for stronger brand presence
+- Made Dashboard stat cards clickable
 - All ESLint checks pass clean
 
 Stage Summary:
-- Mock data counts: 30 clients, 70 transactions, 25 KYC records, 15 notifications — all sufficient for pagination testing
-- Login page now has branded gradient with deep blue and accent divider
-- Dashboard stat cards are clickable and navigate to their respective pages
+- Sufficient mock data for pagination testing
+- Branded login page
+- Interactive dashboard
+
+---
+Task ID: 17
+Agent: Main Orchestrator
+Task: Add Paramètres (Settings) page with role-based differentiation (super_admin vs admin)
+
+Work Log:
+- Updated `/src/types/index.ts`: Added 'settings' to RouteName type + 8 new settings interfaces (ProfileSettings, SecuritySettings, NotificationPreferences, AppearanceSettings, SystemSettings, AdminAgentSettings, AdminLimitSettings, SettingsTab)
+- Created `/src/stores/settings-store.ts`: Zustand store with persist middleware for notification preferences, appearance, system settings (super_admin), admin agent settings, and admin limit settings
+- Created `/src/views/settings/SettingsView.tsx`: Full settings page with 8 role-based tabs:
+  - **Mon profil** (both roles): View/edit name, email, phone, role badge, account info
+  - **Sécurité** (both roles): Change password with show/hide, 2FA (coming soon), role-specific security warning for super_admin
+  - **Notifications** (both roles): Channel toggles (email, push, in-app) + alert type toggles (fraud, low float, KYC expiry, transactions, system)
+  - **Apparence** (both roles): Theme selection (light/dark/system), language selector, compact mode toggle
+  - **Système** (super_admin only): Maintenance mode toggle, session timeout, auto-logout, max login attempts, audit log config with retention
+  - **Configuration** (super_admin only): Full platform config — fees table with inline editing, KYC limits table, countries/operators checkboxes
+  - **Mes agents** (admin only): Default commission rate, auto-approve float with threshold, float alert threshold, new agent notification
+  - **Mes limites** (admin only): Transaction approval limits, daily approval cap, float approval limit, double approval requirement with threshold, summary cards
+- Updated `/src/components/layout/AppSidebar.tsx`: Added new "COMPTE" nav group with "Paramètres" item (Cog icon, route: 'settings', both roles)
+- Updated `/src/app/page.tsx`: Added SettingsView import, 'settings' route in ROUTE_ROLES (both roles), and switch case for rendering
+- All ESLint checks pass clean
+- Dev server HTTP 200
+
+Stage Summary:
+- Complete role-based settings page with 8 differentiated tabs
+- super_admin sees: Profil + Sécurité + Notifications + Apparence + Système + Configuration (6 tabs)
+- admin sees: Profil + Sécurité + Notifications + Apparence + Mes agents + Mes limites (6 tabs)
+- Settings store persisted to localStorage
+- All settings have functional edit/save workflows with toast feedback
+- Configuration tab embeds the same fee/KYC/country editing from ConfigView

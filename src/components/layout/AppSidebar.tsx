@@ -10,6 +10,7 @@ import {
   IdCard,
   Wallet,
   Settings,
+  Cog,
   Bell,
   LogOut,
   ChevronLeft,
@@ -111,6 +112,17 @@ const NAV_GROUPS: NavGroup[] = [
         icon: Bell,
         label: 'Notifications',
         route: 'notifications',
+        roles: ['super_admin', 'admin'],
+      },
+    ],
+  },
+  {
+    title: 'COMPTE',
+    items: [
+      {
+        icon: Cog,
+        label: 'Paramètres',
+        route: 'settings',
         roles: ['super_admin', 'admin'],
       },
     ],

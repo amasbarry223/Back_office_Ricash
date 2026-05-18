@@ -36,6 +36,7 @@ export type RouteName =
   | 'kyc-detail'
   | 'float'
   | 'config'
+  | 'settings'
   | 'notifications'
   | 'unauthorized'
   | 'not-found';
@@ -204,6 +205,64 @@ export interface GeneralConfig {
   currency: string;
   activeCountries: string[];
   activeOperators: Operator[];
+}
+
+// --- Settings ---
+export type SettingsTab = 'profil' | 'securite' | 'notifications-prefs' | 'apparence' | 'systeme' | 'configuration' | 'mes-agents' | 'mes-limites';
+
+export interface ProfileSettings {
+  name: string;
+  email: string;
+  phone: string;
+}
+
+export interface SecuritySettings {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  twoFactorEnabled: boolean;
+}
+
+export interface NotificationPreferences {
+  emailNotifications: boolean;
+  pushNotifications: boolean;
+  inAppNotifications: boolean;
+  fraudAlerts: boolean;
+  lowFloatAlerts: boolean;
+  kycExpiryAlerts: boolean;
+  transactionAlerts: boolean;
+  systemAlerts: boolean;
+}
+
+export interface AppearanceSettings {
+  theme: 'light' | 'dark' | 'system';
+  language: 'fr' | 'en';
+  compactMode: boolean;
+}
+
+export interface SystemSettings {
+  maintenanceMode: boolean;
+  sessionTimeoutMinutes: number;
+  maxLoginAttempts: number;
+  autoLogoutMinutes: number;
+  auditLogEnabled: boolean;
+  auditLogRetentionDays: number;
+}
+
+export interface AdminAgentSettings {
+  defaultCommissionRate: number;
+  autoApproveFloat: boolean;
+  autoApproveMaxAmount: number;
+  floatAlertThreshold: number;
+  notifyNewAgent: boolean;
+}
+
+export interface AdminLimitSettings {
+  maxTransactionApproval: number;
+  maxDailyApproval: number;
+  maxFloatApproval: number;
+  requireSecondApproval: boolean;
+  secondApprovalThreshold: number;
 }
 
 // --- Dashboard ---

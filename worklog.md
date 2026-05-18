@@ -67,3 +67,27 @@ Stage Summary:
 - 1 page-level integration: PageTransition in page.tsx
 - Full prefers-reduced-motion accessibility support
 - Zero lint errors, zero compilation errors
+
+---
+Task ID: 3
+Agent: Main Agent
+Task: Notification sending feature — admin and super_admin can send notifications to all users, agents, admins
+
+Work Log:
+- Analyzed existing notification system: store, mock data, view, types
+- Updated types/index.ts: Added 3 new NotificationType (GENERAL_INFO, MAINTENANCE, SECURITY), added NotificationPriority type (normal/high/urgent), NotificationRecipientType (all_clients/all_agents/all_admins/specific), extended Notification interface with priority/senderId/senderName/recipientType/recipientCount, added SentNotification interface, added French label constants for all enums
+- Updated notifications-store.ts: Added sentNotifications state, sendNotification() method (creates both system notification + sent record with mock recipient counts), deleteNotification() method
+- Updated notifications.mock.ts: Added mockSentNotifications with 4 example sent notifications (maintenance, pricing, security phishing, app update)
+- Created NotificationCompose component at src/components/notifications/NotificationCompose.tsx: Full-featured compose form with Type/Priority card (Select dropdown + RadioGroup), Recipients card (4 RadioGroup options with icons, descriptions, recipient count badges), Message Content card (title input with char counter, textarea with min/max validation), live preview panel (sticky right column showing real-time notification preview, quick stats cards, writing tips), Send button with loading state and success toast
+- Rebuilt NotificationsView with 3 tabs: Inbox (existing notification list with delete button on hover), Compose (NotificationCompose component), Sent (list of sent notifications with recipient/sender/time meta)
+- All components use Ricash design tokens and semantic Badge variants
+- Zero lint errors, dev server compiles successfully
+
+Stage Summary:
+- 3 new notification types added: GENERAL_INFO, MAINTENANCE, SECURITY
+- New type system: NotificationPriority, NotificationRecipientType, SentNotification
+- Store extended with sendNotification() and deleteNotification()
+- New component: NotificationCompose with rich UX (3 form cards + live preview + tips)
+- NotificationsView rebuilt with Tabs: Inbox / Envoyer / Envoyées
+- French labels added for all notification enums
+- Zero lint errors, zero compilation errors

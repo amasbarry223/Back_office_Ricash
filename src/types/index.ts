@@ -172,7 +172,11 @@ export interface KycRecord {
 }
 
 // --- Notifications ---
-export type NotificationType = 'FRAUD_ALERT' | 'LOW_FLOAT' | 'KYC_EXPIRED' | 'SYSTEM' | 'TRANSACTION_ALERT';
+export type NotificationType = 'FRAUD_ALERT' | 'LOW_FLOAT' | 'KYC_EXPIRED' | 'SYSTEM' | 'TRANSACTION_ALERT' | 'GENERAL_INFO' | 'MAINTENANCE' | 'SECURITY';
+
+export type NotificationPriority = 'normal' | 'high' | 'urgent';
+
+export type NotificationRecipientType = 'all_clients' | 'all_agents' | 'all_admins' | 'specific';
 
 export interface Notification {
   id: string;
@@ -181,7 +185,44 @@ export interface Notification {
   message: string;
   read: boolean;
   createdAt: string;
+  priority?: NotificationPriority;
+  senderId?: string;
+  senderName?: string;
+  recipientType?: NotificationRecipientType;
+  recipientCount?: number;
 }
+
+export interface SentNotification extends Notification {
+  senderId: string;
+  senderName: string;
+  recipientType: NotificationRecipientType;
+  recipientCount: number;
+  priority: NotificationPriority;
+}
+
+export const NOTIFICATION_TYPE_LABELS: Record<NotificationType, string> = {
+  FRAUD_ALERT: 'Alerte Fraude',
+  LOW_FLOAT: 'Float Bas',
+  KYC_EXPIRED: 'KYC Expiré',
+  SYSTEM: 'Système',
+  TRANSACTION_ALERT: 'Alerte Transaction',
+  GENERAL_INFO: 'Information Générale',
+  MAINTENANCE: 'Maintenance',
+  SECURITY: 'Sécurité',
+};
+
+export const NOTIFICATION_PRIORITY_LABELS: Record<NotificationPriority, string> = {
+  normal: 'Normale',
+  high: 'Haute',
+  urgent: 'Urgente',
+};
+
+export const RECIPIENT_TYPE_LABELS: Record<NotificationRecipientType, string> = {
+  all_clients: 'Tous les clients',
+  all_agents: 'Tous les agents',
+  all_admins: 'Tous les administrateurs',
+  specific: 'Sélection spécifique',
+};
 
 // --- Config ---
 export interface FeeConfig {

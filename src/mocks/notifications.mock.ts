@@ -1,4 +1,4 @@
-import { Notification } from '@/types';
+import { Notification, SentNotification } from '@/types';
 
 export const mockNotifications: Notification[] = [
   { id: 'NOT-001', type: 'FRAUD_ALERT', title: 'Alerte Fraude', message: 'Transaction suspecte détectée - 3 retraits consécutifs en 5 minutes pour le client CLI-010', read: false, createdAt: '2025-07-11T15:30:00Z' },
@@ -13,7 +13,62 @@ export const mockNotifications: Notification[] = [
   { id: 'NOT-010', type: 'TRANSACTION_ALERT', title: 'Échec Transaction', message: '5 transactions ont échoué au cours des dernières 24h', read: true, createdAt: '2025-07-03T18:00:00Z' },
   { id: 'NOT-011', type: 'FRAUD_ALERT', title: 'Alerte Fraude', message: 'Tentative de transfert inhabituel de 850 000 XOF depuis le compte CLI-027 (Essoyaba Kpémissi)', read: false, createdAt: '2025-07-11T17:30:00Z' },
   { id: 'NOT-012', type: 'LOW_FLOAT', title: 'Float Bas', message: 'Agent AG-SLP-007 (Babacar Seck) - Float restant: 50 000 XOF', read: false, createdAt: '2025-07-11T16:45:00Z' },
-  { id: 'NOT-013', type: 'SYSTEM', title: 'Mise à jour Sécurité', message: 'Un correctif de sécurité a été appliqué avec succès à la plateforme', read: true, createdAt: '2025-07-10T20:00:00Z' },
+  { id: 'NOT-013', type: 'SECURITY', title: 'Mise à jour Sécurité', message: 'Un correctif de sécurité a été appliqué avec succès à la plateforme', read: true, createdAt: '2025-07-10T20:00:00Z' },
   { id: 'NOT-014', type: 'KYC_EXPIRED', title: 'KYC Expiré', message: 'Le document KYC du client Issa Kaboré (CLI-024) a expiré et nécessite une mise à jour', read: false, createdAt: '2025-07-11T12:15:00Z' },
   { id: 'NOT-015', type: 'TRANSACTION_ALERT', title: 'Volume Élevé', message: 'Le volume de transactions dépasse la moyenne quotidienne de 35% aujourd\'hui', read: true, createdAt: '2025-07-11T14:00:00Z' },
+];
+
+export const mockSentNotifications: SentNotification[] = [
+  {
+    id: 'SNT-001',
+    type: 'MAINTENANCE',
+    title: 'Maintenance planifiée',
+    message: 'Chers utilisateurs, une maintenance est prévue le 20 juillet 2025 de 01h00 à 03h00 GMT. Les services seront temporairement indisponibles.',
+    read: true,
+    createdAt: '2025-07-10T08:00:00Z',
+    priority: 'high',
+    senderId: 'ADM-001',
+    senderName: 'Moussa Konaté',
+    recipientType: 'all_clients',
+    recipientCount: 30,
+  },
+  {
+    id: 'SNT-002',
+    type: 'GENERAL_INFO',
+    title: 'Nouveaux tarifs en vigueur',
+    message: 'Informez vos clients que les nouveaux tarifs de transfert entrent en vigueur à partir du 1er août 2025. Consultez la section Configuration pour plus de détails.',
+    read: true,
+    createdAt: '2025-07-08T14:30:00Z',
+    priority: 'normal',
+    senderId: 'ADM-002',
+    senderName: 'Aminata Diallo',
+    recipientType: 'all_agents',
+    recipientCount: 12,
+  },
+  {
+    id: 'SNT-003',
+    type: 'SECURITY',
+    title: 'Alerte de sécurité — Phishing',
+    message: 'Nous avons détecté des tentatives de phishing ciblant nos utilisateurs. Ne partagez jamais vos codes PIN ou mots de passe. Ricash ne vous demandera jamais ces informations.',
+    read: true,
+    createdAt: '2025-07-07T10:00:00Z',
+    priority: 'urgent',
+    senderId: 'ADM-001',
+    senderName: 'Moussa Konaté',
+    recipientType: 'all_clients',
+    recipientCount: 30,
+  },
+  {
+    id: 'SNT-004',
+    type: 'SYSTEM',
+    title: 'Mise à jour de l\'application',
+    message: 'Une nouvelle version de l\'application mobile Ricash (v3.2) est disponible. Merci de mettre à jour pour bénéficier des dernières améliorations de sécurité.',
+    read: true,
+    createdAt: '2025-07-05T09:15:00Z',
+    priority: 'normal',
+    senderId: 'ADM-002',
+    senderName: 'Aminata Diallo',
+    recipientType: 'all_clients',
+    recipientCount: 30,
+  },
 ];

@@ -48,6 +48,23 @@ export default function DataTable({
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
+  const sortedData = useMemo(() => {
+    if (!sortKey) return data;
+    return [...data].sort((a, b) => {
+      const aVal = a[sortKey];
+      const bVal = b[sortKey];
+      if (aVal === null || aVal === undefined) return 1;
+      if (bVal === null || bVal === undefined) return -1;
+      let comparison = 0;
+      if (typeof aVal === 'number' && typeof bVal === 'number') {
+        comparison = aVal - bVal;
+      } else {
+        comparison = String(aVal).localeCompare(String(bVal));
+      }
+      return sortDirection === 'desc' ? -comparison : comparison;
+    });
+  }, [data, sortKey, sortDirection]);
+
   const handleSort = (key: string) => {
     const newDirection = sortKey === key && sortDirection === 'asc' ? 'desc' : 'asc';
     setSortKey(key);
@@ -128,7 +145,7 @@ export default function DataTable({
   }
 
   // Empty state
-  if (!loading && data.length === 0) {
+  if (!loading && sortedData.length === 0) {
     return (
       <div className="bg-white rounded-xl ricash-card-shadow overflow-hidden">
         <div className="flex flex-col items-center justify-center py-16 px-4">
@@ -163,7 +180,7 @@ export default function DataTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data.map((row, rowIdx) => (
+            {sortedData.map((row, rowIdx) => (
               <TableRow
                 key={`row-${rowIdx}`}
                 className={`

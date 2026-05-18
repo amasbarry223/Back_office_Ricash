@@ -64,55 +64,8 @@ export default function AgentDetailView() {
     [floatMovementsList, agentId]
   );
 
-  if (!agent) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate('agents')}>
-            <ArrowLeft className="size-4 mr-1" />
-            Retour
-          </Button>
-        </div>
-        <Card>
-          <CardContent className="py-16 text-center">
-            <p className="text-muted-foreground">Agent introuvable.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const handleSuspend = () => {
-    updateAgentStatus(agent.id, 'SUSPENDED');
-    toast.success('Agent suspendu', {
-      description: `L'agent ${agent.firstName} ${agent.lastName} a été suspendu.`,
-    });
-  };
-
-  const handleReactivate = () => {
-    updateAgentStatus(agent.id, 'APPROVED');
-    toast.success('Agent réactivé', {
-      description: `L'agent ${agent.firstName} ${agent.lastName} a été réactivé.`,
-    });
-  };
-
-  const handleApprove = () => {
-    const rate = parseFloat(commissionRate);
-    if (isNaN(rate) || rate <= 0 || rate > 100) {
-      toast.error('Erreur', {
-        description: 'Veuillez entrer un taux de commission valide (entre 0.1 et 100).',
-      });
-      return;
-    }
-    approveAgent(agent.id, rate);
-    toast.success('Agent approuvé', {
-      description: `L'agent ${agent.firstName} ${agent.lastName} a été approuvé avec un taux de ${rate}%.`,
-    });
-    setCommissionRate('');
-  };
-
   // Transaction columns
-  const txColumns = [
+  const txColumns = useMemo(() => [
     {
       key: 'ref',
       label: 'Réf',
@@ -147,10 +100,10 @@ export default function AgentDetailView() {
       width: '120px',
       render: (value: unknown) => formatDate(value as string),
     },
-  ];
+  ], []);
 
   // Float movement columns
-  const floatColumns = [
+  const floatColumns = useMemo(() => [
     {
       key: 'createdAt',
       label: 'Date',
@@ -198,7 +151,54 @@ export default function AgentDetailView() {
         <span className="text-xs text-muted-foreground">{value as string}</span>
       ),
     },
-  ];
+  ], []);
+
+  if (!agent) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate('agents')}>
+            <ArrowLeft className="size-4 mr-1" />
+            Retour
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="py-16 text-center">
+            <p className="text-muted-foreground">Agent introuvable.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleSuspend = () => {
+    updateAgentStatus(agent.id, 'SUSPENDED');
+    toast.success('Agent suspendu', {
+      description: `L'agent ${agent.firstName} ${agent.lastName} a été suspendu.`,
+    });
+  };
+
+  const handleReactivate = () => {
+    updateAgentStatus(agent.id, 'APPROVED');
+    toast.success('Agent réactivé', {
+      description: `L'agent ${agent.firstName} ${agent.lastName} a été réactivé.`,
+    });
+  };
+
+  const handleApprove = () => {
+    const rate = parseFloat(commissionRate);
+    if (isNaN(rate) || rate <= 0 || rate > 100) {
+      toast.error('Erreur', {
+        description: 'Veuillez entrer un taux de commission valide (entre 0.1 et 100).',
+      });
+      return;
+    }
+    approveAgent(agent.id, rate);
+    toast.success('Agent approuvé', {
+      description: `L'agent ${agent.firstName} ${agent.lastName} a été approuvé avec un taux de ${rate}%.`,
+    });
+    setCommissionRate('');
+  };
 
   // Float balance color
   const getFloatColor = (balance: number) => {

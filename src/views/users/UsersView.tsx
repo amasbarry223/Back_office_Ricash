@@ -7,6 +7,7 @@ import SearchBar from '@/components/common/SearchBar';
 import DataTable from '@/components/common/DataTable';
 import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { toast } from 'sonner';
@@ -56,6 +57,10 @@ export default function UsersView() {
   const [query, setQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
   const [page, setPage] = useState(1);
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'suspend' | 'activate' | 'forceKyc'; label: string } | null>(null);
 
   // Filtering logic
   const filteredClients = useMemo(() => {
@@ -107,24 +112,44 @@ export default function UsersView() {
 
   const handleToggleStatus = useCallback(
     (clientId: string, currentStatus: UserStatus) => {
-      const newStatus: UserStatus = currentStatus === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
-      updateClientStatus(clientId, newStatus);
-      toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
-        description: 'Le statut a été mis à jour avec succès.',
+      const isSuspend = currentStatus === 'ACTIVE';
+      setConfirmAction({
+        id: clientId,
+        action: isSuspend ? 'suspend' : 'activate',
+        label: isSuspend ? 'Suspendre ce client' : 'Activer ce client',
       });
+      setConfirmOpen(true);
     },
-    [updateClientStatus]
+    []
   );
 
   const handleForceKyc = useCallback(
     (clientId: string) => {
-      updateClientKyc(clientId, 2);
-      toast.success('KYC forcé', {
-        description: 'Le niveau KYC du client a été forcé à Niveau 2.',
+      setConfirmAction({
+        id: clientId,
+        action: 'forceKyc',
+        label: 'Forcer le KYC',
       });
+      setConfirmOpen(true);
     },
-    [updateClientKyc]
+    []
   );
+
+  const handleConfirmAction = useCallback(() => {
+    if (!confirmAction) return;
+    if (confirmAction.action === 'suspend') {
+      updateClientStatus(confirmAction.id, 'SUSPENDED');
+      toast.success('Client suspendu', { description: 'Le statut a été mis à jour avec succès.' });
+    } else if (confirmAction.action === 'activate') {
+      updateClientStatus(confirmAction.id, 'ACTIVE');
+      toast.success('Client activé', { description: 'Le statut a été mis à jour avec succès.' });
+    } else if (confirmAction.action === 'forceKyc') {
+      updateClientKyc(confirmAction.id, 2);
+      toast.success('KYC forcé', { description: 'Le niveau KYC du client a été forcé à Niveau 2.' });
+    }
+    setConfirmOpen(false);
+    setConfirmAction(null);
+  }, [confirmAction, updateClientStatus, updateClientKyc]);
 
   const handleExportCSV = useCallback(() => {
     if (filteredClients.length === 0) return;
@@ -302,6 +327,23 @@ export default function UsersView() {
         }}
         onPageChange={setPage}
         emptyMessage="Aucun client trouvé"
+      />
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'suspend'
+            ? 'Êtes-vous sûr de vouloir suspendre ce client ? Il ne pourra plus effectuer de transactions.'
+            : confirmAction?.action === 'forceKyc'
+              ? 'Êtes-vous sûr de vouloir forcer le niveau KYC de ce client à Niveau 2 ?'
+              : 'Êtes-vous sûr de vouloir réactiver ce client ?'
+        }
+        confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : confirmAction?.action === 'forceKyc' ? 'Forcer KYC' : 'Activer'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
       />
     </div>
   );

@@ -27,6 +27,7 @@ import StatusBadge from '@/components/common/StatusBadge';
 import SearchBar from '@/components/common/SearchBar';
 import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useUsersStore } from '@/stores/users-store';
 import { USER_STATUS_LABELS, type Role, type Admin } from '@/types';
@@ -42,6 +43,10 @@ export default function AdminsView() {
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [page, setPage] = useState(1);
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'suspend' | 'reactivate'; label: string } | null>(null);
 
   // Create admin form state
   const [newName, setNewName] = useState('');
@@ -195,8 +200,8 @@ export default function AdminsView() {
                   size="sm"
                   className="h-7 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50"
                   onClick={() => {
-                    updateAdminStatus(admin.id, 'SUSPENDED');
-                    toast.success('Administrateur suspendu');
+                    setConfirmAction({ id: admin.id, action: 'suspend', label: 'Suspendre cet administrateur' });
+                    setConfirmOpen(true);
                   }}
                 >
                   <Ban className="size-3.5 mr-1" />
@@ -208,8 +213,8 @@ export default function AdminsView() {
                   size="sm"
                   className="h-7 text-xs text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"
                   onClick={() => {
-                    updateAdminStatus(admin.id, 'ACTIVE');
-                    toast.success('Administrateur réactivé');
+                    setConfirmAction({ id: admin.id, action: 'reactivate', label: 'Réactiver cet administrateur' });
+                    setConfirmOpen(true);
                   }}
                 >
                   <CheckCircle className="size-3.5 mr-1" />
@@ -355,6 +360,32 @@ export default function AdminsView() {
             </DialogFooter>
           </DialogContent>
         </Dialog>
+
+        {/* Confirmation dialog */}
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={confirmAction?.label ?? 'Confirmer'}
+          description={
+            confirmAction?.action === 'suspend'
+              ? 'Êtes-vous sûr de vouloir suspendre cet administrateur ? Il perdra ses accès au back-office.'
+              : 'Êtes-vous sûr de vouloir réactiver cet administrateur ?'
+          }
+          confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : 'Réactiver'}
+          variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+          onConfirm={() => {
+            if (!confirmAction) return;
+            if (confirmAction.action === 'suspend') {
+              updateAdminStatus(confirmAction.id, 'SUSPENDED');
+              toast.success('Administrateur suspendu');
+            } else {
+              updateAdminStatus(confirmAction.id, 'ACTIVE');
+              toast.success('Administrateur réactivé');
+            }
+            setConfirmOpen(false);
+            setConfirmAction(null);
+          }}
+        />
       </div>
     </RoleGuard>
   );

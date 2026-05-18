@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Bell,
   FileWarning,
+  IdCard,
 } from 'lucide-react';
 import {
   LineChart,
@@ -31,6 +32,7 @@ import { useRouterStore } from '@/stores/router-store';
 import { useTransactionsStore } from '@/stores/transactions-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useUsersStore } from '@/stores/users-store';
+import { useKycStore } from '@/stores/kyc-store';
 import { useNotificationsStore } from '@/stores/notifications-store';
 import { TRANSACTION_TYPE_LABELS, type NotificationType } from '@/types';
 import { formatXOF, formatDate, formatTimeAgo } from '@/lib/format';
@@ -117,6 +119,7 @@ export default function DashboardView() {
   const agents = useAgentsStore((s) => s.agents);
   const clients = useUsersStore((s) => s.clients);
   const notifications = useNotificationsStore((s) => s.notifications);
+  const kycRecords = useKycStore((s) => s.records);
 
   // Derived data – computed via useMemo for stable references
   const txStats = useMemo(() => ({
@@ -144,6 +147,8 @@ export default function DashboardView() {
     globalFloat: agents.reduce((sum, a) => sum + a.floatBalance, 0),
   }), [agents]);
   const fraudAlerts = unreadNotifications.filter((n) => n.type === 'FRAUD_ALERT').length;
+
+  const kycPending = useMemo(() => kycRecords.filter(r => r.status === 'PENDING').length, [kycRecords]);
 
   // Chart data – generated once
   const chartData = useMemo(() => generateChartData(), []);
@@ -272,6 +277,14 @@ export default function DashboardView() {
             value={formatXOF(globalFloat)}
             icon={<Wallet className="size-5" />}
             color="green"
+          />
+        </div>
+        <div onClick={() => navigate('kyc')} className="cursor-pointer">
+          <StatCard
+            title="KYC en attente"
+            value={kycPending}
+            icon={<IdCard className="size-5" />}
+            color="orange"
           />
         </div>
       </section>

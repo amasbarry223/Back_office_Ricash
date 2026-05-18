@@ -8,7 +8,7 @@ export default function NotFoundView() {
   const navigate = useRouterStore((s) => s.navigate);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
+    <div className="py-20 flex items-center justify-center p-4">
       <div className="flex flex-col items-center gap-6 text-center max-w-md">
         {/* Icon */}
         <div

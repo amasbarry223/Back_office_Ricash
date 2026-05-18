@@ -7,15 +7,17 @@ import {
   AGENT_STATUS_LABELS,
   TRANSACTION_STATUS_LABELS,
   KYC_STATUS_LABELS,
+  FLOAT_REQUEST_STATUS_LABELS,
   type UserStatus,
   type AgentStatus,
   type TransactionStatus,
   type KycStatus,
+  type FloatRequest,
 } from '@/types';
 
 interface StatusBadgeProps {
   status: string;
-  type: 'user' | 'transaction' | 'kyc' | 'agent';
+  type: 'user' | 'transaction' | 'kyc' | 'agent' | 'float_request';
 }
 
 const USER_COLORS: Record<UserStatus, string> = {
@@ -45,6 +47,12 @@ const AGENT_COLORS: Record<AgentStatus, string> = {
   SUSPENDED: 'bg-red-100 text-red-700 border-red-200',
 };
 
+const FLOAT_REQUEST_COLORS: Record<string, string> = {
+  PENDING: 'bg-orange-100 text-orange-700 border-orange-200',
+  APPROVED: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+  REJECTED: 'bg-red-100 text-red-700 border-red-200',
+};
+
 const STATUS_DOT_COLORS: Record<string, string> = {
   // User
   ACTIVE: 'bg-emerald-500',
@@ -62,6 +70,10 @@ const STATUS_DOT_COLORS: Record<string, string> = {
   EXPIRED: 'bg-gray-400',
   // Agent
   APPROVED: 'bg-emerald-500',
+  // Float request
+  PENDING: 'bg-orange-500',
+  APPROVED: 'bg-emerald-500',
+  REJECTED: 'bg-red-500',
 };
 
 function getLabel(status: string, type: StatusBadgeProps['type']): string {
@@ -74,6 +86,8 @@ function getLabel(status: string, type: StatusBadgeProps['type']): string {
       return KYC_STATUS_LABELS[status as KycStatus] ?? status;
     case 'agent':
       return AGENT_STATUS_LABELS[status as AgentStatus] ?? status;
+    case 'float_request':
+      return FLOAT_REQUEST_STATUS_LABELS[status as FloatRequest['status']] ?? status;
     default:
       return status;
   }
@@ -89,6 +103,8 @@ function getColorClass(status: string, type: StatusBadgeProps['type']): string {
       return KYC_COLORS[status as KycStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
     case 'agent':
       return AGENT_COLORS[status as AgentStatus] ?? 'bg-gray-100 text-gray-600 border-gray-200';
+    case 'float_request':
+      return FLOAT_REQUEST_COLORS[status] ?? 'bg-gray-100 text-gray-600 border-gray-200';
     default:
       return 'bg-gray-100 text-gray-600 border-gray-200';
   }

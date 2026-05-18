@@ -15,6 +15,7 @@ import SearchBar from '@/components/common/SearchBar';
 import DataTable from '@/components/common/DataTable';
 import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { toast } from 'sonner';
@@ -48,6 +49,10 @@ export default function AgentsView() {
   const [query, setQuery] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
   const [page, setPage] = useState(1);
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'suspend' | 'reactivate'; label: string } | null>(null);
 
   // Filtering logic — NO geographic filter (règle: pas de filtre localisation agents)
   const filteredAgents = useMemo(() => {
@@ -87,21 +92,29 @@ export default function AgentsView() {
 
   const handleToggleStatus = useCallback(
     (agentId: string, currentStatus: AgentStatus) => {
-      let newStatus: AgentStatus;
       if (currentStatus === 'APPROVED') {
-        newStatus = 'SUSPENDED';
+        setConfirmAction({ id: agentId, action: 'suspend', label: 'Suspendre cet agent' });
+        setConfirmOpen(true);
       } else if (currentStatus === 'SUSPENDED') {
-        newStatus = 'APPROVED';
-      } else {
-        return; // PENDING — use Approve instead
+        setConfirmAction({ id: agentId, action: 'reactivate', label: 'Réactiver cet agent' });
+        setConfirmOpen(true);
       }
-      updateAgentStatus(agentId, newStatus);
-      toast.success(newStatus === 'SUSPENDED' ? 'Agent suspendu' : 'Agent réactivé', {
-        description: 'Le statut a été mis à jour avec succès.',
-      });
     },
-    [updateAgentStatus]
+    []
   );
+
+  const handleConfirmAction = useCallback(() => {
+    if (!confirmAction) return;
+    if (confirmAction.action === 'suspend') {
+      updateAgentStatus(confirmAction.id, 'SUSPENDED');
+      toast.success('Agent suspendu', { description: 'Le statut a été mis à jour avec succès.' });
+    } else {
+      updateAgentStatus(confirmAction.id, 'APPROVED');
+      toast.success('Agent réactivé', { description: 'Le statut a été mis à jour avec succès.' });
+    }
+    setConfirmOpen(false);
+    setConfirmAction(null);
+  }, [confirmAction, updateAgentStatus]);
 
   const handleExportCSV = useCallback(() => {
     if (filteredAgents.length === 0) return;
@@ -304,6 +317,21 @@ export default function AgentsView() {
         }}
         onPageChange={setPage}
         emptyMessage="Aucun agent trouvé"
+      />
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'suspend'
+            ? 'Êtes-vous sûr de vouloir suspendre cet agent ? Il ne pourra plus traiter de transactions.'
+            : 'Êtes-vous sûr de vouloir réactiver cet agent ?'
+        }
+        confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : 'Réactiver'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
       />
     </div>
   );

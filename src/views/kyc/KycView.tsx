@@ -9,6 +9,7 @@ import SearchBar from '@/components/common/SearchBar';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useKycStore } from '@/stores/kyc-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -45,6 +46,10 @@ export default function KycView() {
   // Pagination
   const [page, setPage] = useState(1);
   const perPage = 10;
+
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'approve' | 'reject'; label: string } | null>(null);
 
   // Build filter configs for SearchBar
   const filterConfigs = useMemo(
@@ -138,21 +143,32 @@ export default function KycView() {
   // Action handlers
   const handleApprove = useCallback(
     (id: string) => {
-      if (!user) return;
-      approveKyc(id, user.id);
-      toast.success('Dossier KYC approuvé avec succès');
+      setConfirmAction({ id, action: 'approve', label: 'Approuver le dossier KYC' });
+      setConfirmOpen(true);
     },
-    [approveKyc, user]
+    []
   );
 
   const handleReject = useCallback(
     (id: string) => {
-      if (!user) return;
-      rejectKyc(id, user.id, 'Rejeté par un administrateur');
-      toast.error('Dossier KYC rejeté');
+      setConfirmAction({ id, action: 'reject', label: 'Rejeter le dossier KYC' });
+      setConfirmOpen(true);
     },
-    [rejectKyc, user]
+    []
   );
+
+  const handleConfirmAction = useCallback(() => {
+    if (!confirmAction || !user) return;
+    if (confirmAction.action === 'approve') {
+      approveKyc(confirmAction.id, user.id);
+      toast.success('Dossier KYC approuvé avec succès');
+    } else {
+      rejectKyc(confirmAction.id, user.id, 'Rejeté par un administrateur');
+      toast.error('Dossier KYC rejeté');
+    }
+    setConfirmOpen(false);
+    setConfirmAction(null);
+  }, [confirmAction, user, approveKyc, rejectKyc]);
 
   // DataTable columns
   const columns = useMemo(
@@ -329,6 +345,21 @@ export default function KycView() {
           console.log(`Sorting by ${key} ${direction}`);
         }}
         emptyMessage="Aucun dossier KYC trouvé"
+      />
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'approve'
+            ? 'Êtes-vous sûr de vouloir approuver ce dossier KYC ? Le niveau de vérification du client sera mis à jour.'
+            : 'Êtes-vous sûr de vouloir rejeter ce dossier KYC ? Le client devra soumettre de nouveaux documents.'
+        }
+        confirmLabel={confirmAction?.action === 'approve' ? 'Approuver' : 'Rejeter'}
+        variant={confirmAction?.action === 'reject' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
       />
     </div>
   );

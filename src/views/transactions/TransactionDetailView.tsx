@@ -12,7 +12,6 @@ import {
   Briefcase,
   XCircle,
   CheckCircle2,
-  XCircleIcon,
   Calendar,
   Hash,
   Radio,
@@ -25,6 +24,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import PageHeader from '@/components/common/PageHeader';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -80,6 +80,10 @@ export default function TransactionDetailView() {
   const [isMarkingSuccess, setIsMarkingSuccess] = useState(false);
   const [isMarkingFailed, setIsMarkingFailed] = useState(false);
 
+  // Confirm dialog state
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ action: 'cancel' | 'markSuccess' | 'markFailed'; label: string } | null>(null);
+
   const transaction = useMemo(() => {
     const id = params.id;
     return id ? transactions.find(t => t.id === id) : undefined;
@@ -108,37 +112,53 @@ export default function TransactionDetailView() {
   const channelIcon = CHANNEL_ICONS[transaction.channel];
 
   // Action handlers
-  const handleCancel = async () => {
-    setIsCancelling(true);
-    try {
-      await new Promise((r) => setTimeout(r, 500));
-      updateTransactionStatus(transaction.id, 'CANCELLED');
-      toast.success('Transaction annulée avec succès');
-    } finally {
-      setIsCancelling(false);
-    }
+  const handleCancel = () => {
+    setConfirmAction({ action: 'cancel', label: 'Annuler la transaction' });
+    setConfirmOpen(true);
   };
 
-  const handleMarkSuccess = async () => {
-    setIsMarkingSuccess(true);
-    try {
-      await new Promise((r) => setTimeout(r, 500));
-      updateTransactionStatus(transaction.id, 'SUCCESS');
-      toast.success('Transaction marquée comme réussie');
-    } finally {
-      setIsMarkingSuccess(false);
-    }
+  const handleMarkSuccess = () => {
+    setConfirmAction({ action: 'markSuccess', label: 'Marquer comme réussie' });
+    setConfirmOpen(true);
   };
 
-  const handleMarkFailed = async () => {
-    setIsMarkingFailed(true);
-    try {
-      await new Promise((r) => setTimeout(r, 500));
-      updateTransactionStatus(transaction.id, 'FAILED');
-      toast.success('Transaction marquée comme échouée');
-    } finally {
-      setIsMarkingFailed(false);
+  const handleMarkFailed = () => {
+    setConfirmAction({ action: 'markFailed', label: 'Marquer comme échouée' });
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction) return;
+    if (confirmAction.action === 'cancel') {
+      setIsCancelling(true);
+      try {
+        await new Promise((r) => setTimeout(r, 500));
+        updateTransactionStatus(transaction.id, 'CANCELLED');
+        toast.success('Transaction annulée avec succès');
+      } finally {
+        setIsCancelling(false);
+      }
+    } else if (confirmAction.action === 'markSuccess') {
+      setIsMarkingSuccess(true);
+      try {
+        await new Promise((r) => setTimeout(r, 500));
+        updateTransactionStatus(transaction.id, 'SUCCESS');
+        toast.success('Transaction marquée comme réussie');
+      } finally {
+        setIsMarkingSuccess(false);
+      }
+    } else {
+      setIsMarkingFailed(true);
+      try {
+        await new Promise((r) => setTimeout(r, 500));
+        updateTransactionStatus(transaction.id, 'FAILED');
+        toast.success('Transaction marquée comme échouée');
+      } finally {
+        setIsMarkingFailed(false);
+      }
     }
+    setConfirmOpen(false);
+    setConfirmAction(null);
   };
 
   return (
@@ -387,7 +407,7 @@ export default function TransactionDetailView() {
                       {isMarkingFailed ? (
                         <div className="size-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
                       ) : (
-                        <XCircleIcon className="size-4" />
+                        <XCircle className="size-4" />
                       )}
                       Marquer comme échoué
                     </Button>
@@ -398,6 +418,26 @@ export default function TransactionDetailView() {
           )}
         </div>
       </div>
+
+      {/* Confirmation dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title={confirmAction?.label ?? 'Confirmer'}
+        description={
+          confirmAction?.action === 'cancel'
+            ? 'Êtes-vous sûr de vouloir annuler cette transaction ? Cette action est irréversible.'
+            : confirmAction?.action === 'markFailed'
+              ? 'Êtes-vous sûr de vouloir marquer cette transaction comme échouée ? Cette action est irréversible.'
+              : 'Êtes-vous sûr de vouloir marquer cette transaction comme réussie ?'
+        }
+        confirmLabel={
+          confirmAction?.action === 'cancel' ? 'Annuler' : confirmAction?.action === 'markFailed' ? 'Marquer échouée' : 'Marquer réussie'
+        }
+        variant={confirmAction?.action === 'cancel' || confirmAction?.action === 'markFailed' ? 'destructive' : 'default'}
+        onConfirm={handleConfirmAction}
+        loading={isCancelling || isMarkingSuccess || isMarkingFailed}
+      />
     </div>
   );
 }

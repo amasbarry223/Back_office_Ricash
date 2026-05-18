@@ -285,6 +285,12 @@ export const KYC_STATUS_LABELS: Record<KycStatus, string> = {
   EXPIRED: 'Expiré',
 };
 
+export const FLOAT_REQUEST_STATUS_LABELS: Record<FloatRequest['status'], string> = {
+  PENDING: 'En attente',
+  APPROVED: 'Approuvée',
+  REJECTED: 'Rejetée',
+};
+
 export const CHANNEL_LABELS: Record<Channel, string> = {
   APP_MOBILE: 'App mobile',
   USSD: 'USSD',

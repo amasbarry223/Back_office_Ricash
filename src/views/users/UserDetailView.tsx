@@ -85,41 +85,8 @@ export default function UserDetailView() {
     [clientTransactions]
   );
 
-  if (!client) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate('clients')}>
-            <ArrowLeft className="size-4 mr-1" />
-            Retour
-          </Button>
-        </div>
-        <Card>
-          <CardContent className="py-16 text-center">
-            <p className="text-muted-foreground">Client introuvable.</p>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const handleToggleStatus = () => {
-    const newStatus: UserStatus = client.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
-    updateClientStatus(client.id, newStatus);
-    toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
-      description: 'Le statut a été mis à jour avec succès.',
-    });
-  };
-
-  const handleForceKyc = () => {
-    updateClientKyc(client.id, 2 as KycLevel);
-    toast.success('KYC forcé', {
-      description: 'Le niveau KYC du client a été forcé à Niveau 2.',
-    });
-  };
-
   // Transaction columns
-  const txColumns = [
+  const txColumns = useMemo(() => [
     {
       key: 'ref',
       label: 'Réf',
@@ -154,9 +121,9 @@ export default function UserDetailView() {
       width: '120px',
       render: (value: unknown) => formatDate(value as string),
     },
-  ];
+  ], []);
 
-  const walletColumns = [
+  const walletColumns = useMemo(() => [
     {
       key: 'date',
       label: 'Date',
@@ -196,10 +163,10 @@ export default function UserDetailView() {
       key: 'description',
       label: 'Description',
     },
-  ];
+  ], []);
 
   // KYC columns
-  const kycColumns = [
+  const kycColumns = useMemo(() => [
     {
       key: 'documentType',
       label: 'Type de document',
@@ -236,7 +203,7 @@ export default function UserDetailView() {
           onClick={() =>
             navigate('kyc-detail', { id: value as string }, buildBreadcrumb([
               { label: 'Clients', route: 'clients' },
-              { label: `${client.firstName} ${client.lastName}`, route: 'client-detail', params: { id: client.id } },
+              { label: `${client?.firstName} ${client?.lastName}`, route: 'client-detail', params: { id: clientId } },
               { label: 'KYC' },
             ]))
           }
@@ -245,10 +212,10 @@ export default function UserDetailView() {
         </Button>
       ),
     },
-  ];
+  ], [client, navigate, clientId]);
 
   // Login history columns
-  const loginColumns = [
+  const loginColumns = useMemo(() => [
     {
       key: 'date',
       label: 'Date / Heure',
@@ -270,7 +237,40 @@ export default function UserDetailView() {
       label: 'Localisation',
       width: '140px',
     },
-  ];
+  ], []);
+
+  if (!client) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" onClick={() => navigate('clients')}>
+            <ArrowLeft className="size-4 mr-1" />
+            Retour
+          </Button>
+        </div>
+        <Card>
+          <CardContent className="py-16 text-center">
+            <p className="text-muted-foreground">Client introuvable.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const handleToggleStatus = () => {
+    const newStatus: UserStatus = client.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE';
+    updateClientStatus(client.id, newStatus);
+    toast.success(newStatus === 'SUSPENDED' ? 'Client suspendu' : 'Client activé', {
+      description: 'Le statut a été mis à jour avec succès.',
+    });
+  };
+
+  const handleForceKyc = () => {
+    updateClientKyc(client.id, 2 as KycLevel);
+    toast.success('KYC forcé', {
+      description: 'Le niveau KYC du client a été forcé à Niveau 2.',
+    });
+  };
 
   return (
     <div className="space-y-6">

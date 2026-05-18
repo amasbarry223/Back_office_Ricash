@@ -34,6 +34,14 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     }
   }, [currentRoute, mobileMenuOpen]);
 
+  // Scroll to top on route change
+  useEffect(() => {
+    const mainEl = document.querySelector('main');
+    if (mainEl) {
+      mainEl.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [currentRoute]);
+
   const desktopCollapsed = collapsed && !isMobile;
   const sidebarWidth = desktopCollapsed ? 'var(--sidebar-collapsed)' : 'var(--sidebar-width)';
 

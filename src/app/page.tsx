@@ -47,7 +47,8 @@ const ROUTE_ROLES: Record<string, Array<'super_admin' | 'admin'>> = {
 function RouteRenderer() {
   const currentRoute = useRouterStore((s) => s.currentRoute);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const canAccess = useAuthStore((s) => s.canAccess);
+  const user = useAuthStore((s) => s.user);
+  const userRole = useAuthStore((s) => s.user?.role);
 
   // If not authenticated, show login
   if (!isAuthenticated) {
@@ -56,7 +57,7 @@ function RouteRenderer() {
 
   // Check route access
   const allowedRoles = ROUTE_ROLES[currentRoute];
-  if (allowedRoles && !canAccess(allowedRoles)) {
+  if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
     return (
       <DashboardLayout>
         <UnauthorizedView />
@@ -103,11 +104,6 @@ function RouteRenderer() {
         return <NotFoundView />;
     }
   };
-
-  // Error pages don't use the dashboard layout
-  if (currentRoute === 'unauthorized' || currentRoute === 'not-found') {
-    return renderView();
-  }
 
   return (
     <DashboardLayout>

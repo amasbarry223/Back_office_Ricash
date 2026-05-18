@@ -11,6 +11,7 @@ import DataTable from '@/components/common/DataTable';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
+import ConfirmDialog from '@/components/common/ConfirmDialog';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useAgentsStore } from '@/stores/agents-store';
@@ -30,6 +31,10 @@ export default function FloatRequestsView() {
   const [pendingPage, setPendingPage] = useState(1);
   const [historyPage, setHistoryPage] = useState(1);
 
+  // Confirm dialog for approve
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'approve' } | null>(null);
+
   const pendingCount = useMemo(() => floatRequests.filter(r => r.status === 'PENDING').length, [floatRequests]);
 
   const pendingRequests = useMemo(
@@ -45,9 +50,16 @@ export default function FloatRequestsView() {
   );
 
   const handleApprove = (id: string) => {
-    if (!user?.email) return;
-    approveFloatRequest(id, user.email);
+    setConfirmAction({ id, action: 'approve' });
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmApprove = () => {
+    if (!confirmAction || !user?.email) return;
+    approveFloatRequest(confirmAction.id, user.email);
     toast.success('Demande de float approuvée');
+    setConfirmOpen(false);
+    setConfirmAction(null);
   };
 
   const handleReject = (id: string) => {
@@ -62,7 +74,7 @@ export default function FloatRequestsView() {
     toast.success('Demande de float rejetée');
   };
 
-  const pendingColumns = [
+  const pendingColumns = useMemo(() => [
     {
       key: 'id',
       label: 'N°',
@@ -182,9 +194,9 @@ export default function FloatRequestsView() {
         );
       },
     },
-  ];
+  ], [rejectingId, rejectComment, handleApprove, handleReject]);
 
-  const historyColumns = [
+  const historyColumns = useMemo(() => [
     {
       key: 'id',
       label: 'N°',
@@ -241,14 +253,7 @@ export default function FloatRequestsView() {
       sortable: true,
       render: (_value: unknown, row: Record<string, unknown>) => {
         const req = row as unknown as FloatRequest;
-        if (req.status === 'PENDING') {
-          return <StatusBadge status="PENDING" type="agent" />;
-        }
-        if (req.status === 'APPROVED') {
-          return <StatusBadge status="APPROVED" type="agent" />;
-        }
-        // REJECTED — use transaction 'FAILED' to get red styling
-        return <StatusBadge status="FAILED" type="transaction" />;
+        return <StatusBadge status={req.status} type="float_request" />;
       },
     },
     {
@@ -268,7 +273,7 @@ export default function FloatRequestsView() {
         );
       },
     },
-  ];
+  ], []);
 
   return (
     <div className="space-y-4">
@@ -322,6 +327,17 @@ export default function FloatRequestsView() {
           />
         </TabsContent>
       </Tabs>
+
+      {/* Confirmation dialog for approve */}
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Approuver la demande"
+        description="Êtes-vous sûr de vouloir approuver cette demande de float ? Le montant sera crédité au compte de l'agent."
+        confirmLabel="Approuver"
+        variant="default"
+        onConfirm={handleConfirmApprove}
+      />
     </div>
   );
 }

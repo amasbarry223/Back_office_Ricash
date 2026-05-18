@@ -52,6 +52,114 @@ export default function AgentFloatView() {
     [floatMovementsList, agentId]
   );
 
+  // Float request columns (before early return to avoid conditional hooks)
+  const requestColumns = useMemo(() => [
+    {
+      key: 'id',
+      label: 'N°',
+      width: '100px',
+      render: (value: unknown) => (
+        <span className="font-mono text-xs">{value as string}</span>
+      ),
+    },
+    {
+      key: 'amount',
+      label: 'Montant',
+      width: '130px',
+      render: (value: unknown) => (
+        <span className="font-medium">{formatXOF(value as number)}</span>
+      ),
+    },
+    {
+      key: 'justification',
+      label: 'Justification',
+    },
+    {
+      key: 'requestedAt',
+      label: 'Date',
+      width: '140px',
+      render: (value: unknown) => formatDateTime(value as string),
+    },
+    {
+      key: 'status',
+      label: 'Statut',
+      width: '120px',
+      render: (value: unknown) => {
+        const statusMap: Record<string, { type: 'agent' | 'kyc' | 'transaction' | 'user' | 'float_request'; status: string }> = {
+          PENDING: { type: 'float_request', status: 'PENDING' },
+          APPROVED: { type: 'float_request', status: 'APPROVED' },
+          REJECTED: { type: 'float_request', status: 'REJECTED' },
+        };
+        const mapping = statusMap[value as string];
+        if (mapping) {
+          return <StatusBadge status={mapping.status} type={mapping.type} />;
+        }
+        return <span>{value as string}</span>;
+      },
+    },
+    {
+      key: 'comment',
+      label: 'Commentaire',
+      width: '160px',
+      render: (value: unknown) => (
+        <span className="text-xs text-muted-foreground">
+          {(value as string) ?? '—'}
+        </span>
+      ),
+    },
+  ], []);
+
+  // Float movement columns
+  const movementColumns = useMemo(() => [
+    {
+      key: 'createdAt',
+      label: 'Date',
+      width: '140px',
+      render: (value: unknown) => formatDateTime(value as string),
+    },
+    {
+      key: 'type',
+      label: 'Type',
+      width: '90px',
+      render: (value: unknown) => {
+        const isCredit = (value as string) === 'CREDIT';
+        return (
+          <Badge
+            variant="outline"
+            className={`text-xs font-medium ${
+              isCredit
+                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
+                : 'border-red-200 bg-red-50 text-red-700'
+            }`}
+          >
+            {isCredit ? <ArrowDownLeft className="size-3 mr-1" /> : <ArrowUpRight className="size-3 mr-1" />}
+            {isCredit ? 'CRÉDIT' : 'DÉBIT'}
+          </Badge>
+        );
+      },
+    },
+    {
+      key: 'amount',
+      label: 'Montant',
+      width: '130px',
+      render: (value: unknown) => (
+        <span className="font-medium">{formatXOF(value as number)}</span>
+      ),
+    },
+    {
+      key: 'description',
+      label: 'Description',
+    },
+    {
+      key: 'createdBy',
+      label: 'Créé par',
+      width: '160px',
+      render: (value: unknown) => (
+        <span className="text-xs text-muted-foreground">{value as string}</span>
+      ),
+    },
+  ], []);
+
   if (!agent) {
     return (
       <div className="space-y-6">
@@ -118,114 +226,6 @@ export default function AgentFloatView() {
       });
     }, 500);
   };
-
-  // Float request columns
-  const requestColumns = [
-    {
-      key: 'id',
-      label: 'N°',
-      width: '100px',
-      render: (value: unknown) => (
-        <span className="font-mono text-xs">{value as string}</span>
-      ),
-    },
-    {
-      key: 'amount',
-      label: 'Montant',
-      width: '130px',
-      render: (value: unknown) => (
-        <span className="font-medium">{formatXOF(value as number)}</span>
-      ),
-    },
-    {
-      key: 'justification',
-      label: 'Justification',
-    },
-    {
-      key: 'requestedAt',
-      label: 'Date',
-      width: '140px',
-      render: (value: unknown) => formatDateTime(value as string),
-    },
-    {
-      key: 'status',
-      label: 'Statut',
-      width: '120px',
-      render: (value: unknown) => {
-        const statusMap: Record<string, { type: 'agent' | 'kyc' | 'transaction' | 'user'; status: string }> = {
-          PENDING: { type: 'kyc', status: 'PENDING' },
-          APPROVED: { type: 'agent', status: 'APPROVED' },
-          REJECTED: { type: 'kyc', status: 'REJECTED' },
-        };
-        const mapping = statusMap[value as string];
-        if (mapping) {
-          return <StatusBadge status={mapping.status} type={mapping.type} />;
-        }
-        return <span>{value as string}</span>;
-      },
-    },
-    {
-      key: 'comment',
-      label: 'Commentaire',
-      width: '160px',
-      render: (value: unknown) => (
-        <span className="text-xs text-muted-foreground">
-          {(value as string) ?? '—'}
-        </span>
-      ),
-    },
-  ];
-
-  // Float movement columns
-  const movementColumns = [
-    {
-      key: 'createdAt',
-      label: 'Date',
-      width: '140px',
-      render: (value: unknown) => formatDateTime(value as string),
-    },
-    {
-      key: 'type',
-      label: 'Type',
-      width: '90px',
-      render: (value: unknown) => {
-        const isCredit = (value as string) === 'CREDIT';
-        return (
-          <Badge
-            variant="outline"
-            className={`text-xs font-medium ${
-              isCredit
-                ? 'border-emerald-200 bg-emerald-50 text-emerald-700'
-                : 'border-red-200 bg-red-50 text-red-700'
-            }`}
-          >
-            {isCredit ? <ArrowDownLeft className="size-3 mr-1" /> : <ArrowUpRight className="size-3 mr-1" />}
-            {isCredit ? 'CRÉDIT' : 'DÉBIT'}
-          </Badge>
-        );
-      },
-    },
-    {
-      key: 'amount',
-      label: 'Montant',
-      width: '130px',
-      render: (value: unknown) => (
-        <span className="font-medium">{formatXOF(value as number)}</span>
-      ),
-    },
-    {
-      key: 'description',
-      label: 'Description',
-    },
-    {
-      key: 'createdBy',
-      label: 'Créé par',
-      width: '160px',
-      render: (value: unknown) => (
-        <span className="text-xs text-muted-foreground">{value as string}</span>
-      ),
-    },
-  ];
 
   return (
     <div className="space-y-6">

@@ -131,32 +131,34 @@ export default function LoginView() {
             </Button>
           </form>
 
-          {/* Test accounts */}
-          <div className="mt-6 pt-5 border-t">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
-              Comptes de test
-            </p>
-            <div className="flex flex-col gap-2">
-              <div className="rounded-md bg-muted/60 px-3 py-2">
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
-                    Compte Super Admin
-                  </span>
-                  <br />
-                  superadmin@ricash.com / ricash2025
-                </p>
-              </div>
-              <div className="rounded-md bg-muted/60 px-3 py-2">
-                <p className="text-xs text-muted-foreground">
-                  <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
-                    Compte Admin
-                  </span>
-                  <br />
-                  admin@ricash.com / ricash2025
-                </p>
+          {/* Demo accounts — only shown in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div className="mt-6 pt-5 border-t">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">
+                Comptes de démonstration
+              </p>
+              <div className="flex flex-col gap-2">
+                <div className="rounded-md bg-muted/60 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                      Super Admin
+                    </span>
+                    <br />
+                    superadmin@ricash.com / ricash2025
+                  </p>
+                </div>
+                <div className="rounded-md bg-muted/60 px-3 py-2">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold" style={{ color: 'var(--ricash-primary)' }}>
+                      Admin
+                    </span>
+                    <br />
+                    admin@ricash.com / ricash2025
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </CardContent>
       </Card>
     </div>

@@ -5,6 +5,7 @@ import AppSidebar from './AppSidebar';
 import AppHeader from './AppHeader';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { useRouterStore } from '@/stores/router-store';
+import { MOBILE_BREAKPOINT } from '@/lib/common';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -18,7 +19,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   useEffect(() => {
     const checkMobile = () => {
-      const mobile = window.innerWidth < 1280;
+      const mobile = window.innerWidth < MOBILE_BREAKPOINT;
       setIsMobile(mobile);
       if (!mobile) setMobileMenuOpen(false);
     };

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
+import { type RouteName, type Role } from '@/types';
 import DashboardLayout from '@/components/layout/DashboardLayout';
 
 // Views (all default exports)
@@ -25,9 +26,11 @@ import SettingsView from '@/views/settings/SettingsView';
 import NotificationsView from '@/views/notifications/NotificationsView';
 import UnauthorizedView from '@/views/errors/UnauthorizedView';
 import NotFoundView from '@/views/errors/NotFoundView';
+import { AlertTriangle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
-// Route access control map
-const ROUTE_ROLES: Record<string, Array<'super_admin' | 'admin'>> = {
+// Route access control map — properly typed with RouteName
+const ROUTE_ROLES: Partial<Record<RouteName, Role[]>> = {
   dashboard: ['super_admin', 'admin'],
   clients: ['super_admin', 'admin'],
   'client-detail': ['super_admin', 'admin'],
@@ -46,10 +49,43 @@ const ROUTE_ROLES: Record<string, Array<'super_admin' | 'admin'>> = {
   notifications: ['super_admin', 'admin'],
 };
 
+// Error boundary component
+class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError: boolean; error: Error | null }> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 p-8">
+          <AlertTriangle className="size-12 text-orange-500" />
+          <h2 className="text-xl font-bold text-foreground">Une erreur est survenue</h2>
+          <p className="text-sm text-muted-foreground text-center max-w-md">
+            {this.state.error?.message || 'Erreur inattendue. Veuillez réessayer.'}
+          </p>
+          <Button
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="bg-[var(--ricash-primary)] hover:bg-[var(--ricash-primary)]/90 text-white"
+          >
+            <RefreshCw className="size-4 mr-2" />
+            Réessayer
+          </Button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function RouteRenderer() {
   const currentRoute = useRouterStore((s) => s.currentRoute);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
-  const user = useAuthStore((s) => s.user);
   const userRole = useAuthStore((s) => s.user?.role);
 
   // If not authenticated, show login
@@ -111,7 +147,9 @@ function RouteRenderer() {
 
   return (
     <DashboardLayout>
-      {renderView()}
+      <ErrorBoundary>
+        {renderView()}
+      </ErrorBoundary>
     </DashboardLayout>
   );
 }
@@ -144,7 +182,7 @@ export default function Home() {
   // Show nothing during hydration to prevent SSR mismatch
   if (!hydrated) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#F4F7FB' }}>
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: 'var(--ricash-bg, #F4F7FB)' }}>
         <div className="flex flex-col items-center gap-3">
           <div className="shimmer size-12 rounded-xl" />
         </div>
@@ -153,7 +191,7 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#F4F7FB' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--ricash-bg, #F4F7FB)' }}>
       <RouteRenderer />
     </div>
   );

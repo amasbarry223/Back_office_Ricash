@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { KycRecord, KycStatus } from '@/types';
 import { mockKycRecords } from '@/mocks/kyc.mock';
+import { useUsersStore } from './users-store';
 
 interface KycStore {
   records: KycRecord[];
@@ -23,6 +24,10 @@ export const useKycStore = create<KycStore>((set, get) => ({
   },
 
   approveKyc: (id, verifiedBy) => {
+    const record = get().records.find(r => r.id === id);
+    // Guard: only PENDING records can be approved
+    if (!record || record.status !== 'PENDING') return;
+
     set(state => ({
       records: state.records.map(r =>
         r.id === id ? {
@@ -34,9 +39,16 @@ export const useKycStore = create<KycStore>((set, get) => ({
         } : r
       ),
     }));
+
+    // Cross-store sync: update the client's KYC level
+    useUsersStore.getState().updateClientKyc(record.clientId, record.currentLevel);
   },
 
   rejectKyc: (id, verifiedBy, comment) => {
+    const record = get().records.find(r => r.id === id);
+    // Guard: only PENDING records can be rejected
+    if (!record || record.status !== 'PENDING') return;
+
     set(state => ({
       records: state.records.map(r =>
         r.id === id ? {

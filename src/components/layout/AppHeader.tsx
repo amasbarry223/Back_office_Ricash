@@ -5,6 +5,7 @@ import { Menu, Bell, LogOut, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import { useRouterStore } from '@/stores/router-store';
 import { useNotificationsStore } from '@/stores/notifications-store';
+import { getInitials, roleLabel } from '@/lib/common';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -28,26 +29,6 @@ export default function AppHeader({ onToggleSidebar }: AppHeaderProps) {
   const notifications = useNotificationsStore((s) => s.notifications);
   const unreadCount = useMemo(() => notifications.filter(n => !n.read).length, [notifications]);
   const navigate = useRouterStore((s) => s.navigate);
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  const roleLabel = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return 'Super Admin';
-      case 'admin':
-        return 'Admin';
-      default:
-        return role;
-    }
-  };
 
   return (
     <header

@@ -2,6 +2,15 @@ import { create } from 'zustand';
 import { Transaction, TransactionStatus } from '@/types';
 import { mockTransactions } from '@/mocks/transactions.mock';
 
+// Valid status transitions for transactions
+const VALID_TX_TRANSITIONS: Record<TransactionStatus, TransactionStatus[]> = {
+  PENDING: ['IN_PROGRESS', 'CANCELLED'],
+  IN_PROGRESS: ['SUCCESS', 'FAILED', 'CANCELLED'],
+  SUCCESS: [],        // Terminal state
+  FAILED: [],         // Terminal state
+  CANCELLED: [],      // Terminal state
+};
+
 interface TransactionsStore {
   transactions: Transaction[];
   getTransactionById: (id: string) => Transaction | undefined;
@@ -23,6 +32,12 @@ export const useTransactionsStore = create<TransactionsStore>((set, get) => ({
   },
 
   updateTransactionStatus: (id, status) => {
+    const transaction = get().transactions.find(t => t.id === id);
+    if (!transaction) return;
+    // Guard: validate status transition
+    const allowed = VALID_TX_TRANSITIONS[transaction.status];
+    if (!allowed || !allowed.includes(status)) return;
+
     set(state => ({
       transactions: state.transactions.map(t =>
         t.id === id ? { ...t, status } : t

@@ -25,6 +25,7 @@ import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Role, RouteName } from '@/types';
+import { getInitials, roleLabel, MOBILE_BREAKPOINT } from '@/lib/common';
 
 interface NavItem {
   icon: React.ElementType;
@@ -148,7 +149,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 1280);
+    const checkMobile = () => setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
@@ -159,26 +160,6 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
 
   const handleNavigate = (route: RouteName) => {
     navigate(route);
-  };
-
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map((n) => n[0])
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
-  const roleLabel = (role: string) => {
-    switch (role) {
-      case 'super_admin':
-        return 'Super Admin';
-      case 'admin':
-        return 'Admin';
-      default:
-        return role;
-    }
   };
 
   const getBadgeCount = (item: NavItem): number => {

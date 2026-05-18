@@ -2,6 +2,13 @@ import { create } from 'zustand';
 import { Agent, AgentStatus, FloatRequest, FloatMovement } from '@/types';
 import { mockAgents, mockFloatRequests, mockFloatMovements } from '@/mocks/agents.mock';
 
+// Valid status transitions for agents
+const VALID_AGENT_TRANSITIONS: Record<AgentStatus, AgentStatus[]> = {
+  PENDING: ['APPROVED'],
+  APPROVED: ['SUSPENDED'],
+  SUSPENDED: ['APPROVED'],
+};
+
 interface AgentsStore {
   agents: Agent[];
   floatRequests: FloatRequest[];
@@ -28,12 +35,24 @@ export const useAgentsStore = create<AgentsStore>((set, get) => ({
   floatMovements: [...mockFloatMovements],
 
   updateAgentStatus: (id, status) => {
+    const agent = get().agents.find(a => a.id === id);
+    if (!agent) return;
+    // Guard: validate status transition
+    const allowed = VALID_AGENT_TRANSITIONS[agent.status];
+    if (!allowed || !allowed.includes(status)) return;
+
     set(state => ({
       agents: state.agents.map(a => a.id === id ? { ...a, status } : a),
     }));
   },
 
   approveAgent: (id, commissionRate) => {
+    const agent = get().agents.find(a => a.id === id);
+    // Guard: only PENDING agents can be approved
+    if (!agent || agent.status !== 'PENDING') return;
+    // Guard: commission rate must be between 0.1 and 100
+    if (commissionRate < 0.1 || commissionRate > 100) return;
+
     set(state => ({
       agents: state.agents.map(a =>
         a.id === id ? { ...a, status: 'APPROVED' as AgentStatus, commissionRate } : a
@@ -48,34 +67,49 @@ export const useAgentsStore = create<AgentsStore>((set, get) => ({
   updateAgentFloat: (id, amount) => {
     set(state => ({
       agents: state.agents.map(a =>
-        a.id === id ? { ...a, floatBalance: a.floatBalance + amount } : a
+        a.id === id ? { ...a, floatBalance: Math.max(0, a.floatBalance + amount) } : a
       ),
     }));
   },
 
   approveFloatRequest: (id, processedBy) => {
     const request = get().floatRequests.find(r => r.id === id);
-    if (!request) return;
+    // Guard: only PENDING requests can be approved (prevents double-approval)
+    if (!request || request.status !== 'PENDING') return;
 
-    // Mettre à jour la demande
-    set(state => ({
-      floatRequests: state.floatRequests.map(r =>
-        r.id === id ? { ...r, status: 'APPROVED' as const, processedAt: new Date().toISOString(), processedBy } : r
-      ),
-    }));
+    // Single atomic set: update request + credit agent + add movement all at once
+    set(state => {
+      const agent = state.agents.find(a => a.id === request.agentId);
+      if (!agent) return state;
 
-    // Créditer le float de l'agent
-    get().updateAgentFloat(request.agentId, request.amount);
-    get().addFloatMovement({
-      agentId: request.agentId,
-      type: 'CREDIT',
-      amount: request.amount,
-      description: `Approbation demande float ${id}`,
-      createdBy: processedBy,
+      return {
+        floatRequests: state.floatRequests.map(r =>
+          r.id === id ? { ...r, status: 'APPROVED' as const, processedAt: new Date().toISOString(), processedBy } : r
+        ),
+        agents: state.agents.map(a =>
+          a.id === request.agentId ? { ...a, floatBalance: Math.max(0, a.floatBalance + request.amount) } : a
+        ),
+        floatMovements: [
+          ...state.floatMovements,
+          {
+            id: `FM-${String(state.floatMovements.length + 1).padStart(3, '0')}`,
+            agentId: request.agentId,
+            type: 'CREDIT' as const,
+            amount: request.amount,
+            description: `Approbation demande float ${id}`,
+            createdBy: processedBy,
+            createdAt: new Date().toISOString(),
+          },
+        ],
+      };
     });
   },
 
   rejectFloatRequest: (id, processedBy, comment) => {
+    const request = get().floatRequests.find(r => r.id === id);
+    // Guard: only PENDING requests can be rejected
+    if (!request || request.status !== 'PENDING') return;
+
     set(state => ({
       floatRequests: state.floatRequests.map(r =>
         r.id === id ? { ...r, status: 'REJECTED' as const, processedAt: new Date().toISOString(), processedBy, comment } : r
@@ -84,6 +118,9 @@ export const useAgentsStore = create<AgentsStore>((set, get) => ({
   },
 
   createFloatRequest: (requestData) => {
+    // Guard: amount must be positive
+    if (!requestData.amount || requestData.amount <= 0) return;
+
     const newRequest: FloatRequest = {
       ...requestData,
       id: `FLR-${String(get().floatRequests.length + 1).padStart(3, '0')}`,

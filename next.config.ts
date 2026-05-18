@@ -1,12 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
-  /* config options here */
+  reactStrictMode: true,
   typescript: {
+    // À retirer une fois les erreurs TS corrigées (ConfirmDialog, DashboardView, etc.)
     ignoreBuildErrors: true,
   },
-  reactStrictMode: false,
 };
 
 export default nextConfig;

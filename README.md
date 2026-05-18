@@ -97,6 +97,50 @@ src/
 
 Le routage est géré côté client via `useRouterStore` (`src/stores/router-store.ts`), sans routes Next.js multiples : une seule page (`/`) avec rendu conditionnel des vues.
 
+## Déploiement Vercel
+
+Le projet est prêt pour [Vercel](https://vercel.com) (Next.js détecté automatiquement).
+
+### Déploiement via GitHub (recommandé)
+
+1. Connectez-vous à [vercel.com](https://vercel.com) et cliquez sur **Add New Project**
+2. Importez le dépôt [amasbarry223/Back_office_Ricash](https://github.com/amasbarry223/Back_office_Ricash)
+3. Paramètres détectés automatiquement :
+   - **Framework** : Next.js
+   - **Build Command** : `npm run build`
+   - **Output Directory** : (défaut Next.js)
+   - **Install Command** : `npm install`
+4. Aucune variable d'environnement obligatoire pour la version mock actuelle
+5. Cliquez sur **Deploy**
+
+### Déploiement via CLI
+
+```bash
+npm i -g vercel
+vercel login
+vercel
+```
+
+Pour la production :
+
+```bash
+vercel --prod
+```
+
+### Fichiers de configuration
+
+| Fichier | Rôle |
+|---------|------|
+| `vercel.json` | Région `cdg1` (Paris, proche Afrique de l'Ouest) |
+| `.env.example` | Modèle de variables pour une future API |
+| `next.config.ts` | Config Next.js compatible Vercel (sans `standalone`) |
+
+### Notes importantes
+
+- Les **données mock** et l’**auth** sont côté client (localStorage via Zustand) : pas de base de données sur Vercel pour l’instant
+- En production, le **code de réinitialisation** du mot de passe n’est **pas** affiché (uniquement en `development`)
+- Node.js **20+** requis (`engines` dans `package.json`)
+
 ## Licence
 
 Projet privé — usage interne Ricash.

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Lock, Mail } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import AnimateIn from '@/components/common/AnimateIn';
+import ForgotPasswordView from '@/views/auth/ForgotPasswordView';
 
 export default function LoginView() {
   const login = useAuthStore((s) => s.login);
@@ -17,6 +18,7 @@ export default function LoginView() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
 
   // Clear error when user types
   const handleEmailChange = (value: string) => {
@@ -33,6 +35,15 @@ export default function LoginView() {
     e.preventDefault();
     await login(email, password);
   };
+
+  if (showForgotPassword) {
+    return (
+      <ForgotPasswordView
+        initialEmail={email}
+        onBackToLogin={() => setShowForgotPassword(false)}
+      />
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 ricash-login-bg">
@@ -92,11 +103,15 @@ export default function LoginView() {
               />
             </div>
 
-            {/* Forgot password link */}
             <div className="flex justify-end">
-              <span className="text-xs text-muted-foreground cursor-not-allowed select-none">
+              <button
+                type="button"
+                className="text-xs text-ricash-brand hover:underline font-medium"
+                onClick={() => setShowForgotPassword(true)}
+                disabled={isLoading}
+              >
                 Mot de passe oublié ?
-              </span>
+              </button>
             </div>
 
             {/* Login button */}

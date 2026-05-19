@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import {
   ArrowLeft,
   Ban,
@@ -137,6 +137,7 @@ export default function AgentDetailView() {
 
   const [activeTab, setActiveTab] = useState('profile');
   const [commissionRate, setCommissionRate] = useState('');
+  const [commissionSeedKey, setCommissionSeedKey] = useState('');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState<
     'suspend' | 'reactivate' | 'approve' | null
@@ -155,11 +156,15 @@ export default function AgentDetailView() {
     [floatMovementsList, agentId],
   );
 
-  useEffect(() => {
-    if (agent?.status === 'PENDING' && agent.commissionRate > 0) {
-      setCommissionRate(String(agent.commissionRate));
-    }
-  }, [agent?.id, agent?.status, agent?.commissionRate]);
+  const commissionSeed = `${agentId}:${agent?.status ?? ''}:${agent?.commissionRate ?? ''}`;
+  if (
+    commissionSeed !== commissionSeedKey &&
+    agent?.status === 'PENDING' &&
+    agent.commissionRate > 0
+  ) {
+    setCommissionSeedKey(commissionSeed);
+    setCommissionRate(String(agent.commissionRate));
+  }
 
   const txColumns = useMemo(
     () => [

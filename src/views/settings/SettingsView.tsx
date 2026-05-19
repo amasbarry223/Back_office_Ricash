@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import {
   User,
   Shield,
@@ -119,6 +119,11 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
   const updateGeneral = useConfigStore((s) => s.updateGeneral);
 
   const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
+  const [prevInitialTab, setPrevInitialTab] = useState(initialTab);
+  if (initialTab !== prevInitialTab) {
+    setPrevInitialTab(initialTab);
+    setActiveTab(initialTab);
+  }
 
   // Profile editing
   const [profileEdits, setProfileEdits] = useState({ name: user?.name ?? '', email: user?.email ?? '', phone: '' });
@@ -183,25 +188,21 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
     [userRole],
   );
 
+  const resolvedActiveTab = useMemo((): SettingsTab => {
+    if (visibleTabs.length === 0) return activeTab;
+    if (visibleTabs.some((t) => t.id === activeTab)) return activeTab;
+    return visibleTabs[0].id;
+  }, [visibleTabs, activeTab]);
+
   const activeTabDef = useMemo(
-    () => visibleTabs.find((t) => t.id === activeTab) ?? visibleTabs[0],
-    [visibleTabs, activeTab],
+    () => visibleTabs.find((t) => t.id === resolvedActiveTab) ?? visibleTabs[0],
+    [visibleTabs, resolvedActiveTab],
   );
 
   const visibleGroups = useMemo(
     () => [...new Set(visibleTabs.map((t) => t.group))],
     [visibleTabs],
   );
-
-  useEffect(() => {
-    setActiveTab(initialTab);
-  }, [initialTab]);
-
-  useEffect(() => {
-    if (visibleTabs.length > 0 && !visibleTabs.some((t) => t.id === activeTab)) {
-      setActiveTab(visibleTabs[0].id);
-    }
-  }, [visibleTabs, activeTab]);
 
   const formatNumber = (n: number) => n.toLocaleString('fr-FR');
 
@@ -1198,7 +1199,7 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
       </PageHeader>
 
       <Tabs
-        value={activeTab}
+        value={resolvedActiveTab}
         onValueChange={(value) => setActiveTab(value as SettingsTab)}
         className="space-y-6"
       >

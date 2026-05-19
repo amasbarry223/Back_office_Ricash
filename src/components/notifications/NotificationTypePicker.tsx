@@ -49,16 +49,17 @@ export default function NotificationTypePicker({
   const SelectedIcon = selectedUi.icon;
 
   const filtered = useMemo(() => filterTypes(query), [query]);
-
-  useEffect(() => {
-    setHighlightIndex(0);
-  }, [query]);
+  const safeHighlightIndex = Math.min(
+    highlightIndex,
+    Math.max(0, filtered.length - 1),
+  );
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpen(false);
         setQuery('');
+        setHighlightIndex(0);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -69,6 +70,7 @@ export default function NotificationTypePicker({
     onChange(type);
     setOpen(false);
     setQuery('');
+    setHighlightIndex(0);
     inputRef.current?.blur();
   };
 
@@ -89,12 +91,13 @@ export default function NotificationTypePicker({
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
       setHighlightIndex((i) => Math.max(i - 1, 0));
-    } else if (e.key === 'Enter' && filtered[highlightIndex]) {
+    } else if (e.key === 'Enter' && filtered[safeHighlightIndex]) {
       e.preventDefault();
-      selectType(filtered[highlightIndex]);
+      selectType(filtered[safeHighlightIndex]);
     } else if (e.key === 'Escape') {
       setOpen(false);
       setQuery('');
+      setHighlightIndex(0);
     }
   };
 
@@ -131,11 +134,13 @@ export default function NotificationTypePicker({
           value={open ? query : selectedLabel}
           onChange={(e) => {
             setQuery(e.target.value);
+            setHighlightIndex(0);
             if (!open) setOpen(true);
           }}
           onFocus={() => {
             setOpen(true);
             setQuery('');
+            setHighlightIndex(0);
           }}
           onKeyDown={handleKeyDown}
           className={cn('w-full pl-9 pr-10', !open && 'pl-[3.25rem]')}
@@ -148,6 +153,7 @@ export default function NotificationTypePicker({
             setOpen((o) => !o);
             if (!open) {
               setQuery('');
+              setHighlightIndex(0);
               inputRef.current?.focus();
             }
           }}
@@ -173,7 +179,7 @@ export default function NotificationTypePicker({
               const cfg = NOTIFICATION_TYPE_UI[typeKey];
               const Icon = cfg.icon;
               const isSelected = value === typeKey;
-              const isHighlighted = highlightIndex === index;
+              const isHighlighted = safeHighlightIndex === index;
               return (
                 <li key={typeKey} role="option" aria-selected={isSelected}>
                   <button

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useCallback, useEffect } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   clampPage,
   paginateItems,
@@ -31,11 +31,12 @@ export function useTablePagination<T>(
 
   const safePage = useMemo(() => clampPage(page, total, perPage), [page, total, perPage]);
 
-  useEffect(() => {
-    if (safePage !== page) {
-      setPage(safePage);
-    }
-  }, [safePage, page]);
+  const setPageClamped = useCallback(
+    (newPage: number) => {
+      setPage(clampPage(newPage, total, perPage));
+    },
+    [total, perPage],
+  );
 
   const paginatedItems = useMemo(
     () => paginateItems(items, safePage, perPage),
@@ -55,20 +56,20 @@ export function useTablePagination<T>(
 
   const onPageChange = useCallback(
     (newPage: number) => {
-      setPage(clampPage(newPage, total, perPage));
+      setPageClamped(newPage);
     },
-    [total, perPage],
+    [setPageClamped],
   );
 
-  const resetPage = useCallback(() => setPage(1), []);
+  const resetPage = useCallback(() => setPageClamped(1), [setPageClamped]);
 
   return {
-    page,
+    page: safePage,
     safePage,
     paginatedItems,
     pagination,
     totalPages,
-    setPage,
+    setPage: setPageClamped,
     resetPage,
     onPageChange,
   };

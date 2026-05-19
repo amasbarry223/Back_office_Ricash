@@ -182,7 +182,7 @@ export default function FloatRequestsView() {
     });
     setConfirmOpen(false);
     setConfirmAction(null);
-  }, [confirmAction, user?.email, approveFloatRequest]);
+  }, [confirmAction, user, approveFloatRequest]);
 
   const handleReject = useCallback(
     (id: string) => {
@@ -196,7 +196,7 @@ export default function FloatRequestsView() {
       setRejectComment('');
       toast.success('Demande de float rejetée');
     },
-    [user?.email, rejectComment, rejectFloatRequest],
+    [user, rejectComment, rejectFloatRequest],
   );
 
   const handleExportCSV = useCallback(() => {

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, memo } from 'react';
 import { ArrowUpDown, ArrowUp, ArrowDown, Inbox } from 'lucide-react';
 import {
   Table,
@@ -11,9 +11,9 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { getPaginationRange } from '@/lib/pagination';
+import { computePageNumbers, getPaginationRange } from '@/lib/pagination';
 
-interface Column {
+export interface Column {
   key: string;
   label: string;
   sortable?: boolean;
@@ -21,7 +21,7 @@ interface Column {
   render?: (value: unknown, row: Record<string, unknown>) => React.ReactNode;
 }
 
-interface DataTableProps {
+export interface DataTableProps {
   columns: Column[];
   data: Record<string, unknown>[];
   loading?: boolean;
@@ -36,7 +36,45 @@ interface DataTableProps {
   emptyMessage?: string;
 }
 
-export default function DataTable({
+const DataTableRow = memo(function DataTableRow({
+  row,
+  rowIdx,
+  columns,
+  onRowClick,
+}: {
+  row: Record<string, unknown>;
+  rowIdx: number;
+  columns: Column[];
+  onRowClick?: (row: Record<string, unknown>) => void;
+}) {
+  const handleClick = useCallback(() => {
+    onRowClick?.(row);
+  }, [onRowClick, row]);
+
+  return (
+    <TableRow
+      className={`
+        row-interactive
+        ${rowIdx % 2 === 1 ? 'bg-ricash-surface-table/60' : ''}
+        ${onRowClick ? 'cursor-pointer hover:bg-ricash-surface-table' : ''}
+      `}
+      onClick={onRowClick ? handleClick : undefined}
+      style={{ animationDelay: `${Math.min(rowIdx * 30, 300)}ms` }}
+    >
+      {columns.map((col) => (
+        <TableCell key={`cell-${String(row.id ?? rowIdx)}-${col.key}`}>
+          {col.render
+            ? col.render(row[col.key], row)
+            : row[col.key] !== null && row[col.key] !== undefined
+              ? String(row[col.key])
+              : '—'}
+        </TableCell>
+      ))}
+    </TableRow>
+  );
+});
+
+function DataTable({
   columns,
   data,
   loading = false,
@@ -66,12 +104,15 @@ export default function DataTable({
     });
   }, [data, sortKey, sortDirection]);
 
-  const handleSort = (key: string) => {
-    const newDirection = sortKey === key && sortDirection === 'asc' ? 'desc' : 'asc';
-    setSortKey(key);
-    setSortDirection(newDirection);
-    onSort?.(key, newDirection);
-  };
+  const handleSort = useCallback(
+    (key: string) => {
+      const newDirection = sortKey === key && sortDirection === 'asc' ? 'desc' : 'asc';
+      setSortKey(key);
+      setSortDirection(newDirection);
+      onSort?.(key, newDirection);
+    },
+    [sortKey, sortDirection, onSort],
+  );
 
   const paginationRange = pagination
     ? getPaginationRange(pagination.page, pagination.total, pagination.perPage)
@@ -81,44 +122,31 @@ export default function DataTable({
   const startItem = paginationRange?.start ?? 0;
   const endItem = paginationRange?.end ?? 0;
 
-  const getPageNumbers = (): (number | string)[] => {
-    const pages: (number | string)[] = [];
-    const total = totalPages;
+  const pageNumbers = useMemo(
+    () => computePageNumbers(totalPages, currentPage),
+    [totalPages, currentPage],
+  );
 
-    if (total <= 7) {
-      for (let i = 1; i <= total; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('...');
+  const isSortEnabled = useCallback(
+    (col: Column) => col.sortable && !pagination,
+    [pagination],
+  );
 
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(total - 1, currentPage + 1);
+  const renderSortIcon = useCallback(
+    (col: Column) => {
+      if (!isSortEnabled(col)) return null;
+      if (sortKey !== col.key) {
+        return <ArrowUpDown className="size-3.5 ml-1 text-muted-foreground/50" />;
+      }
+      return sortDirection === 'asc' ? (
+        <ArrowUp className="size-3.5 ml-1 text-ricash-accent" />
+      ) : (
+        <ArrowDown className="size-3.5 ml-1 text-ricash-accent" />
+      );
+    },
+    [isSortEnabled, sortKey, sortDirection],
+  );
 
-      for (let i = start; i <= end; i++) pages.push(i);
-
-      if (currentPage < total - 2) pages.push('...');
-      pages.push(total);
-    }
-
-    return pages;
-  };
-
-  /** Le tri client ne porte que sur la page courante — désactivé si pagination serveur/parent */
-  const isSortEnabled = (col: Column) => col.sortable && !pagination;
-
-  const renderSortIcon = (col: Column) => {
-    if (!isSortEnabled(col)) return null;
-    if (sortKey !== col.key) {
-      return <ArrowUpDown className="size-3.5 ml-1 text-muted-foreground/50" />;
-    }
-    return sortDirection === 'asc' ? (
-      <ArrowUp className="size-3.5 ml-1 text-ricash-accent" />
-    ) : (
-      <ArrowDown className="size-3.5 ml-1 text-ricash-accent" />
-    );
-  };
-
-  // Loading skeleton rows
   if (loading) {
     return (
       <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden animate-in">
@@ -150,7 +178,6 @@ export default function DataTable({
     );
   }
 
-  // Empty state
   if (!loading && sortedData.length === 0) {
     return (
       <div className="bg-card rounded-xl ricash-card-shadow overflow-hidden">
@@ -192,32 +219,18 @@ export default function DataTable({
           </TableHeader>
           <TableBody>
             {sortedData.map((row, rowIdx) => (
-              <TableRow
+              <DataTableRow
                 key={row.id ? String(row.id) : `row-${rowIdx}`}
-                className={`
-                  row-interactive
-                  ${rowIdx % 2 === 1 ? 'bg-muted/20' : ''}
-                  ${onRowClick ? 'cursor-pointer hover:bg-muted/40' : ''}
-                `}
-                onClick={onRowClick ? () => onRowClick(row) : undefined}
-                style={{ animationDelay: `${Math.min(rowIdx * 30, 300)}ms` }}
-              >
-                {columns.map((col) => (
-                  <TableCell key={`cell-${row.id ?? rowIdx}-${col.key}`}>
-                    {col.render
-                      ? col.render(row[col.key], row)
-                      : row[col.key] !== null && row[col.key] !== undefined
-                        ? String(row[col.key])
-                        : '—'}
-                  </TableCell>
-                ))}
-              </TableRow>
+                row={row}
+                rowIdx={rowIdx}
+                columns={columns}
+                onRowClick={onRowClick}
+              />
             ))}
           </TableBody>
         </Table>
       </div>
 
-      {/* Pagination */}
       {pagination && pagination.total > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-border/50">
           <p className="text-sm text-muted-foreground">
@@ -225,47 +238,49 @@ export default function DataTable({
             {pagination.total > 1 ? 's' : ''}
           </p>
           {totalPages > 1 && (
-          <div className="flex items-center gap-1">
-            <Button
-              type="button"
-              variant="outline"
-              size="xs"
-              disabled={currentPage <= 1}
-              onClick={() => onPageChange?.(currentPage - 1)}
-            >
-              Précédent
-            </Button>
-            {getPageNumbers().map((page, idx) =>
-              typeof page === 'string' ? (
-                <span key={`ellipsis-${idx}`} className="px-1 text-muted-foreground text-sm">
-                  …
-                </span>
-              ) : (
-                <Button
-                  key={`page-${page}`}
-                  type="button"
-                  variant={page === currentPage ? 'primary' : 'outline'}
-                  size="xs"
-                  onClick={() => onPageChange?.(page)}
-                  className="w-8 p-0"
-                >
-                  {page}
-                </Button>
-              )
-            )}
-            <Button
-              type="button"
-              variant="outline"
-              size="xs"
-              disabled={currentPage >= totalPages}
-              onClick={() => onPageChange?.(currentPage + 1)}
-            >
-              Suivant
-            </Button>
-          </div>
+            <div className="flex items-center gap-1">
+              <Button
+                type="button"
+                variant="outline"
+                size="xs"
+                disabled={currentPage <= 1}
+                onClick={() => onPageChange?.(currentPage - 1)}
+              >
+                Précédent
+              </Button>
+              {pageNumbers.map((page, idx) =>
+                typeof page === 'string' ? (
+                  <span key={`ellipsis-${idx}`} className="px-1 text-muted-foreground text-sm">
+                    …
+                  </span>
+                ) : (
+                  <Button
+                    key={`page-${page}`}
+                    type="button"
+                    variant={page === currentPage ? 'primary' : 'outline'}
+                    size="xs"
+                    onClick={() => onPageChange?.(page)}
+                    className="w-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ),
+              )}
+              <Button
+                type="button"
+                variant="outline"
+                size="xs"
+                disabled={currentPage >= totalPages}
+                onClick={() => onPageChange?.(currentPage + 1)}
+              >
+                Suivant
+              </Button>
+            </div>
           )}
         </div>
       )}
     </div>
   );
 }
+
+export default memo(DataTable);

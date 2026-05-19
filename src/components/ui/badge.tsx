@@ -26,6 +26,8 @@ const badgeVariants = cva(
           "bg-[var(--ricash-neutral-bg)] text-[var(--ricash-neutral)] border border-[var(--ricash-neutral-border)]",
         brand:
           "bg-[var(--ricash-primary-bg)] text-[var(--ricash-primary)] border border-[var(--ricash-primary-border)]",
+        amber:
+          "bg-[var(--ricash-amber-bg)] text-[var(--ricash-amber)] border border-[var(--ricash-amber-border)]",
 
         // ─── Legacy shadcn variants (backward compat) ───
         default:
@@ -52,6 +54,7 @@ const DOT_COLORS: Record<string, string> = {
   info: "bg-[var(--ricash-info)]",
   neutral: "bg-[var(--ricash-neutral)]",
   brand: "bg-[var(--ricash-primary)]",
+  amber: "bg-[var(--ricash-amber)]",
 }
 
 function StatusDot({ color = "neutral", className }: { color?: string; className?: string }) {

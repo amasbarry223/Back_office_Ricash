@@ -53,10 +53,10 @@ const TYPE_ICONS: Record<TransactionType, React.ReactNode> = {
 
 // Transaction type color mapping
 const TYPE_COLORS: Record<TransactionType, string> = {
-  DEPOSIT: 'text-emerald-600 bg-emerald-50',
-  WITHDRAWAL: 'text-orange-600 bg-orange-50',
-  TRANSFER: 'text-sky-600 bg-sky-50',
-  MERCHANT_PAYMENT: 'text-violet-600 bg-violet-50',
+  DEPOSIT: 'text-ricash-success bg-ricash-success-bg',
+  WITHDRAWAL: 'text-ricash-warning bg-ricash-warning-bg',
+  TRANSFER: 'text-ricash-info bg-ricash-info-bg',
+  MERCHANT_PAYMENT: 'text-ricash-brand bg-ricash-brand-bg',
   REFUND: 'text-rose-600 bg-rose-50',
 };
 
@@ -356,10 +356,10 @@ export default function TransactionDetailView() {
 
           {/* Operations Card */}
           {(transaction.status === 'PENDING' || transaction.status === 'IN_PROGRESS') && (
-            <Card className="ricash-card-shadow border-l-4 border-l-orange-400">
+            <Card className="ricash-card-shadow border-l-4 border-l-ricash-warning">
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Briefcase className="size-4 text-orange-500" />
+                  <Briefcase className="size-4 text-ricash-warning" />
                   Opérations
                 </CardTitle>
               </CardHeader>
@@ -369,12 +369,12 @@ export default function TransactionDetailView() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                      className="w-full gap-2 text-ricash-danger border-[var(--ricash-danger-border)] hover:bg-[var(--ricash-danger-bg)]"
                       onClick={handleCancel}
                       disabled={isCancelling}
                     >
                       {isCancelling ? (
-                        <div className="size-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                        <div className="size-4 border-2 border-ricash-danger border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <XCircle className="size-4" />
                       )}
@@ -386,7 +386,7 @@ export default function TransactionDetailView() {
                   <div className="space-y-2">
                     <Button
                       size="sm"
-                      className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="w-full gap-2 bg-ricash-success hover:opacity-90 text-white"
                       onClick={handleMarkSuccess}
                       disabled={isMarkingSuccess}
                     >
@@ -400,12 +400,12 @@ export default function TransactionDetailView() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                      className="w-full gap-2 text-ricash-danger border-[var(--ricash-danger-border)] hover:bg-[var(--ricash-danger-bg)]"
                       onClick={handleMarkFailed}
                       disabled={isMarkingFailed}
                     >
                       {isMarkingFailed ? (
-                        <div className="size-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                        <div className="size-4 border-2 border-ricash-danger border-t-transparent rounded-full animate-spin" />
                       ) : (
                         <XCircle className="size-4" />
                       )}

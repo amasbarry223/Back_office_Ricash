@@ -346,13 +346,13 @@ export default function AdminsView() {
               <DropdownMenuSeparator />
               {admin.status === 'ACTIVE' && (
                 <DropdownMenuItem onClick={() => handleToggleStatus(admin)}>
-                  <Ban className="size-4 mr-2 text-orange-600" />
+                  <Ban className="size-4 mr-2 text-ricash-warning" />
                   Suspendre
                 </DropdownMenuItem>
               )}
               {admin.status === 'SUSPENDED' && (
                 <DropdownMenuItem onClick={() => handleToggleStatus(admin)}>
-                  <CheckCircle className="size-4 mr-2 text-emerald-600" />
+                  <CheckCircle className="size-4 mr-2 text-ricash-success" />
                   Réactiver
                 </DropdownMenuItem>
               )}
@@ -410,13 +410,13 @@ export default function AdminsView() {
           />
         </div>
 
-        <div className="flex gap-3 rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-950/30">
-          <Shield className="size-5 shrink-0 text-amber-700 dark:text-amber-400 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <Shield className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div className="min-w-0">
-            <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+            <p className="text-sm font-medium text-foreground">
               Zone réservée Super Admin
             </p>
-            <p className="mt-0.5 text-xs text-amber-800/90 dark:text-amber-200/80">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Seuls les Super Admin peuvent créer, suspendre ou réactiver des comptes administrateurs.
               Les Admin standards n&apos;ont pas accès à cette section.
             </p>

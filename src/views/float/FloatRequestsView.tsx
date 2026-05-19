@@ -75,7 +75,7 @@ function StatCard({
       className={cn(
         'rounded-xl border p-4 transition-colors',
         accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
-        warning && 'border-amber-300/60 bg-gradient-to-br from-amber-50/80 to-background dark:from-amber-950/20',
+        warning && 'border-[var(--ricash-warning-border)] bg-gradient-to-br from-[var(--ricash-warning-bg)] to-background',
         !accent && !warning && 'border-border/60 bg-card',
       )}
     >
@@ -84,7 +84,7 @@ function StatCard({
         className={cn(
           'mt-1 text-2xl font-bold tabular-nums',
           accent && 'text-ricash-brand',
-          warning && 'text-amber-600',
+          warning && 'text-ricash-warning',
           !accent && !warning && 'text-foreground',
         )}
       >
@@ -323,7 +323,7 @@ export default function FloatRequestsView() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 text-xs border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                  className="h-8 text-xs border-[var(--ricash-success-border)] text-ricash-success hover:bg-[var(--ricash-success-bg)]"
                   onClick={() => handleApprove(req.id)}
                 >
                   <CheckCircle className="size-3.5 mr-1" />
@@ -332,7 +332,7 @@ export default function FloatRequestsView() {
                 <Button
                   size="sm"
                   variant="outline"
-                  className="h-8 text-xs border-red-300 text-red-700 hover:bg-red-50"
+                  className="h-8 text-xs border-[var(--ricash-danger-border)] text-ricash-danger hover:bg-[var(--ricash-danger-bg)]"
                   onClick={() => setRejectingId(req.id)}
                 >
                   <XCircle className="size-3.5 mr-1" />
@@ -465,14 +465,14 @@ export default function FloatRequestsView() {
       </div>
 
       {stats.pending > 0 && (
-        <div className="flex gap-3 rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-950/30">
-          <Clock className="size-5 shrink-0 text-amber-700 dark:text-amber-400 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <Clock className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div className="min-w-0">
-            <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+            <p className="text-sm font-medium text-foreground">
               {stats.pending} demande{stats.pending > 1 ? 's' : ''} en attente —{' '}
               {formatXOF(stats.pendingAmount)} à valider
             </p>
-            <p className="mt-0.5 text-xs text-amber-800/90 dark:text-amber-200/80">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Traitez les demandes rapidement pour éviter l&apos;interruption d&apos;activité des
               agents.
             </p>
@@ -480,13 +480,13 @@ export default function FloatRequestsView() {
         </div>
       )}
 
-      <div className="flex gap-3 rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-950/30">
-        <Wallet className="size-5 shrink-0 text-sky-700 dark:text-sky-400 mt-0.5" aria-hidden />
+      <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+        <Wallet className="size-5 shrink-0 text-ricash-info mt-0.5" aria-hidden />
         <div className="min-w-0">
-          <p className="text-sm font-medium text-sky-900 dark:text-sky-100">
+          <p className="text-sm font-medium text-foreground">
             Gestion du float agents
           </p>
-          <p className="mt-0.5 text-xs text-sky-800/90 dark:text-sky-200/80">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Approuvez pour créditer le float de l&apos;agent. En cas de rejet, un commentaire
             explicatif est obligatoire.
           </p>
@@ -541,7 +541,7 @@ export default function FloatRequestsView() {
                 <EmptyState
                   title="Aucune demande en attente"
                   description="Toutes les demandes de float ont été traitées."
-                  icon={<CheckCircle className="size-8 text-emerald-600" />}
+                  icon={<CheckCircle className="size-8 text-ricash-success" />}
                 />
               ) : (
                 <DataTable
@@ -605,7 +605,7 @@ export default function FloatRequestsView() {
                           : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
                         id === 'pending' &&
                           isActive &&
-                          'border-amber-400/50 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300',
+                          'border-[var(--ricash-warning-border)] bg-[var(--ricash-warning-bg)] text-ricash-warning',
                       )}
                     >
                       <Icon className="size-3.5" aria-hidden />

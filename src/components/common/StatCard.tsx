@@ -14,7 +14,7 @@ interface StatCardProps {
     value: number;
     direction: 'up' | 'down' | 'stable';
   };
-  color: 'blue' | 'green' | 'orange' | 'red';
+  color: 'blue' | 'green' | 'orange' | 'amber' | 'red';
   loading?: boolean;
   /** Stagger index for mount animation (1-8) */
   stagger?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8;
@@ -37,6 +37,11 @@ const COLOR_MAP = {
     bg: 'bg-[var(--ricash-warning-bg)]',
     icon: 'text-[var(--ricash-warning)]',
     ring: 'ring-[var(--ricash-warning-border)]',
+  },
+  amber: {
+    bg: 'bg-ricash-amber-bg',
+    icon: 'text-ricash-amber',
+    ring: 'ring-ricash-amber-border',
   },
   red: {
     bg: 'bg-[var(--ricash-danger-bg)]',

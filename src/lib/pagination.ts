@@ -46,3 +46,50 @@ export interface TablePaginationState {
   perPage: number;
   total: number;
 }
+
+/**
+ * Numéros de page à afficher dans la barre de pagination.
+ * Insère « ellipsis » entre les blocs lorsque la liste est longue.
+ */
+export function computePageNumbers(
+  totalPages: number,
+  currentPage: number,
+  siblingCount = 1,
+): (number | 'ellipsis')[] {
+  if (totalPages <= 0) return [];
+  if (totalPages === 1) return [1];
+
+  const safePage = clampPage(currentPage, totalPages, 1);
+  const totalNumbers = siblingCount * 2 + 5;
+
+  if (totalPages <= totalNumbers) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1);
+  }
+
+  const leftSibling = Math.max(safePage - siblingCount, 1);
+  const rightSibling = Math.min(safePage + siblingCount, totalPages);
+  const showLeftEllipsis = leftSibling > 2;
+  const showRightEllipsis = rightSibling < totalPages - 1;
+
+  const pages: (number | 'ellipsis')[] = [1];
+
+  if (showLeftEllipsis) {
+    pages.push('ellipsis');
+  } else {
+    for (let i = 2; i < leftSibling; i++) pages.push(i);
+  }
+
+  for (let i = leftSibling; i <= rightSibling; i++) {
+    if (i !== 1 && i !== totalPages) pages.push(i);
+  }
+
+  if (showRightEllipsis) {
+    pages.push('ellipsis');
+  } else {
+    for (let i = rightSibling + 1; i < totalPages; i++) pages.push(i);
+  }
+
+  if (totalPages > 1) pages.push(totalPages);
+
+  return pages;
+}

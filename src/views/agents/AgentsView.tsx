@@ -75,7 +75,7 @@ function StatCard({
       className={cn(
         'rounded-xl border p-4 transition-colors',
         accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
-        warning && 'border-orange-300/60 bg-gradient-to-br from-orange-50/80 to-background dark:from-orange-950/20',
+        warning && 'border-[var(--ricash-warning-border)] bg-gradient-to-br from-[var(--ricash-warning-bg)] to-background',
         !accent && !warning && 'border-border/60 bg-card',
       )}
     >
@@ -84,7 +84,7 @@ function StatCard({
         className={cn(
           'mt-1 text-2xl font-bold tabular-nums',
           accent && 'text-ricash-brand',
-          warning && 'text-orange-600',
+          warning && 'text-ricash-warning',
           !accent && !warning && 'text-foreground',
         )}
       >
@@ -266,7 +266,7 @@ export default function AgentsView() {
         const isLow = amount < LOW_FLOAT_THRESHOLD;
         return (
           <div className="flex flex-col gap-0.5">
-            <span className={cn('font-medium tabular-nums', isLow && 'text-orange-600')}>
+            <span className={cn('font-medium tabular-nums', isLow && 'text-ricash-warning')}>
               {formatXOF(amount)}
             </span>
             {isLow && (
@@ -339,7 +339,7 @@ export default function AgentsView() {
               {currentStatus === 'PENDING' && (
                 <RoleGuard roles={['super_admin', 'admin']}>
                   <DropdownMenuItem onClick={() => navigateToDetail(agent)}>
-                    <CheckCircle className="size-4 mr-2 text-emerald-600" />
+                    <CheckCircle className="size-4 mr-2 text-ricash-success" />
                     Approuver
                   </DropdownMenuItem>
                 </RoleGuard>
@@ -349,7 +349,7 @@ export default function AgentsView() {
                   <DropdownMenuItem
                     onClick={() => handleToggleStatus(agent.id, currentStatus)}
                   >
-                    <Ban className="size-4 mr-2 text-orange-600" />
+                    <Ban className="size-4 mr-2 text-ricash-warning" />
                     Suspendre
                   </DropdownMenuItem>
                 </RoleGuard>
@@ -359,7 +359,7 @@ export default function AgentsView() {
                   <DropdownMenuItem
                     onClick={() => handleToggleStatus(agent.id, currentStatus)}
                   >
-                    <RotateCcw className="size-4 mr-2 text-emerald-600" />
+                    <RotateCcw className="size-4 mr-2 text-ricash-success" />
                     Réactiver
                   </DropdownMenuItem>
                 </RoleGuard>
@@ -408,13 +408,13 @@ export default function AgentsView() {
         />
       </div>
 
-      <div className="flex gap-3 rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-950/30">
-        <Wallet className="size-5 shrink-0 text-sky-700 dark:text-sky-400 mt-0.5" aria-hidden />
+      <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+        <Wallet className="size-5 shrink-0 text-ricash-info mt-0.5" aria-hidden />
         <div className="min-w-0">
-          <p className="text-sm font-medium text-sky-900 dark:text-sky-100">
+          <p className="text-sm font-medium text-foreground">
             Gestion du réseau agents
           </p>
-          <p className="mt-0.5 text-xs text-sky-800/90 dark:text-sky-200/80">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Consultez le float, approuvez les nouveaux agents et suivez les commissions. Les agents
             avec un float inférieur à {formatXOF(LOW_FLOAT_THRESHOLD)} sont signalés automatiquement.
           </p>
@@ -468,7 +468,7 @@ export default function AgentsView() {
                       : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
                     id === 'low_float' &&
                       isActive &&
-                      'border-orange-400/50 bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300',
+                      'border-[var(--ricash-warning-border)] bg-[var(--ricash-warning-bg)] text-ricash-warning',
                   )}
                 >
                   <Icon className="size-3.5" aria-hidden />
@@ -477,7 +477,7 @@ export default function AgentsView() {
                     className={cn(
                       'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums',
                       isActive ? 'bg-ricash-brand/15' : 'bg-muted',
-                      id === 'low_float' && isActive && 'bg-orange-200/60 dark:bg-orange-900/40',
+                      id === 'low_float' && isActive && 'bg-[var(--ricash-warning-bg)]',
                     )}
                   >
                     {count}

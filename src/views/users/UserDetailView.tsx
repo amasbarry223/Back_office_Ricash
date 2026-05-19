@@ -97,7 +97,7 @@ function StatMini({
     <div className={cn(
         'rounded-lg border px-3 py-2.5 min-w-0',
         accent && 'border-ricash-brand/30 bg-ricash-brand/5',
-        warning && 'border-amber-200/80 bg-amber-50/50 dark:border-amber-900/40 dark:bg-amber-950/20',
+        warning && 'border ricash-alert-warning',
         !accent && !warning && 'border-border/60 bg-card',
       )}
     >
@@ -108,7 +108,7 @@ function StatMini({
         className={cn(
           'mt-0.5 text-sm font-semibold truncate',
           accent && 'text-ricash-brand',
-          warning && 'text-amber-600',
+          warning && 'text-ricash-warning',
           !accent && !warning && 'text-foreground',
         )}
       >
@@ -482,13 +482,13 @@ export default function UserDetailView() {
       </div>
 
       {client.status === 'SUSPENDED' && (
-        <div className="flex gap-3 rounded-xl border border-orange-200/80 bg-orange-50/80 px-4 py-3 dark:border-orange-900/40 dark:bg-orange-950/30">
-          <Ban className="size-5 shrink-0 text-orange-600 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <Ban className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div>
-            <p className="text-sm font-medium text-orange-900 dark:text-orange-100">
+            <p className="text-sm font-medium text-foreground">
               Compte suspendu
             </p>
-            <p className="mt-0.5 text-xs text-orange-800/90 dark:text-orange-200/80">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Ce client ne peut plus effectuer de transactions tant que le compte n&apos;est pas
               réactivé.
             </p>
@@ -497,13 +497,13 @@ export default function UserDetailView() {
       )}
 
       {!kycVerified && client.status === 'ACTIVE' && (
-        <div className="flex gap-3 rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-950/30">
-          <IdCard className="size-5 shrink-0 text-amber-700 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <IdCard className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div>
-            <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+            <p className="text-sm font-medium text-foreground">
               KYC incomplet
             </p>
-            <p className="mt-0.5 text-xs text-amber-800/90 dark:text-amber-200/80">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Le niveau actuel ({client.kycLevel}) est inférieur au seuil requis (niveau{' '}
               {KYC_VERIFIED_LEVEL}). Certaines opérations peuvent être limitées.
             </p>
@@ -517,7 +517,7 @@ export default function UserDetailView() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 border-orange-300 text-orange-700 hover:bg-orange-50"
+              className="gap-1.5 border-[var(--ricash-warning-border)] text-ricash-warning hover:bg-[var(--ricash-warning-bg)]"
               onClick={handleToggleStatus}
             >
               <Ban className="size-4" />
@@ -527,7 +527,7 @@ export default function UserDetailView() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+              className="gap-1.5 border-[var(--ricash-success-border)] text-ricash-success hover:bg-[var(--ricash-success-bg)]"
               onClick={handleToggleStatus}
             >
               <CheckCircle className="size-4" />

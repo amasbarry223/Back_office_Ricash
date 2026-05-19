@@ -83,7 +83,7 @@ function StatMini({
       className={cn(
         'rounded-lg border px-3 py-2.5 min-w-0',
         warning
-          ? 'border-orange-200/80 bg-orange-50/50 dark:border-orange-900/40 dark:bg-orange-950/20'
+          ? 'border ricash-alert-warning'
           : 'border-border/60 bg-card',
       )}
     >
@@ -93,7 +93,7 @@ function StatMini({
       <p
         className={cn(
           'mt-0.5 text-sm font-semibold truncate',
-          warning ? 'text-orange-600' : 'text-foreground',
+          warning ? 'text-ricash-warning' : 'text-foreground',
         )}
       >
         {value}
@@ -321,9 +321,9 @@ export default function AgentDetailView() {
   const activeTabMeta = TAB_META[activeTab];
 
   const getFloatColor = (balance: number) => {
-    if (balance >= 500_000) return 'text-emerald-600';
+    if (balance >= 500_000) return 'text-ricash-success';
     if (balance >= LOW_FLOAT_THRESHOLD) return 'text-foreground';
-    return 'text-orange-600';
+    return 'text-ricash-warning';
   };
 
   return (
@@ -386,7 +386,7 @@ export default function AgentDetailView() {
               <p className="mt-0.5 text-xs text-muted-foreground">
                 Inscrit le {formatDate(agent.createdAt)}
                 {agent.status === 'PENDING' && (
-                  <span className="ml-2 inline-flex items-center gap-1 text-amber-700 dark:text-amber-400">
+                  <span className="ml-2 inline-flex items-center gap-1 text-ricash-warning">
                     <Clock className="size-3" aria-hidden />
                     {AGENT_STATUS_LABELS.PENDING}
                   </span>
@@ -418,15 +418,15 @@ export default function AgentDetailView() {
 
       {/* Approbation en attente */}
       {agent.status === 'PENDING' && (
-        <Card className="border-amber-200/80 bg-amber-50/40 dark:border-amber-900/40 dark:bg-amber-950/20 shadow-sm">
+        <Card className="border ricash-alert-amber shadow-sm">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base flex items-center gap-2 text-amber-900 dark:text-amber-100">
+            <CardTitle className="text-base flex items-center gap-2 text-foreground">
               <Clock className="size-4" />
               Validation du compte agent
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-sm text-amber-800/90 dark:text-amber-200/80">
+            <p className="text-sm text-muted-foreground">
               Cet agent est en attente d&apos;approbation. Définissez le taux de commission avant
               d&apos;activer son accès opérationnel.
             </p>
@@ -487,7 +487,7 @@ export default function AgentDetailView() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 border-orange-300 text-orange-700 hover:bg-orange-50"
+                className="gap-1.5 border-[var(--ricash-warning-border)] text-ricash-warning hover:bg-[var(--ricash-warning-bg)]"
                 onClick={() => {
                   setConfirmAction('suspend');
                   setConfirmOpen(true);
@@ -501,7 +501,7 @@ export default function AgentDetailView() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 border-emerald-300 text-emerald-700 hover:bg-emerald-50"
+                className="gap-1.5 border-[var(--ricash-success-border)] text-ricash-success hover:bg-[var(--ricash-success-bg)]"
                 onClick={() => {
                   setConfirmAction('reactivate');
                   setConfirmOpen(true);
@@ -516,11 +516,11 @@ export default function AgentDetailView() {
       )}
 
       {isLowFloat && agent.status === 'APPROVED' && (
-        <div className="flex gap-3 rounded-xl border border-orange-200/80 bg-orange-50/80 px-4 py-3 dark:border-orange-900/40 dark:bg-orange-950/30">
-          <AlertTriangle className="size-5 shrink-0 text-orange-600 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <AlertTriangle className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div>
-            <p className="text-sm font-medium text-orange-900 dark:text-orange-100">Float insuffisant</p>
-            <p className="mt-0.5 text-xs text-orange-800/90 dark:text-orange-200/80">
+            <p className="text-sm font-medium text-foreground">Float insuffisant</p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Le solde est inférieur à {formatXOF(LOW_FLOAT_THRESHOLD)}. Envisagez un
               réapprovisionnement via la gestion du float.
             </p>

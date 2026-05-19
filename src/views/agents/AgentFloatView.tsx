@@ -176,15 +176,15 @@ export default function AgentFloatView() {
 
   // Float balance color
   const getFloatColor = (balance: number) => {
-    if (balance > 500000) return 'text-emerald-600';
-    if (balance >= 200000) return 'text-orange-600';
-    return 'text-red-600';
+    if (balance > 500000) return 'text-ricash-success';
+    if (balance >= 200000) return 'text-ricash-warning';
+    return 'text-ricash-danger';
   };
 
   const getFloatBgColor = (balance: number) => {
-    if (balance > 500000) return 'bg-emerald-50 border-emerald-200';
-    if (balance >= 200000) return 'bg-orange-50 border-orange-200';
-    return 'bg-red-50 border-red-200';
+    if (balance > 500000) return 'bg-ricash-success-bg border-ricash-success-border';
+    if (balance >= 200000) return 'bg-ricash-warning-bg border-ricash-warning-border';
+    return 'bg-ricash-danger-bg border-ricash-danger-border';
   };
 
   const handleSubmitRequest = () => {

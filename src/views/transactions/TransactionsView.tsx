@@ -28,10 +28,10 @@ import { useTablePagination } from '@/hooks/use-table-pagination';
 
 // Transaction type badge color mapping
 const TYPE_COLORS: Record<TransactionType, string> = {
-  DEPOSIT: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  WITHDRAWAL: 'bg-orange-50 text-orange-700 border-orange-200',
-  TRANSFER: 'bg-sky-50 text-sky-700 border-sky-200',
-  MERCHANT_PAYMENT: 'bg-violet-50 text-violet-700 border-violet-200',
+  DEPOSIT: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  WITHDRAWAL: 'bg-ricash-warning-bg text-ricash-warning border-ricash-warning-border',
+  TRANSFER: 'bg-ricash-info-bg text-ricash-info border-ricash-info-border',
+  MERCHANT_PAYMENT: 'bg-ricash-brand-bg text-ricash-brand border-ricash-brand-border',
   REFUND: 'bg-rose-50 text-rose-700 border-rose-200',
 };
 
@@ -237,7 +237,7 @@ export default function TransactionsView() {
           const type = row.type as TransactionType;
           return (
             <span
-              className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium ${TYPE_COLORS[type] ?? 'bg-gray-50 text-gray-700 border-gray-200'}`}
+              className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium ${TYPE_COLORS[type] ?? 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border'}`}
             >
               {TRANSACTION_TYPE_LABELS[type] ?? type}
             </span>
@@ -262,7 +262,7 @@ export default function TransactionsView() {
           const status = row.status as TransactionStatus;
           return (
             <span
-              className={`font-semibold text-sm ${status === 'FAILED' ? 'text-red-600' : status === 'SUCCESS' ? 'text-emerald-600' : 'text-foreground'}`}
+              className={`font-semibold text-sm ${status === 'FAILED' ? 'text-ricash-danger' : status === 'SUCCESS' ? 'text-ricash-success' : 'text-foreground'}`}
             >
               {formatXOF(amount)}
             </span>

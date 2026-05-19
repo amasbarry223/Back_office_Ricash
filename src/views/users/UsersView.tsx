@@ -76,7 +76,7 @@ function StatCard({
       className={cn(
         'rounded-xl border p-4 transition-colors',
         accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
-        warning && 'border-amber-300/60 bg-gradient-to-br from-amber-50/80 to-background dark:from-amber-950/20',
+        warning && 'border-[var(--ricash-warning-border)] bg-gradient-to-br from-[var(--ricash-warning-bg)] to-background',
         !accent && !warning && 'border-border/60 bg-card',
       )}
     >
@@ -85,7 +85,7 @@ function StatCard({
         className={cn(
           'mt-1 text-2xl font-bold tabular-nums',
           accent && 'text-ricash-brand',
-          warning && 'text-amber-600',
+          warning && 'text-ricash-warning',
           !accent && !warning && 'text-foreground',
         )}
       >
@@ -345,14 +345,14 @@ export default function UsersView() {
                   <DropdownMenuItem
                     onClick={() => handleToggleStatus(client.id, currentStatus)}
                   >
-                    <Ban className="size-4 mr-2 text-orange-600" />
+                    <Ban className="size-4 mr-2 text-ricash-warning" />
                     Suspendre
                   </DropdownMenuItem>
                 ) : (
                   <DropdownMenuItem
                     onClick={() => handleToggleStatus(client.id, currentStatus)}
                   >
-                    <CheckCircle className="size-4 mr-2 text-emerald-600" />
+                    <CheckCircle className="size-4 mr-2 text-ricash-success" />
                     Activer
                   </DropdownMenuItem>
                 )}
@@ -406,13 +406,13 @@ export default function UsersView() {
         />
       </div>
 
-      <div className="flex gap-3 rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-950/30">
-        <Wallet className="size-5 shrink-0 text-sky-700 dark:text-sky-400 mt-0.5" aria-hidden />
+      <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+        <Wallet className="size-5 shrink-0 text-ricash-info mt-0.5" aria-hidden />
         <div className="min-w-0">
-          <p className="text-sm font-medium text-sky-900 dark:text-sky-100">
+          <p className="text-sm font-medium text-foreground">
             Gestion de la base clients
           </p>
-          <p className="mt-0.5 text-xs text-sky-800/90 dark:text-sky-200/80">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Consultez les profils, vérifiez le KYC et gérez les statuts. Les clients sous le niveau{' '}
             {KYC_VERIFIED_LEVEL} nécessitent une validation KYC complémentaire.
           </p>
@@ -462,7 +462,7 @@ export default function UsersView() {
                       : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
                     id === 'kyc_pending' &&
                       isActive &&
-                      'border-amber-400/50 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300',
+                      'border-[var(--ricash-warning-border)] bg-[var(--ricash-warning-bg)] text-ricash-warning',
                   )}
                 >
                   <Icon className="size-3.5" aria-hidden />
@@ -471,7 +471,7 @@ export default function UsersView() {
                     className={cn(
                       'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums',
                       isActive ? 'bg-ricash-brand/15' : 'bg-muted',
-                      id === 'kyc_pending' && isActive && 'bg-amber-200/60 dark:bg-amber-900/40',
+                      id === 'kyc_pending' && isActive && 'bg-[var(--ricash-warning-bg)]',
                     )}
                   >
                     {count}

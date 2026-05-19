@@ -64,7 +64,7 @@ class ErrorBoundary extends Component<{ children: React.ReactNode }, { hasError:
     if (this.state.hasError) {
       return (
         <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 p-8">
-          <AlertTriangle className="size-12 text-orange-500" />
+          <AlertTriangle className="size-12 text-ricash-warning" />
           <h2 className="text-xl font-bold text-foreground">Une erreur est survenue</h2>
           <p className="text-sm text-muted-foreground text-center max-w-md">
             {this.state.error?.message || 'Erreur inattendue. Veuillez réessayer.'}

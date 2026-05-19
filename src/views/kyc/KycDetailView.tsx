@@ -38,10 +38,10 @@ import { toast } from 'sonner';
 
 // KYC Level badge colors
 const KYC_LEVEL_COLORS: Record<number, string> = {
-  0: 'bg-gray-100 text-gray-600 border-gray-200',
-  1: 'bg-sky-50 text-sky-700 border-sky-200',
-  2: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  3: 'bg-violet-50 text-violet-700 border-violet-200',
+  0: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
+  1: 'bg-ricash-info-bg text-ricash-info border-ricash-info-border',
+  2: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  3: 'bg-ricash-brand-bg text-ricash-brand border-ricash-brand-border',
 };
 
 export default function KycDetailView() {
@@ -159,7 +159,7 @@ export default function KycDetailView() {
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">Niveau KYC actuel</p>
                   <span
-                    className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium ${KYC_LEVEL_COLORS[record.currentLevel] ?? 'bg-gray-100 text-gray-600 border-gray-200'}`}
+                    className={`inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium ${KYC_LEVEL_COLORS[record.currentLevel] ?? 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border'}`}
                   >
                     Niveau {record.currentLevel}
                   </span>
@@ -196,7 +196,7 @@ export default function KycDetailView() {
                 <div>
                   <p className="text-xs text-muted-foreground">Résultat Smile Identity</p>
                   <span
-                    className={`inline-flex items-center gap-1 text-sm font-medium ${record.smileIdentityResult === 'PASS' ? 'text-emerald-600' : 'text-red-600'}`}
+                    className={`inline-flex items-center gap-1 text-sm font-medium ${record.smileIdentityResult === 'PASS' ? 'text-ricash-success' : 'text-ricash-danger'}`}
                   >
                     {record.smileIdentityResult === 'PASS' ? (
                       <CheckCircle className="size-4" />
@@ -225,7 +225,7 @@ export default function KycDetailView() {
               {record.comment && (
                 <div>
                   <p className="text-xs text-muted-foreground">Commentaire</p>
-                  <p className="text-sm text-red-600 bg-red-50 p-2 rounded-md border border-red-100">
+                  <p className="text-sm text-ricash-danger bg-ricash-danger-bg p-2 rounded-md border border-ricash-danger-border">
                     {record.comment}
                   </p>
                 </div>
@@ -236,17 +236,17 @@ export default function KycDetailView() {
           {/* Actions Card */}
           {record.status === 'PENDING' && (
             <RoleGuard roles={['super_admin', 'admin']}>
-              <Card className="ricash-card-shadow border-l-4 border-l-orange-400">
+              <Card className="ricash-card-shadow border-l-4 border-l-ricash-warning">
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
-                    <FileText className="size-4 text-orange-500" />
+                    <FileText className="size-4 text-ricash-warning" />
                     Actions
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   <Button
                     size="sm"
-                    className="w-full gap-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="w-full gap-2 bg-ricash-success hover:opacity-90 text-white"
                     onClick={handleApprove}
                     disabled={isApproving}
                   >
@@ -262,7 +262,7 @@ export default function KycDetailView() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="w-full gap-2 text-red-600 border-red-200 hover:bg-red-50"
+                      className="w-full gap-2 text-ricash-danger border-[var(--ricash-danger-border)] hover:bg-[var(--ricash-danger-bg)]"
                       onClick={() => setShowRejectForm(true)}
                     >
                       <XCircle className="size-4" />
@@ -280,12 +280,12 @@ export default function KycDetailView() {
                         <Button
                           variant="outline"
                           size="sm"
-                          className="flex-1 text-red-600 border-red-200 hover:bg-red-50"
+                          className="flex-1 text-ricash-danger border-[var(--ricash-danger-border)] hover:bg-[var(--ricash-danger-bg)]"
                           onClick={handleReject}
                           disabled={isRejecting || !rejectComment.trim()}
                         >
                           {isRejecting ? (
-                            <div className="size-4 border-2 border-red-400 border-t-transparent rounded-full animate-spin" />
+                            <div className="size-4 border-2 border-ricash-danger border-t-transparent rounded-full animate-spin" />
                           ) : (
                             <XCircle className="size-4 mr-1" />
                           )}
@@ -323,7 +323,7 @@ export default function KycDetailView() {
             <CardContent className="space-y-4">
               {/* Large document preview area */}
               <div
-                className="relative flex items-center justify-center rounded-xl overflow-hidden border-2 border-dashed border-gray-300"
+                className="relative flex items-center justify-center rounded-xl overflow-hidden border-2 border-dashed border-ricash-border"
                 style={{
                   minHeight: '400px',
                   background: 'linear-gradient(135deg, var(--ricash-primary)/5 0%, var(--ricash-accent)/8 50%, var(--ricash-primary)/5 100%)',
@@ -333,7 +333,7 @@ export default function KycDetailView() {
                   className="flex flex-col items-center justify-center transition-transform duration-200"
                   style={{ transform: `scale(${zoom})` }}
                 >
-                  <div className="flex items-center justify-center size-28 rounded-2xl bg-white/80 shadow-lg border border-gray-200 mb-4">
+                  <div className="flex items-center justify-center size-28 rounded-2xl bg-white/80 shadow-lg border border-ricash-border mb-4">
                     <IdCard className="size-16 text-ricash-brand/40" />
                   </div>
                   <p className="text-ricash-brand/60 text-sm font-semibold">Aperçu du document</p>

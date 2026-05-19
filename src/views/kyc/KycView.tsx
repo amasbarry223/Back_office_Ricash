@@ -79,7 +79,7 @@ function StatCard({
       className={cn(
         'rounded-xl border p-4 transition-colors',
         accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
-        warning && 'border-amber-300/60 bg-gradient-to-br from-amber-50/80 to-background dark:from-amber-950/20',
+        warning && 'border-[var(--ricash-warning-border)] bg-gradient-to-br from-[var(--ricash-warning-bg)] to-background',
         !accent && !warning && 'border-border/60 bg-card',
       )}
     >
@@ -88,7 +88,7 @@ function StatCard({
         className={cn(
           'mt-1 text-2xl font-bold tabular-nums',
           accent && 'text-ricash-brand',
-          warning && 'text-amber-600',
+          warning && 'text-ricash-warning',
           !accent && !warning && 'text-foreground',
         )}
       >
@@ -104,7 +104,7 @@ function KycLevelBadge({ level }: { level: number }) {
     <span
       className={cn(
         'inline-flex items-center px-2 py-0.5 rounded-md border text-xs font-medium',
-        KYC_LEVEL_BADGE_CLASS[level] ?? 'bg-gray-100 text-gray-600 border-gray-200',
+        KYC_LEVEL_BADGE_CLASS[level] ?? 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
       )}
     >
       Niveau {level}
@@ -322,11 +322,11 @@ export default function KycView() {
                     <DropdownMenuSeparator />
                     <RoleGuard roles={['super_admin', 'admin']}>
                       <DropdownMenuItem onClick={() => handleApprove(record.id)}>
-                        <CheckCircle2 className="size-4 mr-2 text-emerald-600" />
+                        <CheckCircle2 className="size-4 mr-2 text-ricash-success" />
                         Valider
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => handleReject(record.id)}>
-                        <XCircle className="size-4 mr-2 text-red-600" />
+                        <XCircle className="size-4 mr-2 text-ricash-danger" />
                         Rejeter
                       </DropdownMenuItem>
                     </RoleGuard>
@@ -379,26 +379,26 @@ export default function KycView() {
       </div>
 
       {stats.pending > 0 && (
-        <div className="flex gap-3 rounded-xl border border-amber-200/80 bg-amber-50/80 px-4 py-3 dark:border-amber-900/40 dark:bg-amber-950/30">
-          <Clock className="size-5 shrink-0 text-amber-700 dark:text-amber-400 mt-0.5" aria-hidden />
+        <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+          <Clock className="size-5 shrink-0 text-ricash-warning mt-0.5" aria-hidden />
           <div className="min-w-0">
-            <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+            <p className="text-sm font-medium text-foreground">
               {stats.pending} dossier{stats.pending > 1 ? 's' : ''} en attente de validation
             </p>
-            <p className="mt-0.5 text-xs text-amber-800/90 dark:text-amber-200/80">
+            <p className="mt-0.5 text-xs text-muted-foreground">
               Traitez les soumissions en attente pour maintenir la conformité des comptes clients.
             </p>
           </div>
         </div>
       )}
 
-      <div className="flex gap-3 rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-950/30">
-        <ShieldCheck className="size-5 shrink-0 text-sky-700 dark:text-sky-400 mt-0.5" aria-hidden />
+      <div className="flex gap-3 rounded-xl border border ricash-alert-warning px-4 py-3">
+        <ShieldCheck className="size-5 shrink-0 text-ricash-info mt-0.5" aria-hidden />
         <div className="min-w-0">
-          <p className="text-sm font-medium text-sky-900 dark:text-sky-100">
+          <p className="text-sm font-medium text-foreground">
             Conformité KYC / AML
           </p>
-          <p className="mt-0.5 text-xs text-sky-800/90 dark:text-sky-200/80">
+          <p className="mt-0.5 text-xs text-muted-foreground">
             Vérifiez les pièces d&apos;identité, validez ou rejetez les dossiers. Les niveaux 0 à 3
             déterminent les plafonds opérationnels du client.
           </p>
@@ -448,7 +448,7 @@ export default function KycView() {
                       : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
                     id === 'pending' &&
                       isActive &&
-                      'border-amber-400/50 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-300',
+                      'border-[var(--ricash-warning-border)] bg-[var(--ricash-warning-bg)] text-ricash-warning',
                   )}
                 >
                   <Icon className="size-3.5" aria-hidden />
@@ -457,7 +457,7 @@ export default function KycView() {
                     className={cn(
                       'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums',
                       isActive ? 'bg-ricash-brand/15' : 'bg-muted',
-                      id === 'pending' && isActive && 'bg-amber-200/60 dark:bg-amber-900/40',
+                      id === 'pending' && isActive && 'bg-[var(--ricash-warning-bg)]',
                     )}
                   >
                     {count}

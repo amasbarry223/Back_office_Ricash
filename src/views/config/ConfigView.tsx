@@ -463,8 +463,8 @@ export default function ConfigView() {
         <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
-              <div className="flex items-center justify-center size-8 rounded-lg bg-amber-100">
-                <Settings className="size-4 text-amber-600" />
+              <div className="flex items-center justify-center size-8 rounded-lg bg-ricash-amber-bg">
+                <Settings className="size-4 text-ricash-warning" />
               </div>
               <div>
                 <CardTitle className="text-lg">Paramètres généraux</CardTitle>

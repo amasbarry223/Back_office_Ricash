@@ -31,15 +31,15 @@ const OPERATOR_STYLES: Record<
   { accent: string; ring: string; bg: string; initial: string }
 > = {
   ORANGE_MONEY: {
-    accent: 'text-orange-600',
-    ring: 'ring-orange-500/40',
-    bg: 'bg-orange-50',
+    accent: 'text-ricash-warning',
+    ring: 'ring-ricash-warning/40',
+    bg: 'bg-ricash-warning-bg',
     initial: 'OM',
   },
   MOOV: {
-    accent: 'text-blue-600',
-    ring: 'ring-blue-500/40',
-    bg: 'bg-blue-50',
+    accent: 'text-ricash-blue-gray',
+    ring: 'ring-ricash-blue-gray/40',
+    bg: 'bg-ricash-blue-gray-bg',
     initial: 'MV',
   },
   MTN: {
@@ -49,9 +49,9 @@ const OPERATOR_STYLES: Record<
     initial: 'MT',
   },
   WAVE: {
-    accent: 'text-violet-600',
-    ring: 'ring-violet-500/40',
-    bg: 'bg-violet-50',
+    accent: 'text-ricash-brand',
+    ring: 'ring-ricash-brand/40',
+    bg: 'bg-ricash-brand-bg',
     initial: 'WV',
   },
   FREE_MONEY: {

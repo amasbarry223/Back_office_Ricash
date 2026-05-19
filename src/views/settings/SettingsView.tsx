@@ -380,8 +380,8 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
             </Card>
 
             {/* Info banner */}
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
-              <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-ricash-blue-gray-bg">
+              <Info className="size-5 text-ricash-blue-gray shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">Informations sur votre compte</p>
                 <p className="text-xs text-blue-700 mt-1">
@@ -464,7 +464,7 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
                     <CardTitle className="text-lg">Authentification à deux facteurs</CardTitle>
                     <CardDescription>Ajoutez une couche de sécurité supplémentaire à votre compte</CardDescription>
                   </div>
-                  <Badge variant="outline" className="text-orange-600 border-orange-300 bg-orange-50">Bientôt disponible</Badge>
+                  <Badge variant="outline" className="text-ricash-warning border-ricash-warning-border bg-ricash-warning-bg">Bientôt disponible</Badge>
                 </div>
               </CardHeader>
               <CardContent>
@@ -485,11 +485,11 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
 
             {/* Role-specific security info */}
             <RoleGuard roles={['super_admin']}>
-              <div className="flex items-start gap-3 p-4 rounded-lg border border-amber-200 bg-amber-50">
-                <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-3 p-4 rounded-lg border border ricash-alert-warning">
+                <AlertTriangle className="size-5 text-ricash-warning shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-amber-800">Accès Super Admin</p>
-                  <p className="text-xs text-amber-700 mt-1">
+                  <p className="text-sm font-medium text-ricash-warning">Accès Super Admin</p>
+                  <p className="text-xs text-ricash-warning mt-1">
                     Votre compte dispose d&apos;un accès complet à la plateforme. Toute modification de vos paramètres de sécurité est enregistrée dans le journal d&apos;audit.
                   </p>
                 </div>
@@ -534,9 +534,9 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
               </CardHeader>
               <CardContent className="space-y-4">
                 {[
-                  { key: 'fraudAlerts' as const, label: 'Alertes fraude', desc: 'Activités suspectes détectées', icon: AlertTriangle, color: 'text-red-500' },
-                  { key: 'lowFloatAlerts' as const, label: 'Alertes float bas', desc: 'Quand le float d\'un agent est faible', icon: Info, color: 'text-orange-500' },
-                  { key: 'kycExpiryAlerts' as const, label: 'Expiration KYC', desc: 'Documents KYC arrivant à expiration', icon: Shield, color: 'text-amber-500' },
+                  { key: 'fraudAlerts' as const, label: 'Alertes fraude', desc: 'Activités suspectes détectées', icon: AlertTriangle, color: 'text-ricash-danger' },
+                  { key: 'lowFloatAlerts' as const, label: 'Alertes float bas', desc: 'Quand le float d\'un agent est faible', icon: Info, color: 'text-ricash-warning' },
+                  { key: 'kycExpiryAlerts' as const, label: 'Expiration KYC', desc: 'Documents KYC arrivant à expiration', icon: Shield, color: 'text-ricash-amber' },
                   { key: 'transactionAlerts' as const, label: 'Alertes transactions', desc: 'Transactions importantes ou inhabituelles', icon: Bell, color: 'text-ricash-brand' },
                   { key: 'systemAlerts' as const, label: 'Alertes système', desc: 'Maintenance, mises à jour et incidents', icon: Server, color: 'text-muted-foreground' },
                 ].map((item) => {
@@ -642,11 +642,11 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
       case 'systeme':
         return (
           <div className="space-y-6">
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-amber-200 bg-amber-50">
-              <AlertTriangle className="size-5 text-amber-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-lg border border ricash-alert-warning">
+              <AlertTriangle className="size-5 text-ricash-warning shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-amber-800">Zone Super Admin</p>
-                <p className="text-xs text-amber-700 mt-1">
+                <p className="text-sm font-medium text-ricash-warning">Zone Super Admin</p>
+                <p className="text-xs text-ricash-warning mt-1">
                   Ces paramètres affectent l&apos;ensemble de la plateforme. Toute modification est enregistrée dans le journal d&apos;audit.
                 </p>
               </div>
@@ -660,8 +660,8 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
               <CardContent>
                 <div className="flex items-center justify-between p-4 rounded-lg border bg-white">
                   <div className="flex items-center gap-3">
-                    <div className={`flex items-center justify-center size-10 rounded-lg ${system.maintenanceMode ? 'bg-red-100' : 'bg-green-100'}`}>
-                      <Server className={`size-5 ${system.maintenanceMode ? 'text-red-600' : 'text-green-600'}`} />
+                    <div className={`flex items-center justify-center size-10 rounded-lg ${system.maintenanceMode ? 'bg-ricash-danger-bg' : 'bg-ricash-success-bg'}`}>
+                      <Server className={`size-5 ${system.maintenanceMode ? 'text-ricash-danger' : 'text-ricash-success'}`} />
                     </div>
                     <div>
                       <p className="text-sm font-medium">
@@ -773,8 +773,8 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
       case 'configuration':
         return (
           <div className="space-y-6">
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
-              <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-ricash-blue-gray-bg">
+              <Info className="size-5 text-ricash-blue-gray shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">Paramètres de la plateforme Ricash</p>
                 <p className="text-xs text-blue-700 mt-1">
@@ -951,8 +951,8 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
       case 'mes-agents':
         return (
           <div className="space-y-6">
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
-              <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-ricash-blue-gray-bg">
+              <Info className="size-5 text-ricash-blue-gray shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">Paramètres agents</p>
                 <p className="text-xs text-blue-700 mt-1">
@@ -1058,8 +1058,8 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
       case 'mes-limites':
         return (
           <div className="space-y-6">
-            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
-              <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
+            <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-ricash-blue-gray-bg">
+              <Info className="size-5 text-ricash-blue-gray shrink-0 mt-0.5" />
               <div>
                 <p className="text-sm font-medium text-blue-800">Limites de transaction</p>
                 <p className="text-xs text-blue-700 mt-1">
@@ -1154,7 +1154,7 @@ export default function SettingsView({ initialTab = 'profil' }: SettingsViewProp
                   </div>
                   <div className="p-4 rounded-lg bg-green-50 border border-green-200">
                     <p className="text-xs text-muted-foreground">Float max</p>
-                    <p className="text-lg font-bold text-green-700">{formatNumber(adminLimits.maxFloatApproval)} XOF</p>
+                    <p className="text-lg font-bold text-ricash-success">{formatNumber(adminLimits.maxFloatApproval)} XOF</p>
                   </div>
                 </div>
               </CardContent>

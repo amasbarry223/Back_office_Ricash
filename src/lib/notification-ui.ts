@@ -15,18 +15,18 @@ export const NOTIFICATION_TYPE_UI: Record<
   NotificationType,
   { icon: ElementType; colorClass: string; bgClass: string }
 > = {
-  FRAUD_ALERT: { icon: AlertTriangle, colorClass: 'text-red-500', bgClass: 'bg-red-50' },
-  LOW_FLOAT: { icon: Wallet, colorClass: 'text-orange-500', bgClass: 'bg-orange-50' },
-  KYC_EXPIRED: { icon: IdCard, colorClass: 'text-yellow-600', bgClass: 'bg-yellow-50' },
-  SYSTEM: { icon: Info, colorClass: 'text-sky-500', bgClass: 'bg-sky-50' },
+  FRAUD_ALERT: { icon: AlertTriangle, colorClass: 'text-ricash-danger', bgClass: 'bg-ricash-danger-bg' },
+  LOW_FLOAT: { icon: Wallet, colorClass: 'text-ricash-warning', bgClass: 'bg-ricash-warning-bg' },
+  KYC_EXPIRED: { icon: IdCard, colorClass: 'text-ricash-amber', bgClass: 'bg-ricash-amber-bg' },
+  SYSTEM: { icon: Info, colorClass: 'text-ricash-info', bgClass: 'bg-ricash-info-bg' },
   TRANSACTION_ALERT: {
     icon: ArrowLeftRight,
     colorClass: 'text-ricash-brand',
-    bgClass: 'bg-ricash-brand/10',
+    bgClass: 'bg-ricash-brand-bg',
   },
-  GENERAL_INFO: { icon: Bell, colorClass: 'text-violet-500', bgClass: 'bg-violet-50' },
-  MAINTENANCE: { icon: Wrench, colorClass: 'text-amber-500', bgClass: 'bg-amber-50' },
-  SECURITY: { icon: Shield, colorClass: 'text-red-600', bgClass: 'bg-red-50' },
+  GENERAL_INFO: { icon: Bell, colorClass: 'text-ricash-blue-gray', bgClass: 'bg-ricash-blue-gray-bg' },
+  MAINTENANCE: { icon: Wrench, colorClass: 'text-ricash-amber', bgClass: 'bg-ricash-amber-bg' },
+  SECURITY: { icon: Shield, colorClass: 'text-ricash-danger', bgClass: 'bg-ricash-danger-bg' },
 };
 
 export const PRIORITY_BADGE_UI: Record<

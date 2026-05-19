@@ -11,10 +11,10 @@ export interface KycStats {
 }
 
 export const KYC_LEVEL_BADGE_CLASS: Record<number, string> = {
-  0: 'bg-gray-100 text-gray-600 border-gray-200',
-  1: 'bg-sky-50 text-sky-700 border-sky-200',
-  2: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-  3: 'bg-violet-50 text-violet-700 border-violet-200',
+  0: 'bg-ricash-neutral-bg text-ricash-neutral border-ricash-neutral-border',
+  1: 'bg-ricash-info-bg text-ricash-info border-ricash-info-border',
+  2: 'bg-ricash-success-bg text-ricash-success border-ricash-success-border',
+  3: 'bg-ricash-brand-bg text-ricash-brand border-ricash-brand-border',
 };
 
 export function computeKycStats(records: KycRecord[]): KycStats {

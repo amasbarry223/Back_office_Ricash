@@ -135,10 +135,12 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
   const canAccess = useAuthStore((s) => s.canAccess);
   const currentRoute = useRouterStore((s) => s.currentRoute);
   const navigate = useRouterStore((s) => s.navigate);
-  const kycRecords = useKycStore((s) => s.records);
-  const floatRequests = useAgentsStore((s) => s.floatRequests);
-  const kycPending = useMemo(() => kycRecords.filter(r => r.status === 'PENDING').length, [kycRecords]);
-  const floatPending = useMemo(() => floatRequests.filter(r => r.status === 'PENDING').length, [floatRequests]);
+  const kycPending = useKycStore(
+    (s) => s.records.filter((r) => r.status === 'PENDING').length,
+  );
+  const floatPending = useAgentsStore(
+    (s) => s.floatRequests.filter((r) => r.status === 'PENDING').length,
+  );
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -219,7 +221,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                         className={`
                           absolute left-0 top-1/2 -translate-y-1/2 w-[3px] rounded-r-full
                           transition-all duration-200 ease-out
-                          ${isActive ? 'h-5 bg-ricash-accent indicator-slide-in' : 'h-0 bg-transparent'}
+                          ${isActive ? 'h-5 bg-ricash-teal indicator-slide-in' : 'h-0 bg-transparent'}
                         `}
                       />
 
@@ -227,7 +229,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                       <Icon
                         className={`shrink-0 transition-colors duration-150
                           ${effectiveCollapsed ? 'size-5' : 'size-[18px] mr-3'}
-                          ${isActive ? 'text-ricash-accent' : 'text-white/45 group-hover:text-white/80'}
+                          ${isActive ? 'text-ricash-teal' : 'text-white/45 group-hover:text-white/80'}
                         `}
                       />
 
@@ -240,7 +242,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                           {badgeCount > 0 && (
                             <Badge
                               variant="brand"
-                              className="text-[10px] px-1.5 py-0 h-5 min-w-[20px] justify-center font-semibold bg-ricash-accent text-white border-ricash-accent/80 hover:bg-ricash-accent/90"
+                              className="text-[10px] px-1.5 py-0 h-5 min-w-[20px] justify-center font-semibold bg-ricash-teal text-white border-ricash-teal/80 hover:bg-ricash-teal-hover"
                             >
                               {badgeCount}
                             </Badge>
@@ -250,7 +252,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
 
                       {/* Collapsed badge dot */}
                       {effectiveCollapsed && badgeCount > 0 && (
-                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-ricash-accent ring-2 ring-[var(--ricash-sidebar-bg)] dot-pulse" />
+                        <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-ricash-teal ring-2 ring-[var(--ricash-sidebar-bg)] dot-pulse" />
                       )}
                     </button>
                   );
@@ -265,7 +267,7 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
                           <TooltipContent side="right" sideOffset={8} className="font-medium">
                             {item.label}
                             {badgeCount > 0 && (
-                              <Badge className="ml-2 bg-ricash-accent text-white hover:bg-ricash-accent/90 text-[10px] px-1.5 py-0 h-5 border-0">
+                              <Badge className="ml-2 bg-ricash-teal text-white hover:bg-ricash-teal-hover text-[10px] px-1.5 py-0 h-5 border-0">
                                 {badgeCount}
                               </Badge>
                             )}

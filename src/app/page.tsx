@@ -21,7 +21,6 @@ import TransactionDetailView from '@/views/transactions/TransactionDetailView';
 import KycView from '@/views/kyc/KycView';
 import KycDetailView from '@/views/kyc/KycDetailView';
 import FloatRequestsView from '@/views/float/FloatRequestsView';
-import ConfigView from '@/views/config/ConfigView';
 import SettingsView from '@/views/settings/SettingsView';
 import NotificationsView from '@/views/notifications/NotificationsView';
 import UnauthorizedView from '@/views/errors/UnauthorizedView';
@@ -45,7 +44,7 @@ const ROUTE_ROLES: Partial<Record<RouteName, Role[]>> = {
   kyc: ['super_admin', 'admin'],
   'kyc-detail': ['super_admin', 'admin'],
   float: ['super_admin', 'admin'],
-  config: ['super_admin'],
+  config: ['super_admin'], // redirigé vers Paramètres > Configuration
   settings: ['super_admin', 'admin'],
   notifications: ['super_admin', 'admin'],
 };
@@ -134,7 +133,7 @@ function RouteRenderer() {
       case 'float':
         return <FloatRequestsView />;
       case 'config':
-        return <ConfigView />;
+        return <SettingsView initialTab="configuration" />;
       case 'settings':
         return <SettingsView />;
       case 'notifications':

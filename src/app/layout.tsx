@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "Ricash Back-Office v4.0",
   description: "Back-office d'administration Ricash — Plateforme de transfert d'argent international en Afrique de l'Ouest",
   icons: {
-    icon: "/logo.svg",
+    icon: "/ricash-logo.png",
   },
 };
 
@@ -29,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         style={{ fontFamily: 'var(--font-geist-sans), sans-serif' }}
       >

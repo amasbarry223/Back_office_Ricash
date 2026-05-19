@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   User,
   Shield,
@@ -20,7 +20,6 @@ import {
   Info,
   DollarSign,
   ShieldCheck,
-  ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -30,7 +29,6 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Separator } from '@/components/ui/separator';
 import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   Table,
   TableBody,
@@ -46,16 +44,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PageHeader from '@/components/common/PageHeader';
 import RoleGuard from '@/components/common/RoleGuard';
+import GeneralPlatformSettings from '@/components/settings/GeneralPlatformSettings';
 import { useRouterStore } from '@/stores/router-store';
 import { useAuthStore } from '@/stores/auth-store';
 import { useSettingsStore } from '@/stores/settings-store';
 import { useConfigStore } from '@/stores/config-store';
 import {
   TRANSACTION_TYPE_LABELS,
-  COUNTRY_LABELS,
-  OPERATOR_LABELS,
   type SettingsTab,
   type FeeConfig,
   type KycLimitConfig,
@@ -66,29 +64,38 @@ import {
 // Tab definitions per role
 // ---------------------------------------------------------------------------
 
+type SettingsTabGroup = 'account' | 'platform' | 'management';
+
 interface SettingsTabDef {
   id: SettingsTab;
   label: string;
+  shortLabel?: string;
+  description: string;
   icon: React.ElementType;
+  group: SettingsTabGroup;
   roles: Array<'super_admin' | 'admin'>;
 }
 
 const SETTINGS_TABS: SettingsTabDef[] = [
-  { id: 'profil', label: 'Mon profil', icon: User, roles: ['super_admin', 'admin'] },
-  { id: 'securite', label: 'Sécurité', icon: Shield, roles: ['super_admin', 'admin'] },
-  { id: 'notifications-prefs', label: 'Notifications', icon: Bell, roles: ['super_admin', 'admin'] },
-  { id: 'apparence', label: 'Apparence', icon: Palette, roles: ['super_admin', 'admin'] },
-  { id: 'systeme', label: 'Système', icon: Server, roles: ['super_admin'] },
-  { id: 'configuration', label: 'Configuration', icon: Settings2, roles: ['super_admin'] },
-  { id: 'mes-agents', label: 'Mes agents', icon: Users, roles: ['admin'] },
-  { id: 'mes-limites', label: 'Mes limites', icon: SlidersHorizontal, roles: ['admin'] },
+  { id: 'profil', label: 'Mon profil', icon: User, group: 'account', roles: ['super_admin', 'admin'], description: 'Informations personnelles et identité' },
+  { id: 'securite', label: 'Sécurité', icon: Shield, group: 'account', roles: ['super_admin', 'admin'], description: 'Mot de passe et authentification' },
+  { id: 'notifications-prefs', label: 'Notifications', shortLabel: 'Notifs', icon: Bell, group: 'account', roles: ['super_admin', 'admin'], description: 'Canaux et types d\'alertes' },
+  { id: 'apparence', label: 'Apparence', icon: Palette, group: 'account', roles: ['super_admin', 'admin'], description: 'Thème, langue et affichage' },
+  { id: 'systeme', label: 'Système', icon: Server, group: 'platform', roles: ['super_admin'], description: 'Maintenance, sessions et audit' },
+  { id: 'configuration', label: 'Configuration', shortLabel: 'Config', icon: Settings2, group: 'platform', roles: ['super_admin'], description: 'Paramètres de la plateforme Ricash' },
+  { id: 'mes-agents', label: 'Mes agents', icon: Users, group: 'management', roles: ['admin'], description: 'Commission, float et alertes agents' },
+  { id: 'mes-limites', label: 'Mes limites', icon: SlidersHorizontal, group: 'management', roles: ['admin'], description: 'Plafonds d\'approbation et validations' },
 ];
 
 // ---------------------------------------------------------------------------
 // SettingsView
 // ---------------------------------------------------------------------------
 
-export default function SettingsView() {
+interface SettingsViewProps {
+  initialTab?: SettingsTab;
+}
+
+export default function SettingsView({ initialTab = 'profil' }: SettingsViewProps) {
   const navigate = useRouterStore((s) => s.navigate);
   const user = useAuthStore((s) => s.user);
   const userRole = useAuthStore((s) => s.user?.role);
@@ -111,7 +118,7 @@ export default function SettingsView() {
   const updateKycLimit = useConfigStore((s) => s.updateKycLimit);
   const updateGeneral = useConfigStore((s) => s.updateGeneral);
 
-  const [activeTab, setActiveTab] = useState<SettingsTab>('profil');
+  const [activeTab, setActiveTab] = useState<SettingsTab>(initialTab);
 
   // Profile editing
   const [profileEdits, setProfileEdits] = useState({ name: user?.name ?? '', email: user?.email ?? '', phone: '' });
@@ -144,6 +151,20 @@ export default function SettingsView() {
     activeOperators: generalOverrides.activeOperators ?? [...general.activeOperators],
   }), [generalOverrides, general.activeCountries, general.activeOperators]);
 
+  const hasGeneralChanges = useMemo(() => {
+    if (generalOverrides.activeCountries !== null) {
+      const a = [...generalOverrides.activeCountries].sort().join(',');
+      const b = [...general.activeCountries].sort().join(',');
+      if (a !== b) return true;
+    }
+    if (generalOverrides.activeOperators !== null) {
+      const a = [...generalOverrides.activeOperators].sort().join(',');
+      const b = [...general.activeOperators].sort().join(',');
+      if (a !== b) return true;
+    }
+    return false;
+  }, [generalOverrides, general.activeCountries, general.activeOperators]);
+
   // Fee editing
   const [editingFeeId, setEditingFeeId] = useState<string | null>(null);
   const [feeEdits, setFeeEdits] = useState<Partial<FeeConfig>>({});
@@ -161,6 +182,26 @@ export default function SettingsView() {
     () => SETTINGS_TABS.filter((t) => userRole && t.roles.includes(userRole)),
     [userRole],
   );
+
+  const activeTabDef = useMemo(
+    () => visibleTabs.find((t) => t.id === activeTab) ?? visibleTabs[0],
+    [visibleTabs, activeTab],
+  );
+
+  const visibleGroups = useMemo(
+    () => [...new Set(visibleTabs.map((t) => t.group))],
+    [visibleTabs],
+  );
+
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
+  useEffect(() => {
+    if (visibleTabs.length > 0 && !visibleTabs.some((t) => t.id === activeTab)) {
+      setActiveTab(visibleTabs[0].id);
+    }
+  }, [visibleTabs, activeTab]);
 
   const formatNumber = (n: number) => n.toLocaleString('fr-FR');
 
@@ -254,6 +295,12 @@ export default function SettingsView() {
     const updated = current.includes(op) ? current.filter((o) => o !== op) : [...current, op];
     setGeneralOverrides((prev) => ({ ...prev, activeOperators: updated }));
   };
+  const setActiveCountries = (codes: string[]) => {
+    setGeneralOverrides((prev) => ({ ...prev, activeCountries: codes }));
+  };
+  const setActiveOperators = (ops: Operator[]) => {
+    setGeneralOverrides((prev) => ({ ...prev, activeOperators: ops }));
+  };
   const saveGeneral = async () => {
     setSavingGeneral(true);
     await new Promise((r) => setTimeout(r, 800));
@@ -264,8 +311,8 @@ export default function SettingsView() {
   };
 
   // ---- Tab content renderer ----
-  const renderTabContent = () => {
-    switch (activeTab) {
+  const renderTabContent = (tab: SettingsTab) => {
+    switch (tab) {
       // ===================== PROFIL =====================
       case 'profil':
         return (
@@ -729,9 +776,9 @@ export default function SettingsView() {
             <div className="flex items-start gap-3 p-4 rounded-lg border border-blue-200 bg-blue-50">
               <Info className="size-5 text-blue-600 shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-blue-800">Configuration plateforme</p>
+                <p className="text-sm font-medium text-blue-800">Paramètres de la plateforme Ricash</p>
                 <p className="text-xs text-blue-700 mt-1">
-                  Ces paramètres définissent les règles de fonctionnement de la plateforme Ricash. Ils s&apos;appliquent à tous les utilisateurs et agents.
+                  Frais de service, plafonds KYC, pays et opérateurs actifs — ces règles s&apos;appliquent à tous les utilisateurs et agents.
                 </p>
               </div>
             </div>
@@ -886,53 +933,17 @@ export default function SettingsView() {
               </CardContent>
             </Card>
 
-            {/* Section 3 — Paramètres généraux */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center justify-center size-8 rounded-lg bg-amber-100">
-                    <Settings2 className="size-4 text-amber-600" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-lg">Paramètres généraux</CardTitle>
-                    <CardDescription>Configuration globale de la plateforme</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <Label className="text-sm font-medium min-w-[140px]">Devise</Label>
-                  <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-muted text-sm font-medium">XOF</div>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium mb-3 block">Pays actifs</Label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    {Object.entries(COUNTRY_LABELS).map(([code, label]) => (
-                      <div key={code} className="flex items-center gap-2">
-                        <Checkbox id={`country-${code}`} checked={generalEdits.activeCountries.includes(code)} onCheckedChange={() => toggleCountry(code)} />
-                        <Label htmlFor={`country-${code}`} className="text-sm font-normal cursor-pointer">{label}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium mb-3 block">Opérateurs actifs</Label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-                    {(Object.entries(OPERATOR_LABELS) as [Operator, string][]).map(([op, label]) => (
-                      <div key={op} className="flex items-center gap-2">
-                        <Checkbox id={`operator-${op}`} checked={generalEdits.activeOperators.includes(op)} onCheckedChange={() => toggleOperator(op)} />
-                        <Label htmlFor={`operator-${op}`} className="text-sm font-normal cursor-pointer">{label}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="flex justify-end pt-2">
-                  <Button variant="primary" disabled={savingGeneral} onClick={saveGeneral}>
-                    {savingGeneral ? <Loader2 className="size-4 mr-1.5 animate-spin" /> : <Save className="size-4 mr-1.5" />} Sauvegarder
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
+            <GeneralPlatformSettings
+              activeCountries={generalEdits.activeCountries}
+              activeOperators={generalEdits.activeOperators}
+              onToggleCountry={toggleCountry}
+              onToggleOperator={toggleOperator}
+              onSetCountries={setActiveCountries}
+              onSetOperators={setActiveOperators}
+              onSave={saveGeneral}
+              saving={savingGeneral}
+              hasChanges={hasGeneralChanges}
+            />
           </div>
         );
 
@@ -1171,58 +1182,76 @@ export default function SettingsView() {
     <div className="space-y-6">
       <PageHeader
         title="Paramètres"
-        subtitle={`Gérer vos préférences${userRole === 'super_admin' ? ' et la configuration plateforme' : ' et vos paramètres d\'agent'}`}
+        subtitle={
+          userRole === 'super_admin'
+            ? 'Paramètres de la plateforme Ricash — préférences personnelles et configuration'
+            : 'Gérer vos préférences et vos paramètres d\'agent'
+        }
         breadcrumb={[
           { label: 'Tableau de bord', onClick: () => navigate('dashboard') },
           { label: 'Paramètres' },
         ]}
-      />
-
-      {/* Role badge */}
-      <div className="flex items-center gap-2">
+      >
         <Badge variant="brand">
           {userRole === 'super_admin' ? 'Super Admin' : 'Admin'}
         </Badge>
-        <span className="text-sm text-muted-foreground">
-          {userRole === 'super_admin'
-            ? 'Accès complet à tous les paramètres'
-            : 'Paramètres limités à votre périmètre'}
-        </span>
-      </div>
+      </PageHeader>
 
-      {/* Layout: sidebar tabs + content */}
-      <div className="flex flex-col lg:flex-row gap-6">
-        {/* Tab sidebar */}
-        <nav className="lg:w-56 shrink-0">
-          <div className="flex flex-row lg:flex-col gap-1 overflow-x-auto lg:overflow-x-visible pb-2 lg:pb-0">
-            {visibleTabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-                    isActive
-                      ? 'bg-ricash-brand text-white shadow-sm'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
-                  }`}
-                >
-                  <Icon className="size-4 shrink-0" />
-                  <span className="hidden sm:inline">{tab.label}</span>
-                  <ChevronRight className="size-3.5 ml-auto hidden lg:block" />
-                </button>
-              );
-            })}
+      <Tabs
+        value={activeTab}
+        onValueChange={(value) => setActiveTab(value as SettingsTab)}
+        className="space-y-6"
+      >
+        <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
+          <div className="border-b bg-muted/20 px-3 py-2 sm:px-4 overflow-x-auto ricash-scroll">
+            <TabsList className="h-auto min-w-max w-full justify-start gap-1 bg-transparent p-0">
+              {visibleGroups.map((group) => {
+                const groupTabs = visibleTabs.filter((t) => t.group === group);
+                const groupIndex = visibleGroups.indexOf(group);
+
+                return (
+                  <React.Fragment key={group}>
+                    {groupIndex > 0 && (
+                      <div
+                        role="separator"
+                        className="hidden sm:block w-px h-7 bg-border mx-1.5 shrink-0 self-center"
+                        aria-hidden
+                      />
+                    )}
+                    {groupTabs.map((tab) => {
+                      const Icon = tab.icon;
+                      return (
+                        <TabsTrigger
+                          key={tab.id}
+                          value={tab.id}
+                          className="gap-2 px-3 py-2 h-auto data-[state=active]:bg-background data-[state=active]:text-ricash-brand data-[state=active]:shadow-sm data-[state=active]:border-border/60 border border-transparent"
+                        >
+                          <Icon className="size-4 shrink-0" />
+                          <span className="hidden sm:inline">{tab.label}</span>
+                          <span className="sm:hidden">{tab.shortLabel ?? tab.label}</span>
+                        </TabsTrigger>
+                      );
+                    })}
+                  </React.Fragment>
+                );
+              })}
+            </TabsList>
           </div>
-        </nav>
 
-        {/* Content */}
-        <div className="flex-1 min-w-0">
-          {renderTabContent()}
+          {activeTabDef && (
+            <div className="px-4 py-3 border-b bg-muted/10">
+              <p className="text-sm font-medium text-foreground">{activeTabDef.label}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">{activeTabDef.description}</p>
+            </div>
+          )}
         </div>
-      </div>
+
+        {visibleTabs.map((tab) => (
+          <TabsContent key={tab.id} value={tab.id} className="mt-0 focus-visible:outline-none">
+            {renderTabContent(tab.id)}
+          </TabsContent>
+        ))}
+      </Tabs>
     </div>
   );
 }

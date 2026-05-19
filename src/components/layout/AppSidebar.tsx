@@ -9,7 +9,6 @@ import {
   ArrowLeftRight,
   IdCard,
   Wallet,
-  Settings,
   Cog,
   Bell,
   ChevronLeft,
@@ -24,6 +23,7 @@ import { Separator } from '@/components/ui/separator';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Role, RouteName } from '@/types';
 import { MOBILE_BREAKPOINT } from '@/lib/common';
+import RicashLogo from '@/components/common/RicashLogo';
 
 // ─── Navigation Configuration ───────────────────────────────
 
@@ -104,12 +104,6 @@ const NAV_GROUPS: NavGroup[] = [
     title: 'SYSTÈME',
     items: [
       {
-        icon: Settings,
-        label: 'Configuration',
-        route: 'config',
-        roles: ['super_admin'],
-      },
-      {
         icon: Bell,
         label: 'Notifications',
         route: 'notifications',
@@ -174,24 +168,11 @@ export default function AppSidebar({ collapsed = false, onToggleCollapse }: AppS
       style={{ width: sidebarWidth }}
     >
       {/* ─── Logo Section ─── */}
-      <div className="flex items-center h-16 px-4 shrink-0">
-        {!effectiveCollapsed ? (
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center size-9 rounded-lg bg-white/10 ring-1 ring-white/10">
-              <span className="text-ricash-accent font-bold text-lg">R</span>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-white font-bold text-lg leading-tight tracking-wide">RICASH</span>
-              <span className="text-white/40 text-[10px] leading-tight font-medium">v4.0</span>
-            </div>
-          </div>
-        ) : (
-          <div className="flex items-center justify-center w-full">
-            <div className="flex items-center justify-center size-9 rounded-lg bg-white/10 ring-1 ring-white/10">
-              <span className="text-ricash-accent font-bold text-lg">R</span>
-            </div>
-          </div>
-        )}
+      <div className="flex w-full items-center justify-center h-20 px-4 shrink-0">
+        <RicashLogo
+          variant={effectiveCollapsed ? 'compact' : 'sidebar'}
+          className="mx-auto max-w-[calc(100%-0.5rem)] object-center"
+        />
       </div>
 
       <Separator className="bg-white/10 mx-3" />

@@ -23,6 +23,8 @@ import {
   type Transaction,
 } from '@/types';
 import { formatXOF, formatDateTime as formatDate } from '@/lib/format';
+import { DEFAULT_TABLE_PER_PAGE } from '@/lib/pagination';
+import { useTablePagination } from '@/hooks/use-table-pagination';
 
 // Transaction type badge color mapping
 const TYPE_COLORS: Record<TransactionType, string> = {
@@ -43,9 +45,7 @@ export default function TransactionsView() {
   const [minAmount, setMinAmount] = useState('');
   const [maxAmount, setMaxAmount] = useState('');
 
-  // Pagination
-  const [page, setPage] = useState(1);
-  const perPage = 10;
+  const perPage = DEFAULT_TABLE_PER_PAGE;
 
   // Build filter configs for SearchBar
   const filterConfigs = useMemo(
@@ -101,22 +101,6 @@ export default function TransactionsView() {
     []
   );
 
-  // Handle search + filter changes
-  const handleSearch = useCallback((query: string, filters: Record<string, unknown>) => {
-    setSearchQuery(query);
-    setActiveFilters(filters);
-    setPage(1);
-  }, []);
-
-  // Handle amount range changes
-  const handleMinAmountChange = useCallback((val: string) => {
-    setMinAmount(val);
-    setPage(1);
-  }, []);
-  const handleMaxAmountChange = useCallback((val: string) => {
-    setMaxAmount(val);
-    setPage(1);
-  }, []);
 
   // Filter and sort transactions
   const filteredTransactions = useMemo(() => {
@@ -198,11 +182,37 @@ export default function TransactionsView() {
     return result;
   }, [transactions, searchQuery, activeFilters, minAmount, maxAmount]);
 
-  // Paginated data
-  const paginatedData = useMemo(() => {
-    const start = (page - 1) * perPage;
-    return filteredTransactions.slice(start, start + perPage);
-  }, [filteredTransactions, page, perPage]);
+  const {
+    paginatedItems: paginatedData,
+    pagination,
+    onPageChange,
+    resetPage,
+  } = useTablePagination(filteredTransactions, perPage);
+
+  const handleSearch = useCallback(
+    (query: string, filters: Record<string, unknown>) => {
+      setSearchQuery(query);
+      setActiveFilters(filters);
+      resetPage();
+    },
+    [resetPage],
+  );
+
+  const handleMinAmountChange = useCallback(
+    (val: string) => {
+      setMinAmount(val);
+      resetPage();
+    },
+    [resetPage],
+  );
+
+  const handleMaxAmountChange = useCallback(
+    (val: string) => {
+      setMaxAmount(val);
+      resetPage();
+    },
+    [resetPage],
+  );
 
   // DataTable columns
   const columns = useMemo(
@@ -439,12 +449,8 @@ export default function TransactionsView() {
       <DataTable
         columns={columns}
         data={paginatedData as unknown as Record<string, unknown>[]}
-        pagination={{
-          page,
-          perPage,
-          total: filteredTransactions.length,
-        }}
-        onPageChange={setPage}
+        pagination={pagination}
+        onPageChange={onPageChange}
         emptyMessage="Aucune transaction trouvée"
       />
     </div>

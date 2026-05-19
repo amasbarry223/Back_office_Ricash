@@ -1,18 +1,21 @@
 'use client';
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ArrowLeftRight,
   Banknote,
+  Bell,
+  CheckCircle,
   Clock,
   AlertTriangle,
-  UserCheck,
   Users,
   Wallet,
-  AlertCircle,
-  Bell,
-  FileWarning,
   IdCard,
+  Search,
+  TrendingUp,
+  XCircle,
+  ArrowRight,
+  Inbox,
 } from 'lucide-react';
 import {
   LineChart,
@@ -24,64 +27,85 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import StatCard from '@/components/common/StatCard';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import DataTable from '@/components/common/DataTable';
 import StatusBadge from '@/components/common/StatusBadge';
 import PageHeader from '@/components/common/PageHeader';
+import EmptyState from '@/components/common/EmptyState';
 import { useRouterStore } from '@/stores/router-store';
 import { useTransactionsStore } from '@/stores/transactions-store';
 import { useAgentsStore } from '@/stores/agents-store';
 import { useUsersStore } from '@/stores/users-store';
 import { useKycStore } from '@/stores/kyc-store';
 import { useNotificationsStore } from '@/stores/notifications-store';
-import { TRANSACTION_TYPE_LABELS, type NotificationType } from '@/types';
+import { NOTIFICATION_TYPE_UI } from '@/lib/notification-ui';
+import { LOW_FLOAT_THRESHOLD } from '@/lib/agent-ui';
+import {
+  computeDashboardStats,
+  filterDashboardTransactions,
+  generateChartData,
+  getTxFilterCounts,
+  type DashboardTxFilter,
+} from '@/lib/dashboard-ui';
+import { TRANSACTION_TYPE_LABELS, NOTIFICATION_TYPE_LABELS } from '@/types';
 import { formatXOF, formatDate, formatTimeAgo } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
-// ---------------------------------------------------------------------------
-// 30-day mock chart data generator
-// ---------------------------------------------------------------------------
+const TX_FILTERS: { id: DashboardTxFilter; label: string; icon: React.ElementType }[] = [
+  { id: 'all', label: 'Toutes', icon: Inbox },
+  { id: 'pending', label: 'En attente', icon: Clock },
+  { id: 'success', label: 'Réussies', icon: CheckCircle },
+  { id: 'failed', label: 'Échouées', icon: XCircle },
+];
 
-function generateChartData() {
-  const data: { date: string; montant: number; volume: number }[] = [];
-  const now = new Date();
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(now);
-    d.setDate(d.getDate() - i);
-    const label = d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' });
-    // Semi-realistic random values with a gentle upward trend
-    const trend = (30 - i) * 8000;
-    data.push({
-      date: label,
-      montant: Math.round(200000 + Math.random() * 400000 + trend),
-      volume: Math.round(15 + Math.random() * 40 + (30 - i) * 0.5),
-    });
-  }
-  return data;
+const RECENT_LIMIT = 10;
+
+function StatCard({
+  label,
+  value,
+  hint,
+  accent,
+  warning,
+  onClick,
+}: {
+  label: string;
+  value: React.ReactNode;
+  hint?: string;
+  accent?: boolean;
+  warning?: boolean;
+  onClick?: () => void;
+}) {
+  const Comp = onClick ? 'button' : 'div';
+  return (
+    <Comp
+      type={onClick ? 'button' : undefined}
+      onClick={onClick}
+      className={cn(
+        'rounded-xl border p-4 text-left transition-all w-full',
+        onClick && 'hover:shadow-md hover:border-ricash-brand/30 cursor-pointer',
+        accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
+        warning &&
+          'border-amber-300/60 bg-gradient-to-br from-amber-50/80 to-background dark:from-amber-950/20',
+        !accent && !warning && 'border-border/60 bg-card',
+      )}
+    >
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <div
+        className={cn(
+          'mt-1 text-2xl font-bold tabular-nums',
+          accent && 'text-ricash-brand',
+          warning && 'text-amber-600',
+          !accent && !warning && 'text-foreground',
+        )}
+      >
+        {value}
+      </div>
+      {hint && <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p>}
+    </Comp>
+  );
 }
-
-// ---------------------------------------------------------------------------
-// Alert icon helper
-// ---------------------------------------------------------------------------
-
-const ALERT_ICON_MAP: Record<NotificationType, React.ReactNode> = {
-  FRAUD_ALERT: <AlertTriangle className="size-5 text-red-500" />,
-  LOW_FLOAT: <Wallet className="size-5 text-orange-500" />,
-  KYC_EXPIRED: <FileWarning className="size-5 text-yellow-500" />,
-  SYSTEM: <AlertCircle className="size-5 text-muted-foreground" />,
-  TRANSACTION_ALERT: <Bell className="size-5 text-ricash-brand" />,
-};
-
-const ALERT_BG_MAP: Record<NotificationType, string> = {
-  FRAUD_ALERT: 'bg-red-50 border-red-200',
-  LOW_FLOAT: 'bg-orange-50 border-orange-200',
-  KYC_EXPIRED: 'bg-yellow-50 border-yellow-200',
-  SYSTEM: 'bg-muted/50 border-border',
-  TRANSACTION_ALERT: 'bg-blue-50 border-blue-200',
-};
-
-// ---------------------------------------------------------------------------
-// Chart Tooltip
-// ---------------------------------------------------------------------------
 
 function ChartTooltip({
   active,
@@ -94,8 +118,8 @@ function ChartTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="bg-card rounded-lg shadow-lg border border-border/60 px-3 py-2 text-xs">
-      <p className="font-medium text-foreground mb-1">{label}</p>
+    <div className="rounded-lg border border-border/60 bg-card px-3 py-2 text-xs shadow-lg">
+      <p className="mb-1 font-medium text-foreground">{label}</p>
       {payload.map((p) => (
         <p key={p.name} style={{ color: p.color }} className="flex items-center gap-1.5">
           <span className="size-2 rounded-full" style={{ backgroundColor: p.color }} />
@@ -107,83 +131,100 @@ function ChartTooltip({
   );
 }
 
-// ---------------------------------------------------------------------------
-// DashboardView
-// ---------------------------------------------------------------------------
-
 export default function DashboardView() {
   const navigate = useRouterStore((s) => s.navigate);
 
-  // Store data – select raw state to avoid infinite loops from function selectors
   const transactions = useTransactionsStore((s) => s.transactions);
   const agents = useAgentsStore((s) => s.agents);
+  const floatRequests = useAgentsStore((s) => s.floatRequests);
   const clients = useUsersStore((s) => s.clients);
   const notifications = useNotificationsStore((s) => s.notifications);
   const kycRecords = useKycStore((s) => s.records);
 
-  // Derived data – computed via useMemo for stable references
-  const txStats = useMemo(() => ({
-    total: transactions.length,
-    totalAmount: transactions.filter(t => t.status === 'SUCCESS').reduce((sum, t) => sum + t.amount, 0),
-    pending: transactions.filter(t => t.status === 'PENDING' || t.status === 'IN_PROGRESS').length,
-    failed: transactions.filter(t => t.status === 'FAILED').length,
-  }), [transactions]);
+  const [txFilter, setTxFilter] = useState<DashboardTxFilter>('all');
+  const [txSearch, setTxSearch] = useState('');
 
-  const recentTx = useMemo(() =>
-    [...transactions]
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
-      .slice(0, 10),
-    [transactions],
-  );
-
-  const unreadNotifications = useMemo(() =>
-    notifications.filter((n) => !n.read),
+  const unreadNotifications = useMemo(
+    () => notifications.filter((n) => !n.read),
     [notifications],
   );
 
-  // Derived stats
-  const { activeAgents, globalFloat } = useMemo(() => ({
-    activeAgents: agents.filter((a) => a.status === 'APPROVED').length,
-    globalFloat: agents.reduce((sum, a) => sum + a.floatBalance, 0),
-  }), [agents]);
-  const fraudAlerts = unreadNotifications.filter((n) => n.type === 'FRAUD_ALERT').length;
+  const stats = useMemo(() => {
+    const activeAgents = agents.filter((a) => a.status === 'APPROVED').length;
+    const globalFloat = agents.reduce((sum, a) => sum + a.floatBalance, 0);
+    const lowFloatAgents = agents.filter((a) => a.floatBalance < LOW_FLOAT_THRESHOLD).length;
+    const floatRequestsPending = floatRequests.filter((r) => r.status === 'PENDING').length;
+    const fraudAlerts = unreadNotifications.filter((n) => n.type === 'FRAUD_ALERT').length;
+    const kycPending = kycRecords.filter((r) => r.status === 'PENDING').length;
 
-  const kycPending = useMemo(() => kycRecords.filter(r => r.status === 'PENDING').length, [kycRecords]);
+    return computeDashboardStats(
+      transactions,
+      unreadNotifications.length,
+      fraudAlerts,
+      activeAgents,
+      clients.length,
+      globalFloat,
+      kycPending,
+      lowFloatAgents,
+      floatRequestsPending,
+    );
+  }, [
+    transactions,
+    unreadNotifications,
+    agents,
+    clients.length,
+    kycRecords,
+    floatRequests,
+  ]);
 
-  // Chart data – generated once
   const chartData = useMemo(() => generateChartData(), []);
 
-  // ---- Table columns for recent transactions ----
+  const filteredRecentTx = useMemo(() => {
+    const filtered = filterDashboardTransactions(transactions, txSearch, txFilter);
+    return filtered.slice(0, RECENT_LIMIT);
+  }, [transactions, txSearch, txFilter]);
+
+  const txFilterCounts = useMemo(() => getTxFilterCounts(transactions), [transactions]);
+
+  const hasPriorityAlerts =
+    stats.fraudAlerts > 0 ||
+    stats.txPending > 0 ||
+    stats.kycPending > 0 ||
+    stats.lowFloatAgents > 0 ||
+    stats.floatRequestsPending > 0;
+
   const columns = useMemo(
     () => [
       {
         key: 'ref' as const,
         label: 'Référence',
-        width: '180px',
+        width: '160px',
         render: (_: unknown, row: Record<string, unknown>) => (
-          <span className="font-mono text-xs text-ricash-brand">
-            {String(row.ref)}
-          </span>
+          <span className="font-mono text-xs text-ricash-brand">{String(row.ref)}</span>
         ),
       },
       {
         key: 'type' as const,
         label: 'Type',
         render: (_: unknown, row: Record<string, unknown>) => (
-          <span>{TRANSACTION_TYPE_LABELS[row.type as keyof typeof TRANSACTION_TYPE_LABELS] ?? String(row.type)}</span>
+          <span className="text-sm">
+            {TRANSACTION_TYPE_LABELS[row.type as keyof typeof TRANSACTION_TYPE_LABELS] ??
+              String(row.type)}
+          </span>
         ),
       },
       {
         key: 'amount' as const,
-        label: 'Montant (XOF)',
+        label: 'Montant',
         sortable: true,
         render: (_: unknown, row: Record<string, unknown>) => (
-          <span className="font-semibold">{formatXOF(Number(row.amount))}</span>
+          <span className="font-semibold tabular-nums">{formatXOF(Number(row.amount))}</span>
         ),
       },
       {
         key: 'status' as const,
         label: 'Statut',
+        width: '120px',
         render: (_: unknown, row: Record<string, unknown>) => (
           <StatusBadge status={String(row.status)} type="transaction" />
         ),
@@ -191,10 +232,14 @@ export default function DashboardView() {
       {
         key: 'clientName' as const,
         label: 'Client',
+        render: (val: unknown) => (
+          <span className="text-sm truncate max-w-[140px] block">{String(val)}</span>
+        ),
       },
       {
         key: 'createdAt' as const,
         label: 'Date',
+        width: '120px',
         render: (_: unknown, row: Record<string, unknown>) => (
           <span className="text-sm text-muted-foreground">{formatDate(String(row.createdAt))}</span>
         ),
@@ -203,7 +248,6 @@ export default function DashboardView() {
     [],
   );
 
-  // ---- Handlers ----
   const handleRowClick = (row: Record<string, unknown>) => {
     navigate('transaction-detail', { id: String(row.id) }, [
       { label: 'Tableau de bord', route: 'dashboard' },
@@ -212,103 +256,177 @@ export default function DashboardView() {
     ]);
   };
 
-  // ---- Render ----
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <PageHeader title="Tableau de bord" subtitle="Vue d'ensemble de l'activité Ricash" />
+      <PageHeader
+        title="Tableau de bord"
+        subtitle="Vue d'ensemble de l'activité Ricash — indicateurs clés, alertes et transactions récentes"
+        breadcrumb={[{ label: 'Tableau de bord' }]}
+      >
+        <Badge variant="brand" className="gap-1.5">
+          <TrendingUp className="size-3.5" aria-hidden />
+          Temps réel (mock)
+        </Badge>
+      </PageHeader>
 
-      {/* ---- Stat Cards Grid ---- */}
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div onClick={() => navigate('transactions')} className="cursor-pointer">
+      {/* KPI principaux */}
+      <section aria-label="Indicateurs principaux">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <StatCard
-            title="Volume transactions"
-            value={txStats.total}
-            icon={<ArrowLeftRight className="size-5" />}
-            color="blue"
-            trend={{ value: 12, direction: 'up' }}
-            stagger={1}
+            label="Volume transactions"
+            value={stats.txTotal}
+            hint="Toutes opérations"
+            accent
+            onClick={() => navigate('transactions')}
           />
-        </div>
-        <div onClick={() => navigate('transactions')} className="cursor-pointer">
           <StatCard
-            title="Montant traité"
-            value={formatXOF(txStats.totalAmount)}
-            icon={<Banknote className="size-5" />}
-            color="green"
-            trend={{ value: 8, direction: 'up' }}
-            stagger={2}
-            animateValue={false}
+            label="Montant traité"
+            value={formatXOF(stats.txSuccessAmount)}
+            hint="Transactions réussies"
+            onClick={() => navigate('transactions')}
           />
-        </div>
-        <div onClick={() => navigate('transactions')} className="cursor-pointer">
           <StatCard
-            title="Transactions en attente"
-            value={txStats.pending}
-            icon={<Clock className="size-5" />}
-            color="orange"
-            stagger={3}
+            label="En attente"
+            value={stats.txPending}
+            hint="À valider ou traiter"
+            warning={stats.txPending > 0}
+            onClick={() => navigate('transactions')}
           />
-        </div>
-        <div onClick={() => navigate('notifications')} className="cursor-pointer">
           <StatCard
-            title="Alertes fraude"
-            value={fraudAlerts}
-            icon={<AlertTriangle className="size-5" />}
-            color="red"
-            stagger={4}
-          />
-        </div>
-        <div onClick={() => navigate('agents')} className="cursor-pointer">
-          <StatCard
-            title="Agents actifs"
-            value={activeAgents}
-            icon={<UserCheck className="size-5" />}
-            color="blue"
-            stagger={5}
-          />
-        </div>
-        <div onClick={() => navigate('clients')} className="cursor-pointer">
-          <StatCard
-            title="Clients enregistrés"
-            value={clients.length}
-            icon={<Users className="size-5" />}
-            color="green"
-            trend={{ value: 15, direction: 'up' }}
-            stagger={6}
-          />
-        </div>
-        <div onClick={() => navigate('float')} className="cursor-pointer">
-          <StatCard
-            title="Float global"
-            value={formatXOF(globalFloat)}
-            icon={<Wallet className="size-5" />}
-            color="green"
-            stagger={7}
-            animateValue={false}
-          />
-        </div>
-        <div onClick={() => navigate('kyc')} className="cursor-pointer">
-          <StatCard
-            title="KYC en attente"
-            value={kycPending}
-            icon={<IdCard className="size-5" />}
-            color="orange"
-            stagger={8}
+            label="Alertes non lues"
+            value={stats.unreadAlerts}
+            hint={stats.fraudAlerts > 0 ? `${stats.fraudAlerts} fraude(s)` : 'Boîte de réception'}
+            warning={stats.unreadAlerts > 0}
+            onClick={() => navigate('notifications')}
           />
         </div>
       </section>
 
-      {/* ---- Chart + Alerts Row ---- */}
-      <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 animate-in" style={{ animationDelay: '400ms' }}>
-        {/* Line Chart */}
-        <Card className="xl:col-span-2 bg-card ricash-card-shadow">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base font-semibold">
+      {/* KPI réseau & conformité */}
+      <section aria-label="Réseau et conformité">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <StatCard
+            label="Agents actifs"
+            value={stats.activeAgents}
+            hint={`${agents.length} au total`}
+            onClick={() => navigate('agents')}
+          />
+          <StatCard
+            label="Clients"
+            value={stats.totalClients}
+            hint="Comptes enregistrés"
+            onClick={() => navigate('clients')}
+          />
+          <StatCard
+            label="Float global"
+            value={formatXOF(stats.globalFloat)}
+            hint={
+              stats.lowFloatAgents > 0
+                ? `${stats.lowFloatAgents} agent(s) sous seuil`
+                : 'Réseau agents'
+            }
+            warning={stats.lowFloatAgents > 0}
+            onClick={() => navigate('float')}
+          />
+          <StatCard
+            label="KYC en attente"
+            value={stats.kycPending}
+            hint="Dossiers à traiter"
+            warning={stats.kycPending > 0}
+            onClick={() => navigate('kyc')}
+          />
+        </div>
+      </section>
+
+      {/* Bandeaux contextuels */}
+      {hasPriorityAlerts && (
+        <div className="space-y-2" role="region" aria-label="Alertes prioritaires">
+          {stats.fraudAlerts > 0 && (
+            <div className="flex flex-col gap-2 rounded-xl border border-red-200/80 bg-red-50/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-red-900/40 dark:bg-red-950/20">
+              <div className="flex items-start gap-3">
+                <AlertTriangle className="size-5 shrink-0 text-red-600 mt-0.5" aria-hidden />
+                <div>
+                  <p className="text-sm font-medium text-red-900 dark:text-red-100">
+                    {stats.fraudAlerts} alerte{stats.fraudAlerts > 1 ? 's' : ''} de fraude active{stats.fraudAlerts > 1 ? 's' : ''}
+                  </p>
+                  <p className="text-xs text-red-700/90 dark:text-red-200/80">
+                    Activité suspecte détectée — vérification recommandée
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="shrink-0 border-red-300 text-red-700 hover:bg-red-100"
+                onClick={() => navigate('notifications')}
+              >
+                Voir les alertes
+              </Button>
+            </div>
+          )}
+          {stats.txPending > 0 && (
+            <div className="flex flex-col gap-2 rounded-xl border border-amber-200/80 bg-amber-50/60 px-4 py-3 sm:flex-row sm:items-center sm:justify-between dark:border-amber-900/40 dark:bg-amber-950/20">
+              <div className="flex items-start gap-3">
+                <Clock className="size-5 shrink-0 text-amber-600 mt-0.5" aria-hidden />
+                <div>
+                  <p className="text-sm font-medium text-amber-900 dark:text-amber-100">
+                    {stats.txPending} transaction{stats.txPending > 1 ? 's' : ''} en attente
+                  </p>
+                  <p className="text-xs text-amber-700/90 dark:text-amber-200/80">
+                    Traitement ou validation en cours
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="shrink-0"
+                onClick={() => navigate('transactions')}
+              >
+                Consulter
+              </Button>
+            </div>
+          )}
+          {stats.floatRequestsPending > 0 && (
+            <div className="flex flex-col gap-2 rounded-xl border border-ricash-brand/25 bg-ricash-brand/5 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <Wallet className="size-5 shrink-0 text-ricash-brand mt-0.5" aria-hidden />
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {stats.floatRequestsPending} demande{stats.floatRequestsPending > 1 ? 's' : ''}{' '}
+                    de float en attente
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Recharges agents à approuver
+                  </p>
+                </div>
+              </div>
+              <Button
+                type="button"
+                variant="primary"
+                size="sm"
+                className="shrink-0"
+                onClick={() => navigate('float')}
+              >
+                Traiter
+              </Button>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Graphique + alertes */}
+      <section className="grid grid-cols-1 gap-6 xl:grid-cols-3">
+        <Card className="xl:col-span-2 shadow-sm border-border/80">
+          <CardHeader className="border-b bg-muted/20 pb-4">
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <ArrowLeftRight className="size-4 text-ricash-brand" aria-hidden />
               Évolution des transactions (30 jours)
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="pt-4">
             <div className="h-72 w-full">
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={chartData} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
@@ -357,8 +475,7 @@ export default function DashboardView() {
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            {/* Legend */}
-            <div className="flex items-center justify-center gap-6 mt-2 text-xs text-muted-foreground">
+            <div className="mt-2 flex items-center justify-center gap-6 text-xs text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <span className="size-3 rounded-full bg-ricash-brand" />
                 Montant (XOF)
@@ -371,67 +488,194 @@ export default function DashboardView() {
           </CardContent>
         </Card>
 
-        {/* Active Alerts */}
-        <Card className="bg-card ricash-card-shadow flex flex-col">
-          <CardHeader className="pb-2">
+        <Card className="flex flex-col shadow-sm border-border/80">
+          <CardHeader className="border-b bg-muted/20 pb-4">
             <CardTitle className="text-base font-semibold flex items-center gap-2">
-              <AlertTriangle className="size-4 text-ricash-warning" />
+              <Bell className="size-4 text-ricash-brand" aria-hidden />
               Alertes actives
               {unreadNotifications.length > 0 && (
-                <span className="ml-auto bg-ricash-danger text-white text-[10px] font-bold rounded-full size-5 flex items-center justify-center">
+                <Badge variant="error" className="ml-auto h-5 min-w-[20px] justify-center px-1.5 text-[10px]">
                   {unreadNotifications.length}
-                </span>
+                </Badge>
               )}
             </CardTitle>
           </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto max-h-80 ricash-scroll">
+          <CardContent className="flex-1 overflow-y-auto max-h-80 p-4 ricash-scroll">
             {unreadNotifications.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-8 text-muted-foreground">
-                <Bell className="size-8 mb-2 opacity-40" />
-                <p className="text-sm">Aucune alerte active</p>
-              </div>
+              <EmptyState
+                title="Aucune alerte"
+                description="Tout est à jour pour le moment."
+                icon={<Bell className="size-8 text-muted-foreground" />}
+              />
             ) : (
-              <ul className="space-y-3">
-                {unreadNotifications.map((notif) => (
-                  <li
-                    key={notif.id}
-                    className={`rounded-lg border p-3 ${ALERT_BG_MAP[notif.type] ?? 'bg-muted/50 border-border'}`}
-                  >
-                    <div className="flex items-start gap-3">
-                      <div className="shrink-0 mt-0.5">
-                        {ALERT_ICON_MAP[notif.type] ?? <Bell className="size-5 text-muted-foreground" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground leading-tight">
-                          {notif.title}
-                        </p>
-                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
-                          {notif.message}
-                        </p>
-                        <p className="text-[10px] text-muted-foreground/70 mt-1">
-                          {formatTimeAgo(notif.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                  </li>
-                ))}
+              <ul className="space-y-2">
+                {unreadNotifications.slice(0, 6).map((notif) => {
+                  const cfg = NOTIFICATION_TYPE_UI[notif.type];
+                  const Icon = cfg.icon;
+                  return (
+                    <li key={notif.id}>
+                      <button
+                        type="button"
+                        onClick={() => navigate('notifications')}
+                        className="flex w-full gap-3 rounded-lg border border-border/60 bg-card p-3 text-left transition-colors hover:border-ricash-brand/30 hover:bg-muted/30"
+                      >
+                        <span
+                          className={cn(
+                            'flex size-9 shrink-0 items-center justify-center rounded-lg',
+                            cfg.bgClass,
+                          )}
+                        >
+                          <Icon className={cn('size-4', cfg.colorClass)} aria-hidden />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-foreground line-clamp-1">
+                            {notif.title}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {NOTIFICATION_TYPE_LABELS[notif.type]}
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">
+                            {notif.message}
+                          </p>
+                          <p className="text-[10px] text-muted-foreground/70 mt-1">
+                            {formatTimeAgo(notif.createdAt)}
+                          </p>
+                        </div>
+                      </button>
+                    </li>
+                  );
+                })}
               </ul>
+            )}
+            {unreadNotifications.length > 6 && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="mt-3 w-full text-ricash-brand"
+                onClick={() => navigate('notifications')}
+              >
+                Voir toutes ({unreadNotifications.length})
+              </Button>
             )}
           </CardContent>
         </Card>
       </section>
 
-      {/* ---- Recent Transactions Table ---- */}
-      <section>
-        <h2 className="text-base font-semibold text-foreground mb-3">
-          Transactions récentes
-        </h2>
-        <DataTable
-          columns={columns}
-          data={recentTx as unknown as Record<string, unknown>[]}
-          onRowClick={handleRowClick}
-          emptyMessage="Aucune transaction récente"
-        />
+      {/* Transactions récentes */}
+      <section aria-label="Transactions récentes">
+        <Card className="shadow-sm border-border/80 overflow-hidden">
+          <CardHeader className="border-b bg-muted/20 pb-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <CardTitle className="text-base font-semibold flex items-center gap-2">
+                <Banknote className="size-4 text-ricash-brand" aria-hidden />
+                Transactions récentes
+              </CardTitle>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('transactions')}
+              >
+                Voir tout
+                <ArrowRight className="size-4 ml-1" />
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4 p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filtrer les transactions">
+                {TX_FILTERS.map(({ id, label, icon: Icon }) => {
+                  const isActive = txFilter === id;
+                  return (
+                    <button
+                      key={id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      onClick={() => setTxFilter(id)}
+                      className={cn(
+                        'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all',
+                        isActive
+                          ? 'border-ricash-brand/40 bg-ricash-brand/10 text-ricash-brand shadow-sm'
+                          : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
+                      )}
+                    >
+                      <Icon className="size-3.5" aria-hidden />
+                      {label}
+                      <span
+                        className={cn(
+                          'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums',
+                          isActive ? 'bg-ricash-brand/15' : 'bg-muted',
+                        )}
+                      >
+                        {txFilterCounts[id]}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="relative w-full sm:max-w-xs">
+                <Search
+                  className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  type="search"
+                  placeholder="Réf., client, agent…"
+                  value={txSearch}
+                  onChange={(e) => setTxSearch(e.target.value)}
+                  className="pl-9"
+                  aria-label="Rechercher une transaction"
+                />
+              </div>
+            </div>
+
+            {filteredRecentTx.length === 0 ? (
+              <EmptyState
+                title={txSearch || txFilter !== 'all' ? 'Aucun résultat' : 'Aucune transaction'}
+                description={
+                  txSearch
+                    ? 'Essayez un autre mot-clé.'
+                    : 'Les dernières opérations apparaîtront ici.'
+                }
+                icon={<ArrowLeftRight className="size-8 text-muted-foreground" />}
+                action={
+                  txSearch || txFilter !== 'all' ? (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setTxSearch('');
+                        setTxFilter('all');
+                      }}
+                    >
+                      Réinitialiser
+                    </Button>
+                  ) : (
+                    <Button
+                      type="button"
+                      variant="primary"
+                      size="sm"
+                      onClick={() => navigate('transactions')}
+                    >
+                      Voir les transactions
+                    </Button>
+                  )
+                }
+              />
+            ) : (
+              <DataTable
+                columns={columns}
+                data={filteredRecentTx as unknown as Record<string, unknown>[]}
+                onRowClick={handleRowClick}
+                emptyMessage="Aucune transaction"
+              />
+            )}
+          </CardContent>
+        </Card>
       </section>
     </div>
   );

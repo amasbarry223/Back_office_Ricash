@@ -68,8 +68,7 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
     }
 
     const now = new Date().toISOString();
-    const newId = `NOT-${String(get().notifications.length + 1).padStart(3, '0')}`;
-    const sentId = `SNT-${String(get().sentNotifications.length + 1).padStart(3, '0')}`;
+    const sentId = `SNT-${Date.now()}`;
 
     const sentNotif: SentNotification = {
       id: sentId,
@@ -85,24 +84,8 @@ export const useNotificationsStore = create<NotificationsStore>((set, get) => ({
       recipientCount,
     };
 
-    // Also add to main notifications as a system notification
-    const systemNotif: Notification = {
-      id: newId,
-      type: form.type,
-      title: form.title,
-      message: form.message,
-      read: false,
-      createdAt: now,
-      priority: form.priority,
-      senderId,
-      senderName,
-      recipientType: form.recipientType,
-      recipientCount,
-    };
-
-    set(state => ({
+    set((state) => ({
       sentNotifications: [sentNotif, ...state.sentNotifications],
-      notifications: [systemNotif, ...state.notifications],
     }));
   },
 

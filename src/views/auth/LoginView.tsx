@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Loader2, Lock, Mail } from 'lucide-react';
 import { useAuthStore } from '@/stores/auth-store';
 import AnimateIn from '@/components/common/AnimateIn';
+import RicashLogo from '@/components/common/RicashLogo';
 import ForgotPasswordView from '@/views/auth/ForgotPasswordView';
 
 export default function LoginView() {
@@ -50,15 +51,12 @@ export default function LoginView() {
       <AnimateIn as="div" className="w-full max-w-md">
       <Card className="shadow-lg" style={{ boxShadow: 'var(--ricash-shadow-lg)' }}>
         <CardHeader className="text-center pb-2">
-          {/* Ricash Logo */}
-          <div className="flex flex-col items-center gap-1">
-            <h1 className="text-4xl font-bold tracking-wider text-ricash-brand">
-              RICASH
-            </h1>
+          <div className="flex flex-col items-center gap-2">
+            <RicashLogo variant="full" priority />
             <p className="text-sm text-muted-foreground font-medium">
               Back-Office v4.0
             </p>
-            <div className="w-12 h-1 rounded-full mx-auto mt-2 bg-ricash-accent" />
+            <div className="w-12 h-1 rounded-full mx-auto mt-1 bg-ricash-accent" />
           </div>
         </CardHeader>
 

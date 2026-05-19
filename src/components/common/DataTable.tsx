@@ -11,6 +11,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { getPaginationRange } from '@/lib/pagination';
 
 interface Column {
   key: string;
@@ -72,11 +73,13 @@ export default function DataTable({
     onSort?.(key, newDirection);
   };
 
-  const totalPages = pagination ? Math.ceil(pagination.total / pagination.perPage) : 1;
-  const currentPage = pagination?.page ?? 1;
-
-  const startItem = pagination ? (currentPage - 1) * pagination.perPage + 1 : 0;
-  const endItem = pagination ? Math.min(currentPage * pagination.perPage, pagination.total) : 0;
+  const paginationRange = pagination
+    ? getPaginationRange(pagination.page, pagination.total, pagination.perPage)
+    : null;
+  const totalPages = paginationRange?.totalPages ?? 1;
+  const currentPage = paginationRange?.safePage ?? 1;
+  const startItem = paginationRange?.start ?? 0;
+  const endItem = paginationRange?.end ?? 0;
 
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
@@ -100,8 +103,11 @@ export default function DataTable({
     return pages;
   };
 
+  /** Le tri client ne porte que sur la page courante — désactivé si pagination serveur/parent */
+  const isSortEnabled = (col: Column) => col.sortable && !pagination;
+
   const renderSortIcon = (col: Column) => {
-    if (!col.sortable) return null;
+    if (!isSortEnabled(col)) return null;
     if (sortKey !== col.key) {
       return <ArrowUpDown className="size-3.5 ml-1 text-muted-foreground/50" />;
     }
@@ -168,8 +174,13 @@ export default function DataTable({
                 <TableHead
                   key={col.key}
                   style={col.width ? { width: col.width } : undefined}
-                  className={col.sortable ? 'cursor-pointer select-none hover:bg-muted/50' : ''}
-                  onClick={col.sortable ? () => handleSort(col.key) : undefined}
+                  className={isSortEnabled(col) ? 'cursor-pointer select-none hover:bg-muted/50' : ''}
+                  onClick={isSortEnabled(col) ? () => handleSort(col.key) : undefined}
+                  title={
+                    col.sortable && pagination
+                      ? 'Tri disponible sur la liste complète (filtrez puis changez de page)'
+                      : undefined
+                  }
                 >
                   <div className="flex items-center">
                     {col.label}
@@ -210,10 +221,13 @@ export default function DataTable({
       {pagination && pagination.total > 0 && (
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-border/50">
           <p className="text-sm text-muted-foreground">
-            Affichage {startItem}–{endItem} sur {pagination.total.toLocaleString('fr-FR')} résultats
+            Affichage {startItem}–{endItem} sur {pagination.total.toLocaleString('fr-FR')} résultat
+            {pagination.total > 1 ? 's' : ''}
           </p>
+          {totalPages > 1 && (
           <div className="flex items-center gap-1">
             <Button
+              type="button"
               variant="outline"
               size="xs"
               disabled={currentPage <= 1}
@@ -229,6 +243,7 @@ export default function DataTable({
               ) : (
                 <Button
                   key={`page-${page}`}
+                  type="button"
                   variant={page === currentPage ? 'primary' : 'outline'}
                   size="xs"
                   onClick={() => onPageChange?.(page)}
@@ -239,6 +254,7 @@ export default function DataTable({
               )
             )}
             <Button
+              type="button"
               variant="outline"
               size="xs"
               disabled={currentPage >= totalPages}
@@ -247,6 +263,7 @@ export default function DataTable({
               Suivant
             </Button>
           </div>
+          )}
         </div>
       )}
     </div>

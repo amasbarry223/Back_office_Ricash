@@ -9,19 +9,33 @@ import {
   CheckCircle,
   Ban,
   RotateCcw,
+  Search,
+  Users,
+  Clock,
+  AlertTriangle,
+  UserCheck,
 } from 'lucide-react';
 import PageHeader from '@/components/common/PageHeader';
-import SearchBar from '@/components/common/SearchBar';
 import DataTable from '@/components/common/DataTable';
 import StatusBadge from '@/components/common/StatusBadge';
 import RoleGuard from '@/components/common/RoleGuard';
 import ConfirmDialog from '@/components/common/ConfirmDialog';
+import EmptyState from '@/components/common/EmptyState';
 import { useRouterStore, buildBreadcrumb } from '@/stores/router-store';
 import { useAgentsStore } from '@/stores/agents-store';
+import {
+  computeAgentStats,
+  filterAgents,
+  LOW_FLOAT_THRESHOLD,
+  type AgentQuickFilter,
+} from '@/lib/agent-ui';
 import { toast } from 'sonner';
-import { AGENT_STATUS_LABELS, type AgentStatus } from '@/types';
+import { AGENT_STATUS_LABELS, type Agent, type AgentStatus } from '@/types';
 import { formatXOF, formatDate } from '@/lib/format';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -29,79 +43,116 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { cn } from '@/lib/utils';
+import { DEFAULT_TABLE_PER_PAGE } from '@/lib/pagination';
+import { useTablePagination } from '@/hooks/use-table-pagination';
 
-const PER_PAGE = 10;
+const PER_PAGE = DEFAULT_TABLE_PER_PAGE;
 
-const STATUS_OPTIONS = Object.entries(AGENT_STATUS_LABELS).map(([value, label]) => ({
-  value,
-  label,
-}));
-
-const FILTER_CONFIGS = [
-  { key: 'status', label: 'Statut', type: 'select' as const, options: STATUS_OPTIONS },
+const QUICK_FILTERS: { id: AgentQuickFilter; label: string; icon: React.ElementType }[] = [
+  { id: 'all', label: 'Tous', icon: Users },
+  { id: 'approved', label: 'Approuvés', icon: UserCheck },
+  { id: 'pending', label: 'En attente', icon: Clock },
+  { id: 'suspended', label: 'Suspendus', icon: Ban },
+  { id: 'low_float', label: 'Float bas', icon: AlertTriangle },
 ];
+
+function StatCard({
+  label,
+  value,
+  hint,
+  accent,
+  warning,
+}: {
+  label: string;
+  value: number;
+  hint?: string;
+  accent?: boolean;
+  warning?: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        'rounded-xl border p-4 transition-colors',
+        accent && 'border-ricash-brand/30 bg-gradient-to-br from-ricash-brand/10 to-background',
+        warning && 'border-orange-300/60 bg-gradient-to-br from-orange-50/80 to-background dark:from-orange-950/20',
+        !accent && !warning && 'border-border/60 bg-card',
+      )}
+    >
+      <p className="text-xs font-medium text-muted-foreground">{label}</p>
+      <p
+        className={cn(
+          'mt-1 text-2xl font-bold tabular-nums',
+          accent && 'text-ricash-brand',
+          warning && 'text-orange-600',
+          !accent && !warning && 'text-foreground',
+        )}
+      >
+        {value}
+      </p>
+      {hint && <p className="mt-0.5 text-[11px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
 
 export default function AgentsView() {
   const agents = useAgentsStore((s) => s.agents);
   const updateAgentStatus = useAgentsStore((s) => s.updateAgentStatus);
   const navigate = useRouterStore((s) => s.navigate);
 
-  const [query, setQuery] = useState('');
-  const [activeFilters, setActiveFilters] = useState<Record<string, unknown>>({});
-  const [page, setPage] = useState(1);
-
-  // Confirm dialog state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [quickFilter, setQuickFilter] = useState<AgentQuickFilter>('all');
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [confirmAction, setConfirmAction] = useState<{ id: string; action: 'suspend' | 'reactivate'; label: string } | null>(null);
+  const [confirmAction, setConfirmAction] = useState<{
+    id: string;
+    action: 'suspend' | 'reactivate';
+    label: string;
+  } | null>(null);
 
-  // Filtering logic — NO geographic filter (règle: pas de filtre localisation agents)
-  const filteredAgents = useMemo(() => {
-    let result = [...agents];
+  const stats = useMemo(() => computeAgentStats(agents), [agents]);
 
-    // Text search: nom, code agent
-    if (query) {
-      const q = query.toLowerCase();
-      result = result.filter(
-        (a) =>
-          a.code.toLowerCase().includes(q) ||
-          a.firstName.toLowerCase().includes(q) ||
-          a.lastName.toLowerCase().includes(q) ||
-          `${a.firstName} ${a.lastName}`.toLowerCase().includes(q)
-      );
-    }
-
-    // Status filter
-    if (activeFilters.status) {
-      result = result.filter((a) => a.status === activeFilters.status);
-    }
-
-    return result;
-  }, [agents, query, activeFilters]);
-
-  // Pagination
-  const paginatedData = useMemo(() => {
-    const start = (page - 1) * PER_PAGE;
-    return filteredAgents.slice(start, start + PER_PAGE);
-  }, [filteredAgents, page]);
-
-  const handleSearch = useCallback((q: string, filters: Record<string, unknown>) => {
-    setQuery(q);
-    setActiveFilters(filters);
-    setPage(1);
-  }, []);
-
-  const handleToggleStatus = useCallback(
-    (agentId: string, currentStatus: AgentStatus) => {
-      if (currentStatus === 'APPROVED') {
-        setConfirmAction({ id: agentId, action: 'suspend', label: 'Suspendre cet agent' });
-        setConfirmOpen(true);
-      } else if (currentStatus === 'SUSPENDED') {
-        setConfirmAction({ id: agentId, action: 'reactivate', label: 'Réactiver cet agent' });
-        setConfirmOpen(true);
-      }
-    },
-    []
+  const filteredAgents = useMemo(
+    () => filterAgents(agents, searchQuery, quickFilter),
+    [agents, searchQuery, quickFilter],
   );
+
+  const {
+    paginatedItems: paginatedAgents,
+    pagination,
+    onPageChange,
+    resetPage,
+  } = useTablePagination(filteredAgents, PER_PAGE);
+
+  const filterCounts = useMemo(
+    () => ({
+      all: agents.length,
+      approved: agents.filter((a) => a.status === 'APPROVED').length,
+      pending: agents.filter((a) => a.status === 'PENDING').length,
+      suspended: agents.filter((a) => a.status === 'SUSPENDED').length,
+      low_float: agents.filter((a) => a.floatBalance < LOW_FLOAT_THRESHOLD).length,
+    }),
+    [agents],
+  );
+
+  const handleQuickFilter = (id: AgentQuickFilter) => {
+    setQuickFilter(id);
+    resetPage();
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearchQuery(value);
+    resetPage();
+  };
+
+  const handleToggleStatus = useCallback((agentId: string, currentStatus: AgentStatus) => {
+    if (currentStatus === 'APPROVED') {
+      setConfirmAction({ id: agentId, action: 'suspend', label: 'Suspendre cet agent' });
+      setConfirmOpen(true);
+    } else if (currentStatus === 'SUSPENDED') {
+      setConfirmAction({ id: agentId, action: 'reactivate', label: 'Réactiver cet agent' });
+      setConfirmOpen(true);
+    }
+  }, []);
 
   const handleConfirmAction = useCallback(() => {
     if (!confirmAction) return;
@@ -118,9 +169,25 @@ export default function AgentsView() {
 
   const handleExportCSV = useCallback(() => {
     if (filteredAgents.length === 0) return;
-    const headers = ['Code Agent', 'Nom', 'Float actuel', 'Statut', 'Tx du mois', 'Commission', 'Date inscription'].join(',');
+    const headers = [
+      'Code Agent',
+      'Nom',
+      'Float actuel',
+      'Statut',
+      'Tx du mois',
+      'Commission',
+      'Date inscription',
+    ].join(',');
     const rows = filteredAgents.map((a) =>
-      [a.code, `"${a.firstName} ${a.lastName}"`, a.floatBalance, AGENT_STATUS_LABELS[a.status], a.monthlyTransactions, `${a.commissionRate}%`, a.createdAt].join(',')
+      [
+        a.code,
+        `"${a.firstName} ${a.lastName}"`,
+        a.floatBalance,
+        AGENT_STATUS_LABELS[a.status],
+        a.monthlyTransactions,
+        `${a.commissionRate}%`,
+        a.createdAt,
+      ].join(','),
     );
     const csv = [headers, ...rows].join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -130,11 +197,38 @@ export default function AgentsView() {
     link.download = `agents-export-${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
     URL.revokeObjectURL(url);
+    toast.success('Export CSV généré');
   }, [filteredAgents]);
+
+  const navigateToDetail = (agent: Agent) => {
+    const fullName = `${agent.firstName} ${agent.lastName}`;
+    navigate(
+      'agent-detail',
+      { id: agent.id },
+      buildBreadcrumb([
+        { label: 'Agents', route: 'agents' },
+        { label: fullName },
+      ]),
+    );
+  };
+
+  const navigateToFloat = (agent: Agent) => {
+    const fullName = `${agent.firstName} ${agent.lastName}`;
+    navigate(
+      'agent-float',
+      { id: agent.id },
+      buildBreadcrumb([
+        { label: 'Agents', route: 'agents' },
+        { label: fullName, route: 'agent-detail', params: { id: agent.id } },
+        { label: 'Gestion Float' },
+      ]),
+    );
+  };
 
   const tableData = useMemo(
     () =>
-      paginatedData.map((a) => ({
+      paginatedAgents.map((a) => ({
+        id: a.id,
         code: a.code,
         fullName: `${a.firstName} ${a.lastName}`,
         floatBalance: a.floatBalance,
@@ -142,38 +236,45 @@ export default function AgentsView() {
         monthlyTransactions: a.monthlyTransactions,
         commissionRate: a.commissionRate,
         createdAt: a.createdAt,
-        id: a.id,
       })),
-    [paginatedData]
+    [paginatedAgents],
   );
 
   const columns = [
     {
-      key: 'code',
-      label: 'Code Agent',
-      sortable: true,
-      width: '120px',
-      render: (value: unknown) => (
-        <span className="font-mono text-xs font-medium">{value as string}</span>
-      ),
-    },
-    {
       key: 'fullName',
-      label: 'Nom',
+      label: 'Agent',
       sortable: true,
+      render: (_value: unknown, row: Record<string, unknown>) => {
+        const code = row.code as string;
+        const name = row.fullName as string;
+        return (
+          <div className="min-w-0">
+            <p className="font-medium text-foreground truncate">{name}</p>
+            <p className="font-mono text-xs text-muted-foreground">{code}</p>
+          </div>
+        );
+      },
     },
     {
       key: 'floatBalance',
       label: 'Float actuel',
       sortable: true,
-      width: '130px',
+      width: '150px',
       render: (value: unknown) => {
         const amount = value as number;
-        const isLow = amount < 200000;
+        const isLow = amount < LOW_FLOAT_THRESHOLD;
         return (
-          <span className={`font-medium ${isLow ? 'text-orange-600' : ''}`}>
-            {formatXOF(amount)}
-          </span>
+          <div className="flex flex-col gap-0.5">
+            <span className={cn('font-medium tabular-nums', isLow && 'text-orange-600')}>
+              {formatXOF(amount)}
+            </span>
+            {isLow && (
+              <Badge variant="warning" className="w-fit text-[10px] px-1.5 py-0">
+                Float bas
+              </Badge>
+            )}
+          </div>
         );
       },
     },
@@ -188,30 +289,36 @@ export default function AgentsView() {
       label: 'Tx du mois',
       sortable: true,
       width: '100px',
+      render: (value: unknown) => (
+        <span className="tabular-nums font-medium">{value as number}</span>
+      ),
     },
     {
       key: 'commissionRate',
       label: 'Commission',
       width: '100px',
       render: (value: unknown) => (
-        <span className="font-medium">{(value as number)}%</span>
+        <span className="font-medium tabular-nums">{(value as number)}%</span>
       ),
     },
     {
       key: 'createdAt',
-      label: 'Date inscription',
+      label: 'Inscription',
       sortable: true,
       width: '120px',
-      render: (value: unknown) => formatDate(value as string),
+      render: (value: unknown) => (
+        <span className="text-sm text-muted-foreground">{formatDate(value as string)}</span>
+      ),
     },
     {
       key: 'actions',
-      label: 'Actions',
-      width: '60px',
+      label: '',
+      width: '56px',
       render: (_value: unknown, row: Record<string, unknown>) => {
-        const agentId = row.id as string;
-        const currentStatus = row.status as AgentStatus;
-        const agentCode = row.code as string;
+        const agent = agents.find((a) => a.id === row.id);
+        if (!agent) return null;
+        const currentStatus = agent.status;
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -220,40 +327,18 @@ export default function AgentsView() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate('agent-detail', { id: agentId }, buildBreadcrumb([
-                    { label: 'Agents', route: 'agents' },
-                    { label: row.fullName as string },
-                  ]))
-                }
-              >
+              <DropdownMenuItem onClick={() => navigateToDetail(agent)}>
                 <Eye className="size-4 mr-2" />
                 Voir profil
               </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() =>
-                  navigate('agent-float', { id: agentId }, buildBreadcrumb([
-                    { label: 'Agents', route: 'agents' },
-                    { label: row.fullName as string, route: 'agent-detail', params: { id: agentId } },
-                    { label: 'Gestion Float' },
-                  ]))
-                }
-              >
+              <DropdownMenuItem onClick={() => navigateToFloat(agent)}>
                 <Wallet className="size-4 mr-2" />
                 Gérer float
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               {currentStatus === 'PENDING' && (
                 <RoleGuard roles={['super_admin', 'admin']}>
-                  <DropdownMenuItem
-                    onClick={() => {
-                      navigate('agent-detail', { id: agentId }, buildBreadcrumb([
-                        { label: 'Agents', route: 'agents' },
-                        { label: row.fullName as string },
-                      ]));
-                    }}
-                  >
+                  <DropdownMenuItem onClick={() => navigateToDetail(agent)}>
                     <CheckCircle className="size-4 mr-2 text-emerald-600" />
                     Approuver
                   </DropdownMenuItem>
@@ -262,7 +347,7 @@ export default function AgentsView() {
               {currentStatus === 'APPROVED' && (
                 <RoleGuard roles={['super_admin', 'admin']}>
                   <DropdownMenuItem
-                    onClick={() => handleToggleStatus(agentId, currentStatus)}
+                    onClick={() => handleToggleStatus(agent.id, currentStatus)}
                   >
                     <Ban className="size-4 mr-2 text-orange-600" />
                     Suspendre
@@ -272,7 +357,7 @@ export default function AgentsView() {
               {currentStatus === 'SUSPENDED' && (
                 <RoleGuard roles={['super_admin', 'admin']}>
                   <DropdownMenuItem
-                    onClick={() => handleToggleStatus(agentId, currentStatus)}
+                    onClick={() => handleToggleStatus(agent.id, currentStatus)}
                   >
                     <RotateCcw className="size-4 mr-2 text-emerald-600" />
                     Réactiver
@@ -286,9 +371,18 @@ export default function AgentsView() {
     },
   ];
 
+  const hasActiveFilters = searchQuery.trim() !== '' || quickFilter !== 'all';
+
   return (
     <div className="space-y-6">
-      <PageHeader title="Agents" subtitle={`${filteredAgents.length} agent(s) trouvé(s)`}>
+      <PageHeader
+        title="Agents"
+        subtitle="Réseau d'agents — float, commissions et statuts opérationnels"
+        breadcrumb={[
+          { label: 'Tableau de bord', onClick: () => navigate('dashboard') },
+          { label: 'Agents' },
+        ]}
+      >
         <Button
           variant="outline"
           size="sm"
@@ -297,40 +391,152 @@ export default function AgentsView() {
           className="gap-1.5"
         >
           <Download className="size-4" />
-          Exporter CSV
+          Exporter
         </Button>
       </PageHeader>
 
-      <SearchBar
-        placeholder="Rechercher un agent (nom, code agent)…"
-        filters={FILTER_CONFIGS}
-        onSearch={handleSearch}
-      />
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <StatCard label="Total" value={stats.total} hint="Agents enregistrés" accent />
+        <StatCard label="Approuvés" value={stats.approved} hint="Opérationnels" />
+        <StatCard label="En attente" value={stats.pending} hint="À valider" />
+        <StatCard label="Suspendus" value={stats.suspended} hint="Accès bloqué" />
+        <StatCard
+          label="Float bas"
+          value={stats.lowFloat}
+          hint={`< ${formatXOF(LOW_FLOAT_THRESHOLD)}`}
+          warning
+        />
+      </div>
 
-      <DataTable
-        columns={columns}
-        data={tableData as unknown as Record<string, unknown>[]}
-        pagination={{
-          page,
-          perPage: PER_PAGE,
-          total: filteredAgents.length,
-        }}
-        onPageChange={setPage}
-        emptyMessage="Aucun agent trouvé"
-      />
+      <div className="flex gap-3 rounded-xl border border-sky-200/80 bg-sky-50/80 px-4 py-3 dark:border-sky-900/40 dark:bg-sky-950/30">
+        <Wallet className="size-5 shrink-0 text-sky-700 dark:text-sky-400 mt-0.5" aria-hidden />
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-sky-900 dark:text-sky-100">
+            Gestion du réseau agents
+          </p>
+          <p className="mt-0.5 text-xs text-sky-800/90 dark:text-sky-200/80">
+            Consultez le float, approuvez les nouveaux agents et suivez les commissions. Les agents
+            avec un float inférieur à {formatXOF(LOW_FLOAT_THRESHOLD)} sont signalés automatiquement.
+          </p>
+        </div>
+      </div>
 
-      {/* Confirmation dialog */}
+      <Card className="shadow-sm border-border/80 overflow-hidden">
+        <CardHeader className="border-b bg-muted/20 pb-4 space-y-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="text-base font-semibold">
+              Liste des agents
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({filteredAgents.length})
+              </span>
+            </CardTitle>
+            <div className="relative w-full sm:max-w-xs">
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden
+              />
+              <Input
+                type="search"
+                placeholder="Rechercher par nom, code ou téléphone…"
+                value={searchQuery}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="pl-9"
+                aria-label="Rechercher un agent"
+              />
+            </div>
+          </div>
+
+          <div
+            className="flex flex-wrap gap-2"
+            role="tablist"
+            aria-label="Filtrer les agents"
+          >
+            {QUICK_FILTERS.map(({ id, label, icon: Icon }) => {
+              const count = filterCounts[id];
+              const isActive = quickFilter === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  onClick={() => handleQuickFilter(id)}
+                  className={cn(
+                    'inline-flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all',
+                    isActive
+                      ? 'border-ricash-brand/40 bg-ricash-brand/10 text-ricash-brand shadow-sm'
+                      : 'border-border bg-card text-muted-foreground hover:border-ricash-brand/30 hover:text-foreground',
+                    id === 'low_float' &&
+                      isActive &&
+                      'border-orange-400/50 bg-orange-50 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300',
+                  )}
+                >
+                  <Icon className="size-3.5" aria-hidden />
+                  {label}
+                  <span
+                    className={cn(
+                      'rounded-full px-1.5 py-0.5 text-[10px] tabular-nums',
+                      isActive ? 'bg-ricash-brand/15' : 'bg-muted',
+                      id === 'low_float' && isActive && 'bg-orange-200/60 dark:bg-orange-900/40',
+                    )}
+                  >
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </CardHeader>
+
+        <CardContent className="p-0">
+          {filteredAgents.length === 0 ? (
+            <EmptyState
+              title={hasActiveFilters ? 'Aucun résultat' : 'Aucun agent'}
+              description={
+                hasActiveFilters
+                  ? 'Modifiez la recherche ou réinitialisez les filtres.'
+                  : 'Aucun agent n\'est enregistré pour le moment.'
+              }
+              icon={<Users className="size-8 text-muted-foreground" />}
+              action={
+                hasActiveFilters ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setSearchQuery('');
+                      setQuickFilter('all');
+                      resetPage();
+                    }}
+                  >
+                    Réinitialiser les filtres
+                  </Button>
+                ) : undefined
+              }
+            />
+          ) : (
+            <DataTable
+              columns={columns}
+              data={tableData as unknown as Record<string, unknown>[]}
+              pagination={pagination}
+              onPageChange={onPageChange}
+              emptyMessage="Aucun agent trouvé"
+            />
+          )}
+        </CardContent>
+      </Card>
+
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
         title={confirmAction?.label ?? 'Confirmer'}
         description={
           confirmAction?.action === 'suspend'
-            ? 'Êtes-vous sûr de vouloir suspendre cet agent ? Il ne pourra plus traiter de transactions.'
-            : 'Êtes-vous sûr de vouloir réactiver cet agent ?'
+            ? 'Cet agent ne pourra plus traiter de transactions tant qu\'il est suspendu.'
+            : 'Cet agent retrouvera ses droits opérationnels après réactivation.'
         }
         confirmLabel={confirmAction?.action === 'suspend' ? 'Suspendre' : 'Réactiver'}
-        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'primary'}
+        variant={confirmAction?.action === 'suspend' ? 'destructive' : 'default'}
         onConfirm={handleConfirmAction}
       />
     </div>

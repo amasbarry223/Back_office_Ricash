@@ -36,7 +36,7 @@ export const mockSentNotifications: SentNotification[] = [
     id: 'SNT-002',
     type: 'GENERAL_INFO',
     title: 'Nouveaux tarifs en vigueur',
-    message: 'Informez vos clients que les nouveaux tarifs de transfert entrent en vigueur à partir du 1er août 2025. Consultez la section Configuration pour plus de détails.',
+    message: 'Informez vos clients que les nouveaux tarifs de transfert entrent en vigueur à partir du 1er août 2025. Consultez Paramètres > Configuration pour plus de détails.',
     read: true,
     createdAt: '2025-07-08T14:30:00Z',
     priority: 'normal',
